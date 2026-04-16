@@ -1,1 +1,15 @@
 /Context/
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.angular/
+
+# Backend
+Backend/target/
+
+# IDE/OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

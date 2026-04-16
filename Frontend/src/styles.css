@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+
+:root {
+  --color-primary-light: #95cde7;
+  --color-primary-dark: #00416a;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-text-main: #434343;
+  --color-secondary-gray: #b5b5b5;
+  --color-secondary-blue: #0071b8;
+  --color-secondary-light: #b2d0e7;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--color-text-main);
+  background-color: #f7fbff;
+}

@@ -1,0 +1,38 @@
+https://www.angular.courses/blog/angular-folder-structure-guide
+
+
+
+
+src
+└── app
+    ├── core
+        ├── layout
+        ├── services
+            ├── notification-api.ts
+            └── notification-api.spec.ts
+        └── interceptors
+            ├── api-interceptor.ts
+            └── api-interceptor.spec.ts
+    ├── features
+        ├── product
+        ├── cart
+        └── checkout
+            ├── checkout-api.ts
+            ├── checkout-api.spec.ts
+            ├── checkout.model.ts
+            ├── checkout-guard.ts
+            ├── checkout-guard.spec.ts
+            ├── checkout.routes.ts
+            └── pages
+                ├── address
+                └── payment
+    └── shared
+        ├── components
+            └── nav
+                ├── footer
+                └── payment
+        ├── interfaces
+            └── usuario-interface.ts
+        └── utils
+            ├── array.utils.ts
+            └── array.utils.spec.ts

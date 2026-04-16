@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DumbellCheck – Crear Cuenta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/variables.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Roboto', sans-serif; background: var(--bg-light, #f5f8fa); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .auth-container { display: flex; width: 100%; max-width: 960px; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,65,106,.18); }
+    .auth-panel { flex: 1; background: var(--color-black); padding: 48px 40px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+    .auth-panel::before { content: ''; position: absolute; top: -80px; right: -80px; width: 300px; height: 300px; border-radius: 50%; background: rgba(149,205,231,.08); }
+    .auth-panel::after { content: ''; position: absolute; bottom: -60px; left: -60px; width: 240px; height: 240px; border-radius: 50%; background: rgba(0,113,184,.12); }
+    .auth-panel-logo { display: flex; align-items: center; gap: 12px; z-index: 1; position: relative; }
+    .auth-panel-logo span { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.5rem; color: white; }
+    .auth-panel-copy { z-index: 1; position: relative; }
+    .auth-panel-copy h2 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.8rem; color: white; line-height: 1.25; margin-bottom: 14px; }
+    .auth-panel-copy p { font-size: .92rem; color: var(--color-sky, #95CDE7); line-height: 1.6; }
+    .auth-feature { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; z-index: 1; position: relative; }
+    .auth-feature-icon { width: 28px; height: 28px; border-radius: 8px; background: rgba(149,205,231,.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .auth-feature-text { font-size: .88rem; color: rgba(255,255,255,.8); line-height: 1.4; padding-top: 4px; }
+    @media(max-width:680px){ .auth-panel { display: none; } }
+
+    .auth-form-panel { flex: 1; background: white; padding: 40px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+    @media(max-width:480px){ .auth-form-panel { padding: 32px 24px; } }
+    .auth-form-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--color-navy, #00416A); margin-bottom: 4px; }
+    .auth-form-sub { font-size: .88rem; color: var(--gray, #B5B5B5); margin-bottom: 24px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media(max-width:420px){ .form-row-2 { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: .78rem; color: var(--color-dark, #434343); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+    .form-input { width: 100%; padding: 11px 13px; border: 2px solid #e8edf2; border-radius: 10px; font-family: 'Roboto', sans-serif; font-size: .92rem; color: var(--color-dark, #434343); background: #fafbfc; outline: none; transition: border-color .2s; }
+    .form-input:focus { border-color: var(--color-sky, #95CDE7); background: white; }
+    .input-wrap { position: relative; }
+    .input-wrap .input-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gray, #B5B5B5); cursor: pointer; }
+    .strength-bar { height: 4px; border-radius: 2px; background: #e8edf2; margin-top: 6px; overflow: hidden; }
+    .strength-fill { height: 100%; width: 0; border-radius: 2px; background: var(--color-sky); transition: width .3s, background .3s; }
+    .strength-label { font-size: .75rem; color: var(--gray); margin-top: 3px; }
+    .terms-check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
+    .terms-check input { margin-top: 3px; accent-color: var(--color-blue, #0071B8); width: 15px; height: 15px; flex-shrink: 0; }
+    .terms-check label { font-size: .85rem; color: var(--color-dark, #434343); line-height: 1.4; }
+    .terms-check a { color: var(--color-blue, #0071B8); text-decoration: none; }
+    .btn-auth { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--color-blue, #0071B8), var(--color-navy, #00416A)); color: white; border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: opacity .2s, transform .1s; }
+    .btn-auth:hover { opacity: .92; transform: translateY(-1px); }
+    .auth-switch { text-align: center; margin-top: 20px; font-size: .88rem; color: var(--gray, #B5B5B5); }
+    .auth-switch a { color: var(--color-blue, #0071B8); font-weight: 700; text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="auth-container">
+  <!-- Decorative left panel -->
+  <div class="auth-panel">
+    <div class="auth-panel-logo">
+      <svg width="38" height="38" viewBox="0 0 36 36" fill="none"><rect x="2" y="11" width="7" height="14" rx="2.5" fill="#0071B8"/><rect x="13" y="15" width="10" height="6" rx="2" fill="#7F7F7F"/><rect x="27" y="11" width="7" height="14" rx="2.5" fill="#0071B8"/></svg>
+      <span>DumbellCheck</span>
+    </div>
+    <div class="auth-panel-copy">
+      <h2>Empieza tu<br>viaje fitness hoy</h2>
+      <p style="margin-bottom:24px;">Únete a miles de personas que ya llevan su progreso con DumbellCheck.</p>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#95CDE7" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="auth-feature-text">Registra cada entrenamiento con detalle completo</div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#95CDE7" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="auth-feature-text">Visualiza tu progreso con gráficas detalladas</div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#95CDE7" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="auth-feature-text">Conecta con otros atletas y comparte tu progreso</div>
+      </div>
+      <div class="auth-feature">
+        <div class="auth-feature-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#95CDE7" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="auth-feature-text">Plantillas de entrenamientos personalizables</div>
+      </div>
+    </div>
+    <div style="z-index:1;position:relative;font-size:.8rem;color:rgba(255,255,255,.4);">© 2026 DumbellCheck · Gratis para siempre</div>
+  </div>
+
+  <!-- Form panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-title">Crear cuenta</div>
+    <div class="auth-form-sub">Es gratis y siempre lo será</div>
+
+    <div class="form-row-2">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-input" placeholder="Adrian">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Apellidos</label>
+        <input type="text" class="form-input" placeholder="García López">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nombre de usuario</label>
+      <input type="text" class="form-input" placeholder="Adrian_fit" oninput="checkUsername(this.value)">
+      <div id="usernameMsg" style="font-size:.76rem;margin-top:4px;color:transparent;">·</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" placeholder="Adrian@email.com">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <div class="input-wrap">
+        <input type="password" class="form-input" placeholder="Mínimo 8 caracteres" id="passReg" oninput="checkStrength(this.value)">
+        <span class="input-icon" onclick="togglePassReg()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+      </div>
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="strength-label" id="strengthLabel">—</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Confirmar contraseña</label>
+      <input type="password" class="form-input" placeholder="Repite la contraseña">
+    </div>
+
+    <div class="terms-check">
+      <input type="checkbox" id="terms">
+      <label for="terms">Acepto los <a href="#">Términos de Servicio</a> y la <a href="#">Política de Privacidad</a> de DumbellCheck</label>
+    </div>
+
+    <button class="btn-auth" onclick="window.location.href='feed.html'">Crear mi cuenta</button>
+
+    <div class="auth-switch">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></div>
+  </div>
+</div>
+<script>
+function togglePassReg() {
+  const i = document.getElementById('passReg');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+function checkStrength(v) {
+  const fill = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+  let score = 0;
+  if (v.length >= 8) score++;
+  if (/[A-Z]/.test(v)) score++;
+  if (/[0-9]/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  const levels = [
+    {w:'0%', c:'#e8edf2', t:'—'},
+    {w:'25%', c:'#ef4444', t:'Débil'},
+    {w:'50%', c:'#f59e0b', t:'Regular'},
+    {w:'75%', c:'#3b82f6', t:'Buena'},
+    {w:'100%', c:'#22c55e', t:'Excelente'},
+  ];
+  fill.style.width = levels[score].w;
+  fill.style.background = levels[score].c;
+  label.style.color = levels[score].c;
+  label.textContent = levels[score].t;
+}
+const used = ['Adrian_fit','maria_gym','pablo123'];
+function checkUsername(v) {
+  const msg = document.getElementById('usernameMsg');
+  if (!v) { msg.style.color = 'transparent'; msg.textContent = '·'; return; }
+  if (used.includes(v.toLowerCase())) {
+    msg.style.color = '#ef4444'; msg.textContent = '✗ Este usuario ya está en uso';
+  } else if (v.length < 3) {
+    msg.style.color = '#f59e0b'; msg.textContent = '⚠ Mínimo 3 caracteres';
+  } else {
+    msg.style.color = '#22c55e'; msg.textContent = '✓ Nombre de usuario disponible';
+  }
+}
+</script>
+</body>
+</html>
