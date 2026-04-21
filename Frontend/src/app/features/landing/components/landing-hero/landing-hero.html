@@ -1,0 +1,49 @@
+<section class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-36 text-center">
+  <div class="absolute inset-0 z-0 bg-[linear-gradient(160deg,#E8F6FC_0%,#F4F8FC_40%,#D4EAF7_100%)]"></div>
+  <div class="absolute -right-[150px] -top-[150px] z-0 h-[600px] w-[600px] animate-float1 rounded-full bg-sky opacity-45 blur-[60px]"></div>
+  <div class="absolute -bottom-[100px] -left-[100px] z-0 h-[400px] w-[400px] animate-float2 rounded-full bg-blue opacity-20 blur-[60px]"></div>
+
+  <div class="relative z-10 max-w-[740px]">
+    <div
+      class="mb-6 inline-flex items-center gap-2 rounded-full bg-blue/10 px-4 py-1.5 font-heading text-xs font-semibold uppercase tracking-[0.06em] text-blue"
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="6" /></svg>
+      La red social del fitness
+    </div>
+
+    <h1 class="mb-6 font-heading text-4xl font-extrabold leading-tight text-charcoal md:text-5xl">
+      Tu progreso,<br /><span class="text-blue">compartido</span><br />con el mundo
+    </h1>
+    <p class="mx-auto mb-10 max-w-[520px] text-lg leading-[1.75] text-muted">
+      Registra tus entrenamientos, comparte tus rutinas y conecta con personas que tambien hacen del gimnasio su pasion.
+    </p>
+
+    <div class="mb-14 flex flex-wrap justify-center gap-4">
+      <a
+        routerLink="/auth/register"
+        class="rounded-full bg-blue px-7 py-3 font-heading text-base font-semibold text-white transition hover:bg-blueDark"
+        >Empezar gratis</a
+      >
+      <a
+        routerLink="/app/feed"
+        class="rounded-full border border-border bg-white px-7 py-3 font-heading text-base font-semibold text-charcoal transition hover:border-sky"
+        >Ver publicaciones</a
+      >
+    </div>
+
+    <div class="mt-6 flex flex-wrap justify-center gap-10">
+      <div class="text-center">
+        <div class="font-heading text-3xl font-bold text-navy">12K+</div>
+        <div class="mt-0.5 text-sm text-muted">Usuarios activos</div>
+      </div>
+      <div class="text-center">
+        <div class="font-heading text-3xl font-bold text-navy">340K</div>
+        <div class="mt-0.5 text-sm text-muted">Rutinas compartidas</div>
+      </div>
+      <div class="text-center">
+        <div class="font-heading text-3xl font-bold text-navy">98%</div>
+        <div class="mt-0.5 text-sm text-muted">Satisfaccion</div>
+      </div>
+    </div>
+  </div>
+</section>

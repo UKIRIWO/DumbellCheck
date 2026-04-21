@@ -1,0 +1,9 @@
+<article
+  class="rounded-2xl border border-border bg-bg px-8 py-8 transition duration-300 hover:-translate-y-1 hover:border-sky hover:shadow-md"
+>
+  <div class="mb-4 flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,var(--color-sky),var(--color-blue))] text-2xl">
+    <i [class]="icon() + ' text-white'" aria-hidden="true"></i>
+  </div>
+  <h3 class="mb-2 font-heading text-xl font-semibold text-charcoal">{{ title() }}</h3>
+  <p class="text-[0.95rem] leading-7 text-muted">{{ description() }}</p>
+</article>

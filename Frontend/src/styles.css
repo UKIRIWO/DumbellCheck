@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@config '../tailwind.config.js';
 
 :root {
   --color-primary-light: #95cde7;
@@ -9,6 +10,18 @@
   --color-secondary-gray: #b5b5b5;
   --color-secondary-blue: #0071b8;
   --color-secondary-light: #b2d0e7;
+  --color-bg: #f4f8fc;
+  --color-text: #243746;
+  --color-navy: #002138;
+  --color-blue: #0071b8;
+  --color-blue-dark: #005a95;
+  --color-sky: #95cde7;
+  --color-muted: #6c879f;
+  --color-border: #d9e5ef;
+  --color-border-soft: #cddde9;
+  --color-footer: #b8c7d6;
+  --color-ice: #e6f2fa;
+  --color-charcoal: #243746;
 }
 
 *,

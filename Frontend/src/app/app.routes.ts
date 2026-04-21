@@ -6,20 +6,16 @@ import { guestGuard } from './core/guards/guest.guard';
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./features/landing/page/landing-page/landing-page').then((m) => m.LandingPage),
+  },
+  {
+    path: 'auth',
     loadComponent: () =>
       import('./core/layout/public-layout/public-layout.component').then((m) => m.PublicLayoutComponent),
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'auth/login',
-      },
-      {
-        path: 'auth',
-        canActivate: [guestGuard],
-        loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
-      },
-    ],
+    canActivate: [guestGuard],
+    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   {
     path: 'app',
@@ -66,6 +62,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/app/feed',
+    redirectTo: '/',
   },
 ];

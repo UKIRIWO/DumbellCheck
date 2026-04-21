@@ -1,0 +1,88 @@
+<header
+  class="fixed left-0 top-0 z-[200] flex h-[72px] w-full items-center border-b border-borderSoft/25 bg-white/85 px-4 backdrop-blur-xl transition-shadow md:px-10"
+  [class.shadow-sm]="scrolled()">
+  <div class="mx-auto flex w-full max-w-[1200px] items-center justify-between">
+    <div class="flex flex-1 justify-start">
+      <a routerLink="/" class="inline-flex" aria-label="DumbellCheck">
+        <img src="assets/logoApp/logo_redondo_horizontal.png" alt="DumbellCheck" class="h-9" />
+      </a>
+    </div>
+
+    <nav class="hidden items-center gap-10 whitespace-nowrap md:flex" aria-label="Navegacion principal">
+      <a href="#features"
+        class="font-heading text-sm font-medium text-charcoal transition-colors hover:text-blue">Caracteristicas</a>
+      <a href="#how" class="font-heading text-sm font-medium text-charcoal transition-colors hover:text-blue">Como
+        funciona</a>
+      <a href="#contact"
+        class="font-heading text-sm font-medium text-charcoal transition-colors hover:text-blue">Contacto</a>
+    </nav>
+
+    <div class="hidden flex-1 justify-end gap-3 md:flex">
+      @if (isAuthenticated()) {
+        <a
+          href="#"
+          class="rounded-full border border-border bg-white px-4 py-2 font-heading text-sm font-semibold text-charcoal transition hover:border-sky"
+          >Ver publicaciones</a
+        >
+        <app-logout-confirm-button
+          buttonText="Cerrar sesion"
+          redirectTo="/"
+          (loggedOut)="onLoggedOut()"
+          buttonClass="rounded-full bg-blue px-4 py-2 font-heading text-sm font-semibold text-white transition hover:bg-blueDark"
+        />
+      } @else {
+        <a
+          routerLink="/auth/login"
+          class="rounded-full border border-border bg-white px-4 py-2 font-heading text-sm font-semibold text-charcoal transition hover:border-sky"
+          >Iniciar sesion</a
+        >
+        <a
+          routerLink="/auth/register"
+          class="rounded-full bg-blue px-4 py-2 font-heading text-sm font-semibold text-white transition hover:bg-blueDark"
+          >Registrarse</a
+        >
+      }
+    </div>
+
+    <button type="button" class="flex flex-col gap-1.5 p-2 md:hidden" aria-label="Menu"
+      [attr.aria-expanded]="menuOpen()" (click)="toggleMenu()">
+      <span class="h-0.5 w-5 rounded bg-charcoal"></span>
+      <span class="h-0.5 w-5 rounded bg-charcoal"></span>
+      <span class="h-0.5 w-5 rounded bg-charcoal"></span>
+    </button>
+  </div>
+</header>
+
+<nav
+  class="fixed bottom-0 left-0 right-0 top-[72px] z-[150] flex flex-col gap-6 bg-white px-6 py-8 transition-transform duration-500 md:hidden"
+  [class.translate-x-full]="!menuOpen()" [class.translate-x-0]="menuOpen()" aria-label="Menu movil">
+  <a href="#features"
+    class="border-b border-border pb-4 font-heading text-2xl font-semibold text-charcoal">Caracteristicas</a>
+  <a href="#how" class="border-b border-border pb-4 font-heading text-2xl font-semibold text-charcoal">Como funciona</a>
+  <a href="#contact" class="border-b border-border pb-4 font-heading text-2xl font-semibold text-charcoal">Contacto</a>
+  @if (isAuthenticated()) {
+    <a
+      href="#"
+      class="rounded-full border border-border bg-white px-5 py-3 text-center font-heading text-sm font-semibold text-charcoal"
+      >Ver publicaciones</a
+    >
+    <app-logout-confirm-button
+      class="block w-full"
+      buttonText="Cerrar sesion"
+      redirectTo="/"
+      (loggedOut)="onLoggedOut()"
+      buttonClass="w-full rounded-full bg-blue px-5 py-3 text-center font-heading text-sm font-semibold text-white"
+    />
+  } @else {
+    <a
+      routerLink="/auth/login"
+      class="rounded-full border border-border bg-white px-5 py-3 text-center font-heading text-sm font-semibold text-charcoal"
+      >Iniciar sesion</a
+    >
+    <a
+      routerLink="/auth/register"
+      class="rounded-full bg-blue px-5 py-3 text-center font-heading text-sm font-semibold text-white"
+      >Registrarse gratis</a
+    >
+  }
+</nav>
