@@ -15,7 +15,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./core/layout/public-layout/public-layout.component').then((m) => m.PublicLayoutComponent),
     canActivate: [guestGuard],
-    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+    loadChildren: () => import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   {
     path: 'app',

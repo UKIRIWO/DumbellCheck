@@ -16,12 +16,18 @@
   --color-blue: #0071b8;
   --color-blue-dark: #005a95;
   --color-sky: #95cde7;
+  --color-silver: #b5b5b5;
+  --color-surface: #ffffff;
+  --color-danger: #d64040;
+  --color-success: #2daa6a;
+  --color-warning: #e8a020;
   --color-muted: #6c879f;
   --color-border: #d9e5ef;
   --color-border-soft: #cddde9;
   --color-footer: #b8c7d6;
   --color-ice: #e6f2fa;
   --color-charcoal: #243746;
+  --bg-light: #d8d8d8;
 }
 
 *,
@@ -39,5 +45,5 @@ body {
 body {
   font-family: 'Roboto', sans-serif;
   color: var(--color-text-main);
-  background-color: #f7fbff;
+  background-color: var(--bg-light);
 }

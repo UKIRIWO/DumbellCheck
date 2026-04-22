@@ -1,0 +1,101 @@
+<app-auth-card mode="register">
+  <h1 class="font-heading text-2xl font-extrabold text-navy">Crear cuenta</h1>
+  <p class="mb-6 mt-1 text-[0.88rem] text-silver">Es gratis y siempre lo sera</p>
+
+  <form class="space-y-3.5" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div>
+        <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Nombre</label>
+        <input
+          class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+          type="text"
+          placeholder="Adrian"
+          formControlName="nombre"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Primer apellido</label>
+        <input
+          class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+          type="text"
+          placeholder="Gonzalez"
+          formControlName="apellido1"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Segundo apellido</label>
+      <input
+        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+        type="text"
+        placeholder="Gutierrez (opcional)"
+        formControlName="apellido2"
+      />
+    </div>
+
+    <div>
+      <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Nombre de usuario</label>
+      <input
+        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+        type="text"
+        placeholder="Adrian_fit"
+        formControlName="username"
+      />
+    </div>
+
+    <div>
+      <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Email</label>
+      <input
+        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+        type="email"
+        placeholder="Adrian@email.com"
+        formControlName="email"
+      />
+    </div>
+
+    <div>
+      <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Contrasena</label>
+      <input
+        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+        type="password"
+        placeholder="Minimo 8 caracteres"
+        formControlName="password"
+      />
+      <div class="mt-1.5 h-1 overflow-hidden rounded-sm bg-[#e8edf2]">
+        <div class="h-full rounded-sm bg-blue transition-all" [style.width.%]="passwordStrength().percent"></div>
+      </div>
+      <p class="mt-1 text-xs text-silver">Fuerza: {{ passwordStrength().label }}</p>
+    </div>
+
+    <div>
+      <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Confirmar contrasena</label>
+      <input
+        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+        type="password"
+        placeholder="Repite la contrasena"
+        formControlName="repeatPassword"
+      />
+    </div>
+
+    <p *ngIf="form.hasError('passwordsMismatch') && form.controls.repeatPassword.touched" class="text-sm text-red-700">
+      Las contrasenas no coinciden.
+    </p>
+
+    <button
+      type="submit"
+      [disabled]="form.invalid || submitting()"
+      class="w-full rounded-[10px] bg-[linear-gradient(135deg,var(--color-blue),var(--color-navy))] px-4 py-[13px] font-heading text-base font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {{ submitting() ? 'Creando cuenta...' : 'Crear mi cuenta' }}
+    </button>
+  </form>
+
+  <p *ngIf="successMessage()" class="mt-3 text-sm text-green-700">{{ successMessage() }}</p>
+  <p *ngIf="errorMessage()" class="mt-3 text-sm text-red-700">{{ errorMessage() }}</p>
+
+  <div class="mt-5 text-center text-[0.88rem] text-silver">
+    Ya tienes cuenta?
+    <a class="font-bold text-blue hover:text-navy" routerLink="/auth/login">Inicia sesion</a>
+  </div>
+</app-auth-card>
