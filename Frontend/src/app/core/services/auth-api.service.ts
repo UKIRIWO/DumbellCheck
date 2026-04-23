@@ -31,4 +31,8 @@ export class AuthApiService {
   login(payload: LoginRequest): Observable<ApiResponse<AuthSession>> {
     return this.http.post<ApiResponse<AuthSession>>(`${this.apiBaseUrl}/auth/login`, payload);
   }
+
+  getGoogleLoginUrl(): string {
+    return `${this.apiBaseUrl}/auth/google/start`;
+  }
 }

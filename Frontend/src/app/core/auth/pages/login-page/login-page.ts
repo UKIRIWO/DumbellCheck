@@ -1,7 +1,8 @@
 import { NgIf } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../services/auth-api.service';
 import { AuthStateService } from '../../../services/auth-state.service';
 import { AuthCard } from '../../components/auth-card/auth-card';
@@ -17,6 +18,7 @@ export class LoginPage {
   private readonly authApiService = inject(AuthApiService);
   private readonly authStateService = inject(AuthStateService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly submitting = signal(false);
   readonly errorMessage = signal('');
@@ -26,6 +28,15 @@ export class LoginPage {
     principal: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
+
+  constructor() {
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+      const googleError = params.get('googleError');
+      if (googleError) {
+        this.errorMessage.set(googleError);
+      }
+    });
+  }
 
   submit(): void {
     if (this.form.invalid || this.submitting()) {
@@ -62,5 +73,9 @@ export class LoginPage {
         this.errorMessage.set(apiMessage || 'Credenciales incorrectas.');
       },
     });
+  }
+
+  loginWithGoogle(): void {
+    window.location.href = this.authApiService.getGoogleLoginUrl();
   }
 }

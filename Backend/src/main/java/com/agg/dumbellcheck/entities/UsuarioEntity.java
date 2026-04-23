@@ -96,4 +96,7 @@ public class UsuarioEntity {
 
     @OneToMany(mappedBy = "seguido")
     private List<SeguidorEntity> seguidores = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario")
+    private List<AuthIdentityEntity> authIdentities = new ArrayList<>();
 }

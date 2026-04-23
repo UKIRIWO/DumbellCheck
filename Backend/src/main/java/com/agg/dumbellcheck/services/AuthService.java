@@ -81,22 +81,26 @@ public class AuthService {
             throw new UnauthorizedActionException("Credenciales incorrectas");
         }
 
+        return createSessionForUser(usuario);
+    }
+
+    public AuthLoginResponse createSessionForUser(UsuarioEntity usuario) {
         String accessToken = jwtService.generateToken(
-                usuario.getUsername(),
-                Map.of(
-                        "userId", usuario.getId(),
-                        "email", usuario.getEmail(),
-                        "role", usuario.getRol().name()
-                )
+            usuario.getUsername(),
+            Map.of(
+                "userId", usuario.getId(),
+                "email", usuario.getEmail(),
+                "role", usuario.getRol().name()
+            )
         );
 
         usuario.setUltimaConexion(Instant.now());
 
         return new AuthLoginResponse(
-                accessToken,
-                usuario.getId(),
-                usuario.getUsername(),
-                usuario.getRol()
+            accessToken,
+            usuario.getId(),
+            usuario.getUsername(),
+            usuario.getRol()
         );
     }
 }
