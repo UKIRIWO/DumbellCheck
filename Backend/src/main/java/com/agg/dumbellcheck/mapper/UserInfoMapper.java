@@ -1,6 +1,8 @@
 /*
 usuarios (Perfil, auth, estadísticas de seguidores).
+
 baneos (Historial de sanciones por usuario).
+
 seguidores (Relación seguidor/seguido).
 notificaciones (Alertas de actividad social).
 */

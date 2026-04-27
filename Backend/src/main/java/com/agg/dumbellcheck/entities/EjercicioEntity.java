@@ -24,9 +24,6 @@ public class EjercicioEntity {
     @Column
     private String descripcion;
 
-    @Column(name = "grupo_muscular", nullable = false)
-    private String grupoMuscular;
-
     @Column(name = "imagen_url")
     private String imagenUrl;
 
@@ -38,4 +35,7 @@ public class EjercicioEntity {
 
     @OneToMany(mappedBy = "ejercicio")
     private List<EjercicioPublicacionEntity> publicaciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ejercicio")
+    private List<EjercicioGrupoMuscularEntity> gruposMusculares = new ArrayList<>();
 }

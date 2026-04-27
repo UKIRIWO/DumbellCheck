@@ -1,5 +1,6 @@
 package com.agg.dumbellcheck.dto;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public final class WorkoutInfoDTO {
@@ -10,9 +11,20 @@ public final class WorkoutInfoDTO {
         Integer id,
         String nombre,
         String descripcion,
-        String grupoMuscular,
         String imagenUrl,
         Instant fechaCreacion
+    ) {}
+
+    public record GrupoMuscularDto(
+        Integer id,
+        String nombre,
+        String descripcion,
+        Instant fechaCreacion
+    ) {}
+
+    public record EjercicioGrupoMuscularDto(
+        Integer ejercicioId,
+        Integer grupoMuscularId
     ) {}
 
     public record RutinaDto(
@@ -29,6 +41,18 @@ public final class WorkoutInfoDTO {
         Integer rutinaId,
         Integer ejercicioId,
         Integer orden,
+        String notas,
+        Instant fechaCreacion
+    ) {}
+
+    public record DetalleSerieRutinaDto(
+        Integer id,
+        Integer ejercicioRutinaId,
+        Integer numeroSerie,
+        Integer repeticiones,
+        BigDecimal peso,
+        Integer descansoSegundos,
+        Integer rpe,
         String notas,
         Instant fechaCreacion
     ) {}
