@@ -1,14 +1,16 @@
 <main class="min-h-screen w-full pb-20 pt-6 lg:pb-0 lg:pt-0">
-  <div class="mx-auto w-full max-w-md px-4 lg:max-w-none lg:px-0 lg:grid lg:grid-cols-[20%_45%_25%] lg:gap-x-[5%]">
-    <aside class="hidden lg:sticky lg:top-0 lg:block lg:h-screen lg:self-start">
+  <div class="mx-auto w-full max-w-md px-4 lg:max-w-none lg:flex lg:items-start lg:px-0">
+    <aside class="hidden lg:sticky lg:top-0 lg:block lg:h-screen lg:w-[20vw] lg:self-start lg:shrink-0">
       <app-side-nav />
     </aside>
 
-    <section>
+    <section class="lg:ml-[5vw] lg:w-[45vw] lg:shrink-0">
       <router-outlet />
     </section>
 
-    <aside class="hidden lg:block lg:h-screen" aria-hidden="true"></aside>
+    <aside class="hidden lg:ml-[3vw] lg:mr-[2vw] lg:block lg:h-screen lg:w-[25vw] lg:shrink-0">
+      <app-feed-right-sidebar />
+    </aside>
   </div>
 </main>
 

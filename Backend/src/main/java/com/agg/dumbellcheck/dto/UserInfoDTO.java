@@ -44,6 +44,27 @@ public final class UserInfoDTO {
         Instant fechaSeguimiento
     ) {}
 
+    public record SidebarProfileDto(
+        Integer id,
+        String username,
+        String nombre,
+        String fotoPerfilUrl,
+        Integer contadorSeguidores,
+        Integer contadorSeguidos
+    ) {}
+
+    public record SidebarSuggestionDto(
+        Integer id,
+        String username,
+        String nombre,
+        String fotoPerfilUrl
+    ) {}
+
+    public record SidebarDataDto(
+        SidebarProfileDto perfil,
+        List<SidebarSuggestionDto> sugerencias
+    ) {}
+
     public record NotificacionDto(
         Integer id,
         Integer usuarioId,

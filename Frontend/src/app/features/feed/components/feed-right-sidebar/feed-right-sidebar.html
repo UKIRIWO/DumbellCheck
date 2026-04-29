@@ -1,0 +1,74 @@
+<div class="sticky top-4 space-y-5 pt-4">
+  @if (loading()) {
+    <div class="rounded-3xl border border-border bg-surface p-6 shadow-sm animate-pulse">
+      <div class="mx-auto h-20 w-20 rounded-full bg-border"></div>
+      <div class="mx-auto mt-4 h-5 w-28 rounded bg-border"></div>
+      <div class="mx-auto mt-2 h-4 w-20 rounded bg-border"></div>
+    </div>
+  } @else if (profile()) {
+    <section class="rounded-3xl border border-border bg-surface p-6 shadow-sm">
+      <div class="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-ice">
+        @if (profile()!.fotoPerfilUrl) {
+          <img [src]="profile()!.fotoPerfilUrl!" [alt]="profile()!.username" class="h-full w-full object-cover" />
+        } @else {
+          <span class="font-heading text-3xl font-bold text-primary-dark">{{ profileInitial() }}</span>
+        }
+      </div>
+
+      <p class="mt-4 text-center font-heading text-[1.5rem] font-semibold text-brand-text leading-tight">{{ profile()!.nombre }}</p>
+      <p class="mt-1 text-center text-[1.5rem] text-muted leading-tight">{{ profile()!.username }}</p>
+
+      <div class="mt-5 grid grid-cols-2 gap-4 text-center">
+        <div>
+          <p class="text-sm text-muted">Seguidores</p>
+          <p class="font-heading text-[1.5rem] font-semibold text-brand-text leading-tight">{{ profile()!.contadorSeguidores }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-muted">Siguiendo</p>
+          <p class="font-heading text-[1.5rem] font-semibold text-brand-text leading-tight">{{ profile()!.contadorSeguidos }}</p>
+        </div>
+      </div>
+
+      <a
+        routerLink="/app/profile"
+        class="mt-5 block rounded-2xl bg-ice px-4 py-3 text-center font-heading text-lg font-semibold text-brand-text hover:bg-sky/40 transition-colors"
+      >
+        Ver tu perfil
+      </a>
+    </section>
+  }
+
+  @if (errorMessage()) {
+    <p class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
+  }
+
+  @if (suggestions().length > 0) {
+    <section class="rounded-3xl border border-border bg-surface p-5 shadow-sm">
+      <h3 class="font-heading text-[1.5rem] font-semibold text-brand-text">Puede que conozcas...</h3>
+      <div class="mt-4 max-h-[320px] space-y-4 overflow-y-auto pr-1">
+        @for (suggestion of suggestions(); track suggestion.id) {
+          <div class="flex items-center gap-3">
+            <div class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-ice shrink-0">
+              @if (suggestion.fotoPerfilUrl) {
+                <img [src]="suggestion.fotoPerfilUrl!" [alt]="suggestion.username" class="h-full w-full object-cover" />
+              } @else {
+                <span class="font-heading text-base font-semibold text-primary-dark">
+                  {{ suggestion.username.charAt(0).toUpperCase() }}
+                </span>
+              }
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate font-heading text-lg text-brand-text">{{ suggestion.username }}</p>
+              @if (suggestion.nombre) {
+                <p class="truncate text-xl text-muted">{{ suggestion.nombre }}</p>
+              }
+            </div>
+            <button type="button" class="shrink-0 font-heading text-xl font-semibold text-blue hover:text-blueDark transition-colors">
+              Seguir
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>
