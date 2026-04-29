@@ -1,0 +1,99 @@
+<article
+  class="rounded-2xl bg-surface shadow-sm border border-border overflow-hidden transition-colors hover:bg-ice/30 cursor-pointer"
+  [routerLink]="['/workout', post.id]"
+>
+
+  <!-- Card header: user info + date -->
+  <div class="flex items-center gap-3 px-4 pt-4 pb-3">
+    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary-dark text-sm font-bold text-white shrink-0">
+      {{ avatarLetter }}
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="font-heading text-sm font-semibold text-brand-text truncate">{{ post.usuario.username }}</p>
+      <p class="text-xs text-muted">{{ post.fechaCreacion | date:'d MMM yyyy, HH:mm':'':'es' }}</p>
+    </div>
+  </div>
+
+  <!-- Post title + description -->
+  <div class="px-4 pb-3">
+    <h2 class="font-heading font-semibold text-base text-brand-text">{{ post.titulo }}</h2>
+    @if (post.descripcion) {
+      <p class="mt-1 text-sm text-muted line-clamp-2">{{ post.descripcion }}</p>
+    }
+  </div>
+
+  <!-- Exercise summary -->
+  @if (post.ejercicios.length > 0 || hasMedia) {
+    <div class="border-t border-border px-4 py-3 space-y-3">
+      <div class="relative overflow-hidden rounded-xl border border-border bg-ice/50 p-3">
+        @if (currentSlide === 0 && hasMedia) {
+          <div class="space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-wide text-muted">Multimedia</p>
+            @if (isMediaVideo) {
+              <video [src]="post.multimediaUrl" controls class="max-h-80 w-full rounded-lg object-cover"></video>
+            } @else {
+              <img [src]="post.multimediaUrl" alt="Multimedia publicación" class="max-h-80 w-full rounded-lg object-cover" />
+            }
+          </div>
+        } @else {
+          <div class="space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-wide text-muted">Entrenamiento</p>
+            @for (ej of visibleEjercicios; track ej.id) {
+              <div class="flex items-center gap-2">
+                @if (ej.imagenUrl) {
+                  <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="h-7 w-7 rounded-full object-cover bg-ice shrink-0" />
+                } @else {
+                  <div class="h-7 w-7 rounded-full bg-ice flex items-center justify-center shrink-0">
+                    <i class="mdi mdi-dumbbell text-sm text-muted"></i>
+                  </div>
+                }
+                <span class="text-sm text-brand-text truncate">
+                  {{ getSeriesCount(ej.id) }} series {{ ej.nombre }}
+                </span>
+              </div>
+            }
+            @if (remainingEjerciciosCount > 0) {
+              <p class="text-sm text-muted">Ver {{ remainingEjerciciosCount }} más ejercicios</p>
+            }
+          </div>
+        }
+
+        @if (totalSlides > 1) {
+          <button
+            type="button"
+            class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-2 py-1 text-muted hover:text-brand-text"
+            (click)="prevSlide($event)"
+            aria-label="Slide anterior"
+          >
+            <i class="mdi mdi-chevron-left text-lg"></i>
+          </button>
+          <button
+            type="button"
+            class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-2 py-1 text-muted hover:text-brand-text"
+            (click)="nextSlide($event)"
+            aria-label="Slide siguiente"
+          >
+            <i class="mdi mdi-chevron-right text-lg"></i>
+          </button>
+          <div class="mt-3 flex justify-center gap-1">
+            @for (dot of [0,1]; track dot) {
+              <span class="h-2 w-2 rounded-full" [class.bg-brand-blue]="dot === currentSlide" [class.bg-border]="dot !== currentSlide"></span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Footer: likes + comments -->
+  <div class="flex items-center gap-4 px-4 py-3 border-t border-border">
+    <span class="flex items-center gap-1.5 text-sm text-muted">
+      <i class="mdi mdi-heart-outline text-base"></i>
+      {{ post.contadorLikes }}
+    </span>
+    <span class="flex items-center gap-1.5 text-sm text-muted">
+      <i class="mdi mdi-comment-outline text-base"></i>
+      {{ post.contadorComentarios }}
+    </span>
+  </div>
+</article>

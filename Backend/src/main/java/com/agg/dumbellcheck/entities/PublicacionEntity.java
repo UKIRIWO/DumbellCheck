@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +34,6 @@ public class PublicacionEntity {
 
     @Column(name = "multimedia_url")
     private String multimediaUrl;
-
-    @Column(name = "fecha_entreno")
-    private LocalDate fechaEntreno;
 
     @Column(name = "contador_likes", nullable = false)
     private Integer contadorLikes;

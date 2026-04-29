@@ -3,6 +3,7 @@ package com.agg.dumbellcheck.exceptions;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleValidationException(Exception exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiErrorResponse.of("Validation error", "VALIDATION_ERROR"));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiErrorResponse> handleMaxUploadSize(MaxUploadSizeExceededException exception) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(ApiErrorResponse.of("El archivo supera el máximo de 20MB", "MAX_UPLOAD_SIZE_EXCEEDED"));
     }
 
     @ExceptionHandler(Exception.class)

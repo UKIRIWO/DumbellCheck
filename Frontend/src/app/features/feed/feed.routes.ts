@@ -5,4 +5,9 @@ export const FEED_ROUTES: Routes = [
     path: '',
     loadComponent: () => import('./pages/feed-page/feed-page.component').then((m) => m.FeedPageComponent),
   },
+  {
+    path: 'crear',
+    loadComponent: () =>
+      import('./pages/create-post-page/create-post-page.component').then((m) => m.CreatePostPageComponent),
+  },
 ];

@@ -1,0 +1,114 @@
+<!-- Tab bar -->
+<div class="mb-4 flex rounded-2xl bg-ice p-1">
+  <button
+    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors"
+    [class.bg-surface]="activeTab() === 'descubrir'"
+    [class.text-primary-dark]="activeTab() === 'descubrir'"
+    [class.shadow-sm]="activeTab() === 'descubrir'"
+    [class.text-muted]="activeTab() !== 'descubrir'"
+    type="button"
+    (click)="setTab('descubrir')"
+  >
+    Descubrir
+  </button>
+  <button
+    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors"
+    [class.bg-surface]="activeTab() === 'publico'"
+    [class.text-primary-dark]="activeTab() === 'publico'"
+    [class.shadow-sm]="activeTab() === 'publico'"
+    [class.text-muted]="activeTab() !== 'publico'"
+    type="button"
+    (click)="setTab('publico')"
+  >
+    Público
+  </button>
+  <button
+    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors"
+    [class.bg-surface]="activeTab() === 'amigos'"
+    [class.text-primary-dark]="activeTab() === 'amigos'"
+    [class.shadow-sm]="activeTab() === 'amigos'"
+    [class.text-muted]="activeTab() !== 'amigos'"
+    type="button"
+    (click)="setTab('amigos')"
+  >
+    Amigos
+  </button>
+</div>
+
+<!-- Público tab content -->
+@if (activeTab() === 'publico') {
+  @if (errorMessage()) {
+    <p class="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
+  }
+
+  <!-- Posts list -->
+  <div class="space-y-4">
+    @for (post of posts(); track post.id) {
+      <app-post-card [post]="post" />
+    }
+  </div>
+
+  <!-- Loading skeleton -->
+  @if (loading() && posts().length === 0) {
+    <div class="space-y-4">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="rounded-2xl bg-surface shadow-sm border border-border p-4 space-y-3 animate-pulse">
+          <div class="flex items-center gap-3">
+            <div class="h-9 w-9 rounded-full bg-border"></div>
+            <div class="flex-1 space-y-1.5">
+              <div class="h-3 w-24 rounded bg-border"></div>
+              <div class="h-2.5 w-16 rounded bg-border"></div>
+            </div>
+          </div>
+          <div class="h-4 w-3/4 rounded bg-border"></div>
+          <div class="h-3 w-1/2 rounded bg-border"></div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && posts().length === 0 && !errorMessage()) {
+    <div class="flex flex-col items-center gap-3 py-16 text-center">
+      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-ice">
+        <i class="mdi mdi-post-outline text-4xl text-muted"></i>
+      </div>
+      <p class="font-heading font-semibold text-brand-text">Aún no hay publicaciones</p>
+      <p class="text-sm text-muted">¡Sé el primero en compartir tu entrenamiento!</p>
+    </div>
+  }
+
+  <!-- Load more button -->
+  @if (hasMore() && posts().length > 0) {
+    <div class="mt-4 flex justify-center">
+      <button
+        class="rounded-xl border border-border bg-surface px-6 py-2.5 text-sm font-medium text-muted hover:bg-ice transition-colors disabled:opacity-50"
+        type="button"
+        [disabled]="loading()"
+        (click)="loadFeed()"
+      >
+        {{ loading() ? 'Cargando…' : 'Cargar más' }}
+      </button>
+    </div>
+  }
+}
+
+<!-- Descubrir / Amigos placeholder -->
+@if (activeTab() !== 'publico') {
+  <div class="flex flex-col items-center gap-3 py-16 text-center">
+    <div class="flex h-16 w-16 items-center justify-center rounded-full bg-ice">
+      <i class="mdi mdi-lock-clock text-4xl text-muted"></i>
+    </div>
+    <p class="font-heading font-semibold text-brand-text">Próximamente</p>
+    <p class="text-sm text-muted">Esta sección estará disponible en una próxima actualización.</p>
+  </div>
+}
+
+<!-- FAB: New post -->
+<a
+  routerLink="/app/feed/crear"
+  class="fixed bottom-24 right-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-blue text-white shadow-lg hover:bg-blueDark transition-colors z-30"
+  aria-label="Nueva publicación"
+>
+  <i class="mdi mdi-pencil-plus text-2xl"></i>
+</a>

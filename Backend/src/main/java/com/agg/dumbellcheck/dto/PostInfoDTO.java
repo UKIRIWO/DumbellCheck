@@ -2,7 +2,6 @@ package com.agg.dumbellcheck.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
 import com.agg.dumbellcheck.entities.TipoLike;
 
 public final class PostInfoDTO {
@@ -16,7 +15,6 @@ public final class PostInfoDTO {
         String titulo,
         String descripcion,
         String multimediaUrl,
-        LocalDate fechaEntreno,
         Integer contadorLikes,
         Integer contadorComentarios,
         boolean estaActiva,

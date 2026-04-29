@@ -1,0 +1,131 @@
+<section class="pb-8">
+  <a
+    routerLink="/app/feed"
+    class="mb-4 inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-primary-dark"
+  >
+    <i class="mdi mdi-arrow-left text-lg"></i>
+    Volver al feed
+  </a>
+
+  @if (loading()) {
+    <div class="rounded-2xl bg-surface shadow-sm border border-border p-4 animate-pulse space-y-3">
+      <div class="h-4 w-32 rounded bg-border"></div>
+      <div class="h-6 w-2/3 rounded bg-border"></div>
+      <div class="h-4 w-1/2 rounded bg-border"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="rounded-xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
+  } @else if (post()) {
+    <article class="rounded-2xl bg-surface shadow-sm border border-border overflow-hidden">
+      <div class="flex items-center gap-3 px-4 pt-4 pb-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary-dark text-sm font-bold text-white shrink-0">
+          {{ post()!.usuario.username.charAt(0).toUpperCase() }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-heading text-sm font-semibold text-brand-text truncate">{{ post()!.usuario.username }}</p>
+          <p class="text-xs text-muted">{{ post()!.fechaCreacion | date:'d MMM yyyy, HH:mm':'':'es' }}</p>
+        </div>
+      </div>
+
+      <div class="px-4 pb-3">
+        <h1 class="font-heading font-semibold text-lg text-brand-text">{{ post()!.titulo }}</h1>
+        @if (post()!.descripcion) {
+          <p class="mt-1 text-sm text-muted">{{ post()!.descripcion }}</p>
+        }
+      </div>
+
+      @if (post()!.ejercicios.length > 0 || hasMedia) {
+        <div class="border-t border-border px-4 py-3">
+          <div class="relative overflow-hidden rounded-xl border border-border bg-ice/50 p-3">
+            @if (currentSlide === 0 && hasMedia) {
+              <div class="space-y-2">
+                <p class="text-xs font-semibold uppercase tracking-wide text-muted">Multimedia</p>
+                @if (isMediaVideo) {
+                  <video [src]="post()!.multimediaUrl" controls class="max-h-96 w-full rounded-lg object-cover"></video>
+                } @else {
+                  <img [src]="post()!.multimediaUrl" alt="Multimedia publicación" class="max-h-96 w-full rounded-lg object-cover" />
+                }
+              </div>
+            } @else {
+              <div class="space-y-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-muted">Entrenamiento</p>
+                @for (ej of post()!.ejercicios; track ej.id) {
+                  <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                      @if (ej.imagenUrl) {
+                        <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="h-8 w-8 rounded-full object-cover bg-ice shrink-0" />
+                      } @else {
+                        <div class="h-8 w-8 rounded-full bg-ice flex items-center justify-center shrink-0">
+                          <i class="mdi mdi-dumbbell text-base text-muted"></i>
+                        </div>
+                      }
+                      <span class="text-sm font-semibold text-brand-blue font-heading">{{ ej.nombre }}</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                      <table class="w-full text-xs">
+                        <thead>
+                          <tr class="text-muted uppercase tracking-wide">
+                            <th class="py-1 pr-3 text-left font-medium">Serie</th>
+                            <th class="py-1 pr-3 text-right font-medium">KG</th>
+                            <th class="py-1 pr-3 text-right font-medium">Reps</th>
+                            <th class="py-1 text-right font-medium">Descanso</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (s of ej.series; track s.numeroSerie) {
+                            <tr class="border-t border-borderSoft">
+                              <td class="py-1 pr-3 font-semibold text-brand-text">{{ s.numeroSerie }}</td>
+                              <td class="py-1 pr-3 text-right text-brand-text">{{ s.peso }}</td>
+                              <td class="py-1 pr-3 text-right text-brand-text">{{ s.repeticiones }}</td>
+                              <td class="py-1 text-right text-muted">{{ s.descansoSegundos ?? '—' }}s</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (totalSlides > 1) {
+              <button
+                type="button"
+                class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-2 py-1 text-muted hover:text-brand-text"
+                (click)="prevSlide()"
+                aria-label="Slide anterior"
+              >
+                <i class="mdi mdi-chevron-left text-lg"></i>
+              </button>
+              <button
+                type="button"
+                class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-2 py-1 text-muted hover:text-brand-text"
+                (click)="nextSlide()"
+                aria-label="Slide siguiente"
+              >
+                <i class="mdi mdi-chevron-right text-lg"></i>
+              </button>
+              <div class="mt-3 flex justify-center gap-1">
+                @for (dot of [0, 1]; track dot) {
+                  <span class="h-2 w-2 rounded-full" [class.bg-brand-blue]="dot === currentSlide" [class.bg-border]="dot !== currentSlide"></span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="flex items-center gap-4 px-4 py-3 border-t border-border">
+        <span class="flex items-center gap-1.5 text-sm text-muted">
+          <i class="mdi mdi-heart-outline text-base"></i>
+          {{ post()!.contadorLikes }}
+        </span>
+        <span class="flex items-center gap-1.5 text-sm text-muted">
+          <i class="mdi mdi-comment-outline text-base"></i>
+          {{ post()!.contadorComentarios }}
+        </span>
+      </div>
+    </article>
+  }
+</section>
