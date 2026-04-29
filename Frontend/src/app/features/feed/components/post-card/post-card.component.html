@@ -52,23 +52,23 @@
         } @else {
           <div class="flex h-96 flex-col space-y-3">
             <p class="text-xs font-semibold uppercase tracking-wide text-muted">Entrenamiento</p>
-            <div class="flex-1 overflow-y-auto pr-1">
+            <div class="flex-1 pr-1">
               @for (ej of visibleEjercicios; track ej.id) {
                 <div class="mb-2 flex items-center gap-2 last:mb-0">
                   @if (ej.imagenUrl) {
-                    <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="h-7 w-7 rounded-full object-cover bg-ice shrink-0" />
+                    <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="h-14 w-14 rounded-full object-cover bg-ice shrink-0" />
                   } @else {
-                    <div class="h-7 w-7 rounded-full bg-ice flex items-center justify-center shrink-0">
-                      <i class="mdi mdi-dumbbell text-sm text-muted"></i>
+                    <div class="h-10 w-10 rounded-full bg-ice flex items-center justify-center shrink-0">
+                      <i class="mdi mdi-dumbbell text-lg text-muted"></i>
                     </div>
                   }
-                  <span class="text-sm text-brand-text truncate">
+                  <span class="text-lg text-brand-text truncate">
                     {{ getSeriesCount(ej.id) }} series {{ ej.nombre }}
                   </span>
                 </div>
               }
               @if (remainingEjerciciosCount > 0) {
-                <p class="text-sm text-muted">Ver {{ remainingEjerciciosCount }} más ejercicios</p>
+                <p class="text-base text-muted pt-2">Ver {{ remainingEjerciciosCount }} más ejercicios</p>
               }
               @if (post.ejercicios.length === 0) {
                 <div class="flex h-full items-center justify-center text-sm text-muted">

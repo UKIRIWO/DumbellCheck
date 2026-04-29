@@ -13,7 +13,7 @@ export class PostCardComponent {
   currentSlide = 0;
 
   get visibleEjercicios() {
-    return this.post.ejercicios.slice(0, 4);
+    return this.post.ejercicios.slice(0, 5);
   }
 
   get remainingEjerciciosCount(): number {
