@@ -52,4 +52,8 @@ export class PostCardComponent {
     event.stopPropagation();
     this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
   }
+
+  blockPostNavigation(event: Event): void {
+    event.stopPropagation();
+  }
 }

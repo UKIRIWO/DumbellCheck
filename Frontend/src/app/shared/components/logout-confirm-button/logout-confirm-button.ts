@@ -14,6 +14,7 @@ export class LogoutConfirmButton {
   private readonly confirmDialog = viewChild<ElementRef<HTMLDialogElement>>('confirmDialog');
 
   readonly buttonText = input('Cerrar sesion');
+  readonly buttonIconClass = input('');
   readonly buttonClass = input('rounded-full bg-blue px-4 py-2 font-heading text-sm font-semibold text-white');
   readonly modalTitle = input('Confirmar cierre de sesion');
   readonly modalMessage = input('Estas seguro de que quieres cerrar sesion?');

@@ -1,0 +1,18 @@
+<main class="min-h-screen w-full pb-20 pt-6 lg:pb-0 lg:pt-0">
+  <div class="mx-auto w-full max-w-md px-4 lg:max-w-none lg:px-0 lg:grid lg:grid-cols-[20%_45%_25%] lg:gap-x-[5%]">
+    <aside class="hidden lg:sticky lg:top-0 lg:block lg:h-screen lg:self-start">
+      <app-side-nav />
+    </aside>
+
+    <section>
+      <router-outlet />
+    </section>
+
+    <aside class="hidden lg:block lg:h-screen" aria-hidden="true"></aside>
+  </div>
+</main>
+
+<div class="lg:hidden">
+  <app-bottom-nav />
+</div>
+

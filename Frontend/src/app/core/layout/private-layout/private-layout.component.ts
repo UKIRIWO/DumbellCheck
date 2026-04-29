@@ -1,17 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from '../../../shared/components/bottom-nav/bottom-nav.component';
-import { Header } from '../../../shared/components/header/header';
+import { SideNavComponent } from '../../../shared/components/side-nav/side-nav.component';
 
 @Component({
   selector: 'app-private-layout',
-  imports: [RouterOutlet, BottomNavComponent, Header],
-  template: `
-    <main class="mx-auto min-h-screen w-full max-w-md px-4 pb-20 pt-6">
-      <app-header />
-      <router-outlet />
-    </main>
-    <app-bottom-nav />
-  `,
+  standalone: true,
+  imports: [RouterOutlet, BottomNavComponent, SideNavComponent],
+  templateUrl: './private-layout.component.html',
 })
 export class PrivateLayoutComponent {}

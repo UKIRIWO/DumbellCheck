@@ -1,5 +1,9 @@
 <button type="button" [class]="buttonClass()" (click)="openModal()">
-  {{ buttonText() }}
+  @if (buttonIconClass()) {
+    <i [class]="buttonIconClass()"></i>
+  } @else {
+    {{ buttonText() }}
+  }
 </button>
 
 <dialog
