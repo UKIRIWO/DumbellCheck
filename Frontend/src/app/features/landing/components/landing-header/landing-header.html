@@ -20,7 +20,7 @@
     <div class="hidden flex-1 justify-end gap-3 md:flex">
       @if (isAuthenticated()) {
         <a
-          href="#"
+          routerLink="/app/feed"
           class="rounded-full border border-border bg-white px-4 py-2 font-heading text-sm font-semibold text-charcoal transition hover:border-sky"
           >Ver publicaciones</a
         >
@@ -62,7 +62,7 @@
   <a href="#contact" class="border-b border-border pb-4 font-heading text-2xl font-semibold text-charcoal">Contacto</a>
   @if (isAuthenticated()) {
     <a
-      href="#"
+    routerLink="/app/feed"
       class="rounded-full border border-border bg-white px-5 py-3 text-center font-heading text-sm font-semibold text-charcoal"
       >Ver publicaciones</a
     >
