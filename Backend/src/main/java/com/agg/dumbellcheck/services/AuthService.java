@@ -2,6 +2,7 @@ package com.agg.dumbellcheck.services;
 
 import com.agg.dumbellcheck.dto.AuthLoginRequest;
 import com.agg.dumbellcheck.dto.AuthLoginResponse;
+import com.agg.dumbellcheck.dto.AuthRefreshRequest;
 import com.agg.dumbellcheck.dto.AuthRegisterRequest;
 import com.agg.dumbellcheck.dto.UserInfoDTO.UsuarioDto;
 import com.agg.dumbellcheck.entities.RolUsuario;
@@ -81,22 +82,57 @@ public class AuthService {
             throw new UnauthorizedActionException("Credenciales incorrectas");
         }
 
-        String accessToken = jwtService.generateToken(
+        String accessToken = buildAccessToken(usuario);
+        String refreshToken = jwtService.generateRefreshToken(usuario.getUsername());
+
+        usuario.setUltimaConexion(Instant.now());
+
+        return new AuthLoginResponse(
+                accessToken,
+                refreshToken,
+                usuario.getId(),
+                usuario.getUsername(),
+                usuario.getRol()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public AuthLoginResponse refresh(AuthRefreshRequest request) {
+        String refreshToken = request.refreshToken().trim();
+        String username;
+        try {
+            username = jwtService.extractUsername(refreshToken);
+        } catch (Exception exception) {
+            throw new UnauthorizedActionException("Refresh token invalido");
+        }
+
+        UsuarioEntity usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new UnauthorizedActionException("Refresh token invalido"));
+
+        if (!jwtService.isRefreshTokenValid(refreshToken, usuario.getUsername())) {
+            throw new UnauthorizedActionException("Refresh token invalido");
+        }
+
+        String newAccessToken = buildAccessToken(usuario);
+        String newRefreshToken = jwtService.generateRefreshToken(usuario.getUsername());
+
+        return new AuthLoginResponse(
+                newAccessToken,
+                newRefreshToken,
+                usuario.getId(),
+                usuario.getUsername(),
+                usuario.getRol()
+        );
+    }
+
+    private String buildAccessToken(UsuarioEntity usuario) {
+        return jwtService.generateAccessToken(
                 usuario.getUsername(),
                 Map.of(
                         "userId", usuario.getId(),
                         "email", usuario.getEmail(),
                         "role", usuario.getRol().name()
                 )
-        );
-
-        usuario.setUltimaConexion(Instant.now());
-
-        return new AuthLoginResponse(
-                accessToken,
-                usuario.getId(),
-                usuario.getUsername(),
-                usuario.getRol()
         );
     }
 }

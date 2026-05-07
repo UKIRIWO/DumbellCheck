@@ -16,7 +16,8 @@ spring:
 app:
   security:
     jwt-secret: ${JWT_SECRET:cmVwbGFjZV9tZV93aXRoX2xvbmdfYmFzZTY0X3NlY3JldA==}
-    jwt-expiration-seconds: ${JWT_EXPIRATION_SECONDS:3600}
+    jwt-expiration-seconds: ${JWT_EXPIRATION_SECONDS:900}
+    jwt-refresh-expiration-seconds: ${JWT_REFRESH_EXPIRATION_SECONDS:1209600}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://www.dumbellcheck.com}
 

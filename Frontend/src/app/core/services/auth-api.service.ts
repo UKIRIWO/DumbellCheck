@@ -19,6 +19,10 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
   private readonly http = inject(HttpClient);
@@ -30,5 +34,9 @@ export class AuthApiService {
 
   login(payload: LoginRequest): Observable<ApiResponse<AuthSession>> {
     return this.http.post<ApiResponse<AuthSession>>(`${this.apiBaseUrl}/auth/login`, payload);
+  }
+
+  refresh(payload: RefreshTokenRequest): Observable<ApiResponse<AuthSession>> {
+    return this.http.post<ApiResponse<AuthSession>>(`${this.apiBaseUrl}/auth/refresh`, payload);
   }
 }

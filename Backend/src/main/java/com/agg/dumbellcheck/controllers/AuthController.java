@@ -3,6 +3,7 @@ package com.agg.dumbellcheck.controllers;
 import com.agg.dumbellcheck.dto.ApiSuccessResponse;
 import com.agg.dumbellcheck.dto.AuthLoginRequest;
 import com.agg.dumbellcheck.dto.AuthLoginResponse;
+import com.agg.dumbellcheck.dto.AuthRefreshRequest;
 import com.agg.dumbellcheck.dto.AuthRegisterRequest;
 import com.agg.dumbellcheck.dto.UserInfoDTO.UsuarioDto;
 import com.agg.dumbellcheck.services.AuthService;
@@ -30,5 +31,10 @@ public class AuthController {
     @PostMapping("/login")
     public ApiSuccessResponse<AuthLoginResponse> login(@Valid @RequestBody AuthLoginRequest request) {
         return ApiSuccessResponse.of(authService.login(request));
+    }
+
+    @PostMapping("/refresh")
+    public ApiSuccessResponse<AuthLoginResponse> refresh(@Valid @RequestBody AuthRefreshRequest request) {
+        return ApiSuccessResponse.of(authService.refresh(request));
     }
 }

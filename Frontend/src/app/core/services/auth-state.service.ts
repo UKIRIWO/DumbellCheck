@@ -8,20 +8,20 @@ export class AuthStateService {
   private readonly sessionSignal = signal<AuthSession | null>(this.loadSession());
 
   readonly session = computed(() => this.sessionSignal());
-  readonly isAuthenticated = computed(() => this.getValidSession(this.sessionSignal()) !== null);
+  readonly isAuthenticated = computed(() => this.ensureActiveSession());
   readonly role = computed(() => this.sessionSignal()?.rol ?? null);
   readonly accessToken = computed(() => this.sessionSignal()?.accessToken ?? null);
+  readonly refreshToken = computed(() => this.sessionSignal()?.refreshToken ?? null);
   readonly isAdmin = computed(() => this.sessionSignal()?.rol === 'ADMIN');
 
   setSession(session: AuthSession): void {
-    const validSession = this.getValidSession(session);
-    if (!validSession) {
+    if (!this.isSessionShapeValid(session)) {
       this.clearSession();
       return;
     }
 
-    this.sessionSignal.set(validSession);
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(validSession));
+    this.sessionSignal.set(session);
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
   }
 
   clearSession(): void {
@@ -30,13 +30,49 @@ export class AuthStateService {
   }
 
   ensureValidSession(): boolean {
+    return this.ensureActiveSession();
+  }
+
+  hasValidAccessToken(): boolean {
+    const session = this.sessionSignal();
+    return this.isTokenValid(session?.accessToken);
+  }
+
+  hasValidRefreshToken(): boolean {
+    const session = this.sessionSignal();
+    return this.isTokenValid(session?.refreshToken);
+  }
+
+  getRefreshToken(): string | null {
+    const session = this.sessionSignal();
+    return session?.refreshToken ?? null;
+  }
+
+  private ensureActiveSession(): boolean {
     const session = this.sessionSignal();
     if (!session) {
       return false;
     }
 
-    if (!this.getValidSession(session)) {
+    if (!this.isSessionShapeValid(session)) {
       this.clearSession();
+      return false;
+    }
+
+    if (this.hasValidAccessToken() || this.hasValidRefreshToken()) {
+      return true;
+    }
+
+    this.clearSession();
+    return false;
+  }
+
+  private isSessionShapeValid(session: AuthSession | null): boolean {
+    if (!session) {
+      return false;
+    }
+
+    if (!session.accessToken || !session.refreshToken) {
       return false;
     }
 
@@ -51,29 +87,30 @@ export class AuthStateService {
 
     try {
       const parsedSession = JSON.parse(rawValue) as AuthSession;
-      return this.getValidSession(parsedSession);
+      if (!this.isSessionShapeValid(parsedSession)) {
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+        return null;
+      }
+
+      return parsedSession;
     } catch {
       localStorage.removeItem(SESSION_STORAGE_KEY);
       return null;
     }
   }
 
-  private getValidSession(session: AuthSession | null): AuthSession | null {
-    if (!session || !session.accessToken) {
-      return null;
+  private isTokenValid(token: string | undefined): boolean {
+    if (!token) {
+      return false;
     }
 
-    const payload = this.getTokenPayload(session.accessToken);
+    const payload = this.getTokenPayload(token);
     if (!payload || typeof payload.exp !== 'number') {
-      return null;
+      return false;
     }
 
     const expiresAtMs = payload.exp * 1000;
-    if (Date.now() >= expiresAtMs) {
-      return null;
-    }
-
-    return session;
+    return Date.now() < expiresAtMs;
   }
 
   private getTokenPayload(token: string): { exp?: number } | null {
