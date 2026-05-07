@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Observable } from 'rxjs';
 import { PostApiService } from '../../../../core/services/post-api.service';
-import { PostFeedItem } from '../../../../core/models/post.model';
+import { PageResponse, PostFeedItem } from '../../../../core/models/post.model';
 import { PostCardComponent } from '../../components/post-card/post-card.component';
 
 type FeedTab = 'descubrir' | 'publico' | 'amigos';
@@ -21,15 +22,36 @@ export class FeedPageComponent implements OnInit {
   currentPage = signal(0);
   hasMore = signal(true);
 
+  readonly emptyTitle = computed(() => {
+    switch (this.activeTab()) {
+      case 'amigos':
+        return 'Aún no hay publicaciones de amigos';
+      case 'descubrir':
+        return 'No hay nada nuevo por descubrir';
+      default:
+        return 'Aún no hay publicaciones';
+    }
+  });
+
+  readonly emptySubtitle = computed(() => {
+    switch (this.activeTab()) {
+      case 'amigos':
+        return 'Sigue a más usuarios para ver sus entrenamientos aquí.';
+      case 'descubrir':
+        return 'Vuelve más tarde para encontrar nuevos perfiles.';
+      default:
+        return '¡Sé el primero en compartir tu entrenamiento!';
+    }
+  });
+
   ngOnInit(): void {
     this.loadFeed(true);
   }
 
   setTab(tab: FeedTab): void {
+    if (this.activeTab() === tab) return;
     this.activeTab.set(tab);
-    if (tab === 'publico') {
-      this.loadFeed(true);
-    }
+    this.loadFeed(true);
   }
 
   loadFeed(reset = false): void {
@@ -43,7 +65,8 @@ export class FeedPageComponent implements OnInit {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.postApi.getFeedPublico(this.currentPage(), 20).subscribe({
+    const tab = this.activeTab();
+    this.fetchByTab(tab, this.currentPage(), 20).subscribe({
       next: (page) => {
         this.posts.update((prev) => [...prev, ...page.content]);
         this.hasMore.set(!page.last);
@@ -55,5 +78,16 @@ export class FeedPageComponent implements OnInit {
         this.errorMessage.set('No se pudieron cargar las publicaciones.');
       },
     });
+  }
+
+  private fetchByTab(tab: FeedTab, page: number, size: number): Observable<PageResponse<PostFeedItem>> {
+    switch (tab) {
+      case 'amigos':
+        return this.postApi.getFeedAmigos(page, size);
+      case 'descubrir':
+        return this.postApi.getFeedDescubrir(page, size);
+      default:
+        return this.postApi.getFeedPublico(page, size);
+    }
   }
 }

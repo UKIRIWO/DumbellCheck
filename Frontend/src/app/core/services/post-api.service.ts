@@ -18,9 +18,25 @@ export class PostApiService {
   }
 
   getFeedPublico(page = 0, size = 20): Observable<PageResponse<PostFeedItem>> {
+    return this.fetchPagedFeed('publico', page, size);
+  }
+
+  getFeedAmigos(page = 0, size = 20): Observable<PageResponse<PostFeedItem>> {
+    return this.fetchPagedFeed('amigos', page, size);
+  }
+
+  getFeedDescubrir(page = 0, size = 20): Observable<PageResponse<PostFeedItem>> {
+    return this.fetchPagedFeed('descubrir', page, size);
+  }
+
+  private fetchPagedFeed(
+    segment: 'publico' | 'amigos' | 'descubrir',
+    page: number,
+    size: number,
+  ): Observable<PageResponse<PostFeedItem>> {
     return this.http
       .get<ApiResponse<PageResponse<PostFeedItem>>>(
-        `${this.apiBaseUrl}/publicaciones/publico`,
+        `${this.apiBaseUrl}/publicaciones/${segment}`,
         { params: { page: page.toString(), size: size.toString() } },
       )
       .pipe(map((r) => (r as { success: true; data: PageResponse<PostFeedItem> }).data));

@@ -40,6 +40,24 @@ public class PostController {
         return ApiSuccessResponse.of(postService.getFeedPublico(PageRequest.of(page, Math.min(size, 50))));
     }
 
+    @GetMapping("/amigos")
+    public ApiSuccessResponse<Page<PostFeedItemResponse>> getFeedAmigos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(postService.getFeedAmigos(userDetails.getUsername(),
+                PageRequest.of(page, Math.min(size, 50))));
+    }
+
+    @GetMapping("/descubrir")
+    public ApiSuccessResponse<Page<PostFeedItemResponse>> getFeedDescubrir(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(postService.getFeedDescubrir(userDetails.getUsername(),
+                PageRequest.of(page, Math.min(size, 50))));
+    }
+
     @GetMapping("/{id}")
     public ApiSuccessResponse<PostFeedItemResponse> getById(@PathVariable Integer id) {
         return ApiSuccessResponse.of(postService.getPostById(id));

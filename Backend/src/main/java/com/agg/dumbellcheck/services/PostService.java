@@ -129,6 +129,22 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    public Page<PostFeedItemResponse> getFeedAmigos(String username, Pageable pageable) {
+        UsuarioEntity usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        return publicacionRepository.findFeedAmigos(usuario.getId(), pageable)
+                .map(p -> buildFeedItem(p, mapEjercicios(p)));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostFeedItemResponse> getFeedDescubrir(String username, Pageable pageable) {
+        UsuarioEntity usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        return publicacionRepository.findFeedDescubrir(usuario.getId(), pageable)
+                .map(p -> buildFeedItem(p, mapEjercicios(p)));
+    }
+
+    @Transactional(readOnly = true)
     public PostFeedItemResponse getPostById(Integer postId) {
         PublicacionEntity publicacion = publicacionRepository.findByIdAndEstaActivaTrue(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
