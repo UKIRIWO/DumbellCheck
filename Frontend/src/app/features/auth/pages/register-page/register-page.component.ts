@@ -7,6 +7,7 @@ import { AuthApiService } from '../../../../core/services/auth-api.service';
 
 @Component({
   selector: 'app-register-page',
+  standalone: true,
   imports: [RouterLink, ReactiveFormsModule, NgIf],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.scss',

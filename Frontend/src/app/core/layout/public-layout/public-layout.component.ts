@@ -4,10 +4,6 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-public-layout',
   imports: [RouterOutlet],
-  template: `
-    <main class="mx-auto flex min-h-screen w-full max-w-[1000px] items-center justify-center px-4 py-6">
-      <router-outlet />
-    </main>
-  `,
+  templateUrl: './public-layout.component.html',
 })
 export class PublicLayoutComponent {}
