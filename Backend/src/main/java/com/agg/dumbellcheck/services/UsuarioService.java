@@ -50,7 +50,8 @@ public class UsuarioService {
                 currentUser.getNombre(),
                 currentUser.getFotoPerfilUrl(),
                 currentUser.getContadorSeguidores(),
-                currentUser.getContadorSeguidos());
+                currentUser.getContadorSeguidos(),
+                currentUser.getContadorPublicaciones());
 
         return new SidebarDataDto(perfil, sugerencias);
     }

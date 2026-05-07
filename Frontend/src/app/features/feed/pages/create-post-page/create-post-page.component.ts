@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PostApiService } from '../../../../core/services/post-api.service';
+import { CurrentUserService } from '../../../../core/services/current-user.service';
 import { Ejercicio } from '../../../../core/models/exercise.model';
 import { CreatePostRequest } from '../../../../core/models/post.model';
 import { ExerciseSelectorComponent } from '../../components/exercise-selector/exercise-selector.component';
@@ -45,6 +46,7 @@ function isValidRestInput(input: string): boolean {
 })
 export class CreatePostPageComponent {
   private readonly postApi = inject(PostApiService);
+  private readonly currentUser = inject(CurrentUserService);
   private readonly router = inject(Router);
 
   titulo = '';
@@ -191,6 +193,7 @@ export class CreatePostPageComponent {
       this.postApi.createPost(finalPayload).subscribe({
         next: () => {
           this.submitting.set(false);
+          this.currentUser.refresh().subscribe({ error: () => {} });
           this.router.navigateByUrl('/app/feed');
         },
         error: (err) => {

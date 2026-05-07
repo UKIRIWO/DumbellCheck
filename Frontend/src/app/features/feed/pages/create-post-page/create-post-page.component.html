@@ -102,18 +102,18 @@
             @for (serie of ej.series; track $index; let sIdx = $index) {
             <tr class="border-t border-borderSoft" [class.bg-ice]="serie.repeticiones == null && serie.peso == null">
               <td class="py-2 pl-4 font-semibold text-brand-text">{{ sIdx + 1 }}</td>
-              <td class="py-1 px-2">
+              <td class="py-1 px-2 text-center">
                 <input
                   class="w-16 rounded-lg border border-border bg-surface px-2 py-1.5 text-center text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-primary-dark"
                   type="number" min="0" step="0.5" [placeholder]="getPesoPlaceholder(ej, sIdx)"
                   [(ngModel)]="serie.peso" />
               </td>
-              <td class="py-1 px-2">
+              <td class="py-1 px-2 text-center">
                 <input
                   class="w-14 rounded-lg border border-border bg-surface px-2 py-1.5 text-center text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-primary-dark"
                   type="number" min="1" [placeholder]="getRepsPlaceholder(ej, sIdx)" [(ngModel)]="serie.repeticiones" />
               </td>
-              <td class="py-1 px-2">
+              <td class="py-1 px-2 text-center">
                 <input class="w-20 rounded-lg border px-2 py-1.5 text-center text-sm focus:outline-none focus:ring-1"
                   [class.border-border]="isValidRest(serie.descansoInput)"
                   [class.border-danger]="!isValidRest(serie.descansoInput)"

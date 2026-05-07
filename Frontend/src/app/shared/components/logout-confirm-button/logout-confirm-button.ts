@@ -1,6 +1,7 @@
 import { Component, ElementRef, inject, input, output, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthStateService } from '../../../core/services/auth-state.service';
+import { CurrentUserService } from '../../../core/services/current-user.service';
 
 @Component({
   selector: 'app-logout-confirm-button',
@@ -10,6 +11,7 @@ import { AuthStateService } from '../../../core/services/auth-state.service';
 })
 export class LogoutConfirmButton {
   private readonly authStateService = inject(AuthStateService);
+  private readonly currentUserService = inject(CurrentUserService);
   private readonly router = inject(Router);
   private readonly confirmDialog = viewChild<ElementRef<HTMLDialogElement>>('confirmDialog');
 
@@ -52,6 +54,7 @@ export class LogoutConfirmButton {
 
   confirmLogout(): void {
     this.authStateService.clearSession();
+    this.currentUserService.clear();
     this.closeModal();
     this.loggedOut.emit();
     this.router.navigateByUrl(this.redirectTo());

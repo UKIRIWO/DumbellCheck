@@ -41,16 +41,18 @@
 
   <div class="border-t border-border p-4">
     <div class="flex items-center gap-3">
-      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-dark text-sm font-bold text-white font-heading">
-        {{ avatarLetter() }}
-      </div>
+      <app-user-avatar
+        size="md"
+        [username]="username()"
+        [fotoPerfilUrl]="fotoPerfilUrl()"
+      />
       <div class="min-w-0 flex-1 flex items-center justify-between gap-2">
         <p class="truncate font-heading text-sm font-semibold text-brand-text">{{ username() }}</p>
         <div class="flex shrink-0 items-center">
-      <app-logout-confirm-button
-        buttonIconClass="mdi mdi-logout-variant text-lg"
-        buttonClass="flex h-9 w-9 items-center justify-center rounded-full bg-ice text-brand-blue hover:bg-sky/40 transition-colors"
-      />
+          <app-logout-confirm-button
+            buttonIconClass="mdi mdi-logout-variant text-lg"
+            buttonClass="flex h-9 w-9 items-center justify-center rounded-full bg-ice text-brand-blue hover:bg-sky/40 transition-colors"
+          />
         </div>
       </div>
     </div>

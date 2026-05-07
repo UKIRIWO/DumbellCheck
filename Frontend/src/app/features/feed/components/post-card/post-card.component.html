@@ -1,15 +1,30 @@
 <article
-  class="rounded-2xl bg-surface shadow-sm border border-border overflow-hidden transition-colors mb-5 hover:bg-ice/30 cursor-pointer"
+  class="rounded-2xl bg-surface shadow-sm border border-border overflow-hidden mb-5 cursor-pointer"
   [routerLink]="['/workout', post.id]"
 >
 
   <!-- Card header: user info + date -->
   <div class="flex items-center gap-3 px-4 pt-4 pb-3">
-    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary-dark text-sm font-bold text-white shrink-0">
-      {{ avatarLetter }}
-    </div>
+    <a
+      [routerLink]="['/app/profile', post.usuario.username]"
+      (click)="blockPostNavigation($event)"
+      class="shrink-0"
+      [attr.aria-label]="'Ver perfil de ' + post.usuario.username"
+    >
+      <app-user-avatar
+        size="sm"
+        [username]="post.usuario.username"
+        [fotoPerfilUrl]="post.usuario.fotoPerfilUrl"
+      />
+    </a>
     <div class="flex-1 min-w-0">
-      <p class="font-heading text-sm font-semibold text-brand-text truncate">{{ post.usuario.username }}</p>
+      <a
+        [routerLink]="['/app/profile', post.usuario.username]"
+        (click)="blockPostNavigation($event)"
+        class="font-heading text-sm font-semibold text-brand-text truncate hover:underline"
+      >
+        {{ post.usuario.username }}
+      </a>
       <p class="text-xs text-muted">{{ post.fechaCreacion | date:'d MMM yyyy, HH:mm':'':'es' }}</p>
     </div>
   </div>
@@ -68,7 +83,7 @@
                 </div>
               }
               @if (remainingEjerciciosCount > 0) {
-                <p class="text-base text-muted pt-2">Ver {{ remainingEjerciciosCount }} más ejercicios</p>
+                <p class="text-base text-muted pt-2">Ver {{ remainingEjerciciosCount }} ejercicios más</p>
               }
               @if (post.ejercicios.length === 0) {
                 <div class="flex h-full items-center justify-center text-sm text-muted">

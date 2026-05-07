@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileApiService } from '../../../../core/services/profile-api.service';
 import { PostApiService } from '../../../../core/services/post-api.service';
+import { CurrentUserService } from '../../../../core/services/current-user.service';
 import { Perfil } from '../../../../core/models/profile.model';
 import { PostFeedItem } from '../../../../core/models/post.model';
 import { ProfileHeader } from '../../components/profile-header/profile-header';
@@ -18,6 +19,7 @@ export class ProfilePageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly profileApi = inject(ProfileApiService);
   private readonly postApi = inject(PostApiService);
+  private readonly currentUser = inject(CurrentUserService);
 
   readonly perfil = signal<Perfil | null>(null);
   readonly posts = signal<PostFeedItem[]>([]);
@@ -82,5 +84,8 @@ export class ProfilePageComponent implements OnInit {
   onEditClosed(updated: Perfil): void {
     this.editOpen.set(false);
     this.perfil.set(updated);
+    if (updated.esPropio) {
+      this.currentUser.refresh().subscribe({ error: () => {} });
+    }
   }
 }

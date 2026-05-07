@@ -59,6 +59,7 @@ public class AuthService {
         usuario.setRol(RolUsuario.MEMBER);
         usuario.setContadorSeguidores(0);
         usuario.setContadorSeguidos(0);
+        usuario.setContadorPublicaciones(0);
         usuario.setEstaActivo(true);
         usuario.setFechaCreacion(Instant.now());
         usuario.setPassword(passwordEncoder.encode(request.password()));

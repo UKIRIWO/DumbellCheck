@@ -56,7 +56,8 @@ public final class UserInfoDTO {
         String nombre,
         String fotoPerfilUrl,
         Integer contadorSeguidores,
-        Integer contadorSeguidos
+        Integer contadorSeguidos,
+        Integer contadorPublicaciones
     ) {}
 
     public record SidebarSuggestionDto(

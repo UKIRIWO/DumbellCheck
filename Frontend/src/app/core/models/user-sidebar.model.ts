@@ -5,6 +5,7 @@ export interface SidebarProfile {
   fotoPerfilUrl: string | null;
   contadorSeguidores: number;
   contadorSeguidos: number;
+  contadorPublicaciones: number;
 }
 
 export interface SidebarSuggestion {

@@ -2,10 +2,11 @@ import { Component, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PostFeedItem } from '../../../../core/models/post.model';
+import { UserAvatarComponent } from '../../../../shared/components/user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-post-card',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, UserAvatarComponent],
   templateUrl: './post-card.component.html',
 })
 export class PostCardComponent {
