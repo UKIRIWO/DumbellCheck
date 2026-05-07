@@ -1,5 +1,6 @@
 package com.agg.dumbellcheck.services;
 
+import com.agg.dumbellcheck.dto.CursorPageResponse;
 import com.agg.dumbellcheck.dto.PostCreateRequest;
 import com.agg.dumbellcheck.dto.PostFeedItemResponse;
 import com.agg.dumbellcheck.entities.DetalleSerieEntity;
@@ -14,6 +15,7 @@ import com.agg.dumbellcheck.repositories.EjercicioRepository;
 import com.agg.dumbellcheck.repositories.PublicacionRepository;
 import com.agg.dumbellcheck.repositories.UsuarioRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,6 +159,29 @@ public class PostService {
                     );
                 })
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public CursorPageResponse<PostFeedItemResponse> getPostsByUser(String username, Integer cursor, int size) {
+        UsuarioEntity usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + username));
+
+        int pageSize = Math.min(size, 30);
+        Pageable pageable = PageRequest.of(0, pageSize + 1);
+
+        List<PublicacionEntity> rows = (cursor == null)
+                ? publicacionRepository.findByUsuarioIdAndEstaActivaTrueOrderByIdDesc(usuario.getId(), pageable)
+                : publicacionRepository.findByUsuarioIdAndEstaActivaTrueAndIdLessThanOrderByIdDesc(usuario.getId(), cursor, pageable);
+
+        boolean hasMore = rows.size() > pageSize;
+        List<PublicacionEntity> page = hasMore ? rows.subList(0, pageSize) : rows;
+        Integer nextCursor = hasMore ? page.get(page.size() - 1).getId() : null;
+
+        List<PostFeedItemResponse> content = page.stream()
+                .map(p -> buildFeedItem(p, mapEjercicios(p)))
+                .toList();
+
+        return new CursorPageResponse<>(content, nextCursor, hasMore);
     }
 
     private PostFeedItemResponse buildFeedItem(PublicacionEntity p, List<PostFeedItemResponse.EjercicioEnPost> ejercicios) {

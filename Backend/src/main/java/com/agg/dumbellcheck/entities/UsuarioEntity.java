@@ -39,6 +39,9 @@ public class UsuarioEntity {
     @Column(name = "foto_perfil_url")
     private String fotoPerfilUrl;
 
+    @Column(name = "banner_url")
+    private String bannerUrl;
+
     @Column
     private String biografia;
 
@@ -52,6 +55,9 @@ public class UsuarioEntity {
     @Column(name = "contador_seguidos", nullable = false)
     private Integer contadorSeguidos;
 
+    @Column(name = "contador_publicaciones", nullable = false)
+    private Integer contadorPublicaciones;
+
     @Column(name = "esta_activo", nullable = false)
     private boolean estaActivo;
 
@@ -60,6 +66,9 @@ public class UsuarioEntity {
 
     @Column(name = "ultima_conexion")
     private Instant ultimaConexion;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<UsuarioEnlaceEntity> enlaces = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario")
     private List<BaneoEntity> baneos = new ArrayList<>();

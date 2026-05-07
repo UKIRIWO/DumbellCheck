@@ -13,6 +13,7 @@ import com.agg.dumbellcheck.dto.UserInfoDTO.*;
 import com.agg.dumbellcheck.entities.BaneoEntity;
 import com.agg.dumbellcheck.entities.NotificacionEntity;
 import com.agg.dumbellcheck.entities.SeguidorEntity;
+import com.agg.dumbellcheck.entities.UsuarioEnlaceEntity;
 import com.agg.dumbellcheck.entities.UsuarioEntity;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -45,6 +46,7 @@ public interface UserInfoMapper {
     @Mapping(target = "siguiendo", ignore = true)
     @Mapping(target = "seguidores", ignore = true)
     @Mapping(target = "baneos", ignore = true)
+    @Mapping(target = "enlaces", ignore = true)
     @Mapping(target = "password", ignore = true)
     UsuarioEntity toUsuarioEntity(UsuarioDto dto);
 
@@ -61,4 +63,6 @@ public interface UserInfoMapper {
 
     @Mapping(target = "usuario.id", source = "usuarioId")
     NotificacionEntity toNotificacionEntity(NotificacionDto dto);
+
+    UsuarioEnlaceDto toUsuarioEnlaceDto(UsuarioEnlaceEntity entity);
 }

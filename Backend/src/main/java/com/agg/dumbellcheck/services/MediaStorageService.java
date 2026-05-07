@@ -23,6 +23,12 @@ public class MediaStorageService {
             "video/webm",
             "video/quicktime"
     );
+    private static final Set<String> IMAGE_TYPES = Set.of(
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif"
+    );
 
     private final Cloudinary cloudinary;
 
@@ -31,16 +37,28 @@ public class MediaStorageService {
     }
 
     public String storePublicationMedia(MultipartFile file) {
+        return upload(file, "dumbellcheck/publicaciones", ALLOWED_TYPES, MAX_SIZE_BYTES);
+    }
+
+    public String storeProfilePicture(MultipartFile file) {
+        return upload(file, "dumbellcheck/perfiles", IMAGE_TYPES, MAX_SIZE_BYTES);
+    }
+
+    public String storeBanner(MultipartFile file) {
+        return upload(file, "dumbellcheck/banners", IMAGE_TYPES, MAX_SIZE_BYTES);
+    }
+
+    private String upload(MultipartFile file, String folder, Set<String> allowedTypes, long maxBytes) {
         if (file == null || file.isEmpty()) {
-            throw new ResourceConflictException("El archivo multimedia es obligatorio");
+            throw new ResourceConflictException("El archivo es obligatorio");
         }
-        if (file.getSize() > MAX_SIZE_BYTES) {
+        if (file.getSize() > maxBytes) {
             throw new ResourceConflictException("El archivo supera el máximo de 20MB");
         }
 
         String contentType = file.getContentType();
-        if (contentType == null || !ALLOWED_TYPES.contains(contentType)) {
-            throw new ResourceConflictException("Tipo de archivo no permitido. Solo imagen o video.");
+        if (contentType == null || !allowedTypes.contains(contentType)) {
+            throw new ResourceConflictException("Tipo de archivo no permitido");
         }
 
         try {
@@ -48,7 +66,7 @@ public class MediaStorageService {
                     file.getBytes(),
                     ObjectUtils.asMap(
                             "resource_type", "auto",
-                            "folder", "dumbellcheck/publicaciones",
+                            "folder", folder,
                             "use_filename", false,
                             "unique_filename", true
                     )
@@ -59,7 +77,7 @@ public class MediaStorageService {
             }
             return secureUrl.toString();
         } catch (IOException e) {
-            throw new ResourceConflictException("No se pudo subir el archivo multimedia");
+            throw new ResourceConflictException("No se pudo subir el archivo");
         }
     }
 }

@@ -64,3 +64,9 @@ export interface PageResponse<T> {
   size: number;
   last: boolean;
 }
+
+export interface CursorPageResponse<T> {
+  content: T[];
+  nextCursor: number | null;
+  hasMore: boolean;
+}

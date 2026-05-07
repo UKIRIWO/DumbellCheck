@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { API_BASE_URL } from '../tokens/api-base-url.token';
 import { ApiResponse } from '../models/api-response.model';
-import { CreatePostRequest, PostFeedItem, PageResponse } from '../models/post.model';
+import { CreatePostRequest, PostFeedItem, PageResponse, CursorPageResponse } from '../models/post.model';
 
 @Injectable({ providedIn: 'root' })
 export class PostApiService {
@@ -38,5 +38,18 @@ export class PostApiService {
     return this.http
       .post<ApiResponse<string>>(`${this.apiBaseUrl}/publicaciones/media`, formData)
       .pipe(map((r) => (r as { success: true; data: string }).data));
+  }
+
+  getPostsByUsername(username: string, cursor?: number, size = 18): Observable<CursorPageResponse<PostFeedItem>> {
+    const params: Record<string, string> = { size: size.toString() };
+    if (cursor !== undefined) {
+      params['cursor'] = cursor.toString();
+    }
+    return this.http
+      .get<ApiResponse<CursorPageResponse<PostFeedItem>>>(
+        `${this.apiBaseUrl}/publicaciones/usuario/${username}`,
+        { params },
+      )
+      .pipe(map((r) => (r as { success: true; data: CursorPageResponse<PostFeedItem> }).data));
   }
 }

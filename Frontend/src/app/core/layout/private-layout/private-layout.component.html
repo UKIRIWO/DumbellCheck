@@ -4,13 +4,19 @@
       <app-side-nav />
     </aside>
 
-    <section class="lg:ml-[5vw] lg:w-[45vw] lg:shrink-0">
+    <section
+      class="lg:ml-[5vw] lg:shrink-0"
+      [class.lg:w-[45vw]]="!hideSidebar()"
+      [class.lg:w-[73vw]]="hideSidebar()"
+    >
       <router-outlet />
     </section>
 
-    <aside class="hidden lg:ml-[3vw] lg:mr-[2vw] lg:block lg:h-screen lg:w-[25vw] lg:shrink-0">
-      <app-feed-right-sidebar />
-    </aside>
+    @if (!hideSidebar()) {
+      <aside class="hidden lg:ml-[3vw] lg:mr-[2vw] lg:block lg:h-screen lg:w-[25vw] lg:shrink-0">
+        <app-feed-right-sidebar />
+      </aside>
+    }
   </div>
 </main>
 

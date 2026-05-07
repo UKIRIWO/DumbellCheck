@@ -1,6 +1,7 @@
 package com.agg.dumbellcheck.controllers;
 
 import com.agg.dumbellcheck.dto.ApiSuccessResponse;
+import com.agg.dumbellcheck.dto.CursorPageResponse;
 import com.agg.dumbellcheck.dto.PostCreateRequest;
 import com.agg.dumbellcheck.dto.PostFeedItemResponse;
 import com.agg.dumbellcheck.services.MediaStorageService;
@@ -47,5 +48,13 @@ public class PostController {
     @PostMapping("/media")
     public ApiSuccessResponse<String> uploadMedia(@RequestParam("file") MultipartFile file) {
         return ApiSuccessResponse.of(mediaStorageService.storePublicationMedia(file));
+    }
+
+    @GetMapping("/usuario/{username}")
+    public ApiSuccessResponse<CursorPageResponse<PostFeedItemResponse>> getByUser(
+            @PathVariable String username,
+            @RequestParam(required = false) Integer cursor,
+            @RequestParam(defaultValue = "18") int size) {
+        return ApiSuccessResponse.of(postService.getPostsByUser(username, cursor, size));
     }
 }
