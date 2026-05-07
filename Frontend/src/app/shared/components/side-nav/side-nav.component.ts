@@ -22,6 +22,11 @@ export class SideNavComponent implements OnInit {
 
   readonly fotoPerfilUrl = computed(() => this.profile()?.fotoPerfilUrl ?? null);
 
+  readonly profileLink = computed<unknown[]>(() => {
+    const u = this.username();
+    return u ? ['/app/profile', u] : ['/app/profile'];
+  });
+
   ngOnInit(): void {
     this.currentUser.ensureLoaded().subscribe({ error: () => {} });
   }

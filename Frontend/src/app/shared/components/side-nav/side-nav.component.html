@@ -41,13 +41,24 @@
 
   <div class="border-t border-border p-4">
     <div class="flex items-center gap-3">
-      <app-user-avatar
-        size="md"
-        [username]="username()"
-        [fotoPerfilUrl]="fotoPerfilUrl()"
-      />
+      <a
+        [routerLink]="profileLink()"
+        class="shrink-0"
+        [attr.aria-label]="'Ver tu perfil'"
+      >
+        <app-user-avatar
+          size="md"
+          [username]="username()"
+          [fotoPerfilUrl]="fotoPerfilUrl()"
+        />
+      </a>
       <div class="min-w-0 flex-1 flex items-center justify-between gap-2">
-        <p class="truncate font-heading text-sm font-semibold text-brand-text">{{ username() }}</p>
+        <a
+          [routerLink]="profileLink()"
+          class="truncate font-heading text-sm font-semibold text-brand-text hover:underline"
+        >
+          {{ username() }}
+        </a>
         <div class="flex shrink-0 items-center">
           <app-logout-confirm-button
             buttonIconClass="mdi mdi-logout-variant text-lg"

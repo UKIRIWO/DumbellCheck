@@ -8,15 +8,30 @@
   } @else if (profile()) {
     <section class="rounded-3xl border border-border bg-surface p-6 shadow-sm">
       <div class="flex justify-center">
-        <app-user-avatar
-          size="xl"
-          [username]="profile()!.username"
-          [fotoPerfilUrl]="profile()!.fotoPerfilUrl"
-        />
+        <a
+          [routerLink]="['/app/profile', profile()!.username]"
+          [attr.aria-label]="'Ver perfil de ' + profile()!.username"
+        >
+          <app-user-avatar
+            size="xl"
+            [username]="profile()!.username"
+            [fotoPerfilUrl]="profile()!.fotoPerfilUrl"
+          />
+        </a>
       </div>
 
-      <p class="mt-4 text-center font-heading text-[1.5rem] font-semibold text-brand-text leading-tight">{{ profile()!.nombre }}</p>
-      <p class="mt-1 text-center text-[1.5rem] text-muted leading-tight">{{ profile()!.username }}</p>
+      <a
+        [routerLink]="['/app/profile', profile()!.username]"
+        class="mt-4 block text-center font-heading text-[1.5rem] font-semibold text-brand-text leading-tight hover:underline"
+      >
+        {{ profile()!.nombre }}
+      </a>
+      <a
+        [routerLink]="['/app/profile', profile()!.username]"
+        class="mt-1 block text-center text-[1.5rem] text-muted leading-tight hover:underline"
+      >
+        {{ profile()!.username }}
+      </a>
 
       <div class="mt-5 grid grid-cols-3 gap-2 text-center">
         <div>
@@ -52,17 +67,26 @@
       <div class="mt-4 max-h-[320px] space-y-4 overflow-y-auto pr-1">
         @for (suggestion of suggestions(); track suggestion.id) {
           <div class="flex items-center gap-3">
-            <app-user-avatar
-              size="lg"
-              [username]="suggestion.username"
-              [fotoPerfilUrl]="suggestion.fotoPerfilUrl"
-            />
-            <div class="min-w-0 flex-1">
+            <a
+              [routerLink]="['/app/profile', suggestion.username]"
+              class="shrink-0"
+              [attr.aria-label]="'Ver perfil de ' + suggestion.username"
+            >
+              <app-user-avatar
+                size="lg"
+                [username]="suggestion.username"
+                [fotoPerfilUrl]="suggestion.fotoPerfilUrl"
+              />
+            </a>
+            <a
+              [routerLink]="['/app/profile', suggestion.username]"
+              class="min-w-0 flex-1 hover:underline"
+            >
               <p class="truncate font-heading text-lg text-brand-text">{{ suggestion.username }}</p>
               @if (suggestion.nombre) {
                 <p class="truncate text-xl text-muted">{{ suggestion.nombre }}</p>
               }
-            </div>
+            </a>
             <button type="button" class="shrink-0 font-heading text-xl font-semibold text-blue hover:text-blueDark transition-colors">
               Seguir
             </button>
