@@ -19,16 +19,15 @@ export class WorkoutDetailPageComponent implements OnInit {
   currentSlide = 0;
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    const postId = Number(idParam);
+    const publicId = this.route.snapshot.paramMap.get('publicId')?.trim() ?? '';
 
-    if (!Number.isInteger(postId) || postId <= 0) {
+    if (!/^[A-Za-z0-9_-]{21}$/.test(publicId)) {
       this.loading.set(false);
       this.errorMessage.set('Publicación no válida.');
       return;
     }
 
-    this.postApi.getPostById(postId).subscribe({
+    this.postApi.getPostByPublicId(publicId).subscribe({
       next: (response) => {
         this.post.set(response);
         this.loading.set(false);

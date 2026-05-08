@@ -1,5 +1,6 @@
 package com.agg.dumbellcheck.entities;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,9 @@ public class PublicacionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "public_id", unique = true, nullable = false, length = 21)
+    private String publicId;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -52,4 +56,11 @@ public class PublicacionEntity {
 
     @OneToMany(mappedBy = "publicacion")
     private List<ComentarioEntity> comentarios = new ArrayList<>();
+
+    @PrePersist
+    public void generatePublicId() {
+        if (this.publicId == null) {
+            this.publicId = NanoIdUtils.randomNanoId();
+        }
+    }
 }

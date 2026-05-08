@@ -145,8 +145,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostFeedItemResponse getPostById(Integer postId) {
-        PublicacionEntity publicacion = publicacionRepository.findByIdAndEstaActivaTrue(postId)
+    public PostFeedItemResponse getPostByPublicId(String publicId) {
+        PublicacionEntity publicacion = publicacionRepository.findByPublicIdAndEstaActivaTrue(publicId)
                 .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
         return buildFeedItem(publicacion, mapEjercicios(publicacion));
     }
@@ -203,6 +203,7 @@ public class PostService {
     private PostFeedItemResponse buildFeedItem(PublicacionEntity p, List<PostFeedItemResponse.EjercicioEnPost> ejercicios) {
         return new PostFeedItemResponse(
                 p.getId(),
+                p.getPublicId(),
                 new PostFeedItemResponse.UsuarioResumen(
                         p.getUsuario().getId(),
                         p.getUsuario().getUsername(),

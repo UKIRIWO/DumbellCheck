@@ -16,6 +16,8 @@ public interface PublicacionRepository extends JpaRepository<PublicacionEntity, 
 
     Optional<PublicacionEntity> findByIdAndEstaActivaTrue(Integer id);
 
+    Optional<PublicacionEntity> findByPublicIdAndEstaActivaTrue(String publicId);
+
     // Cursor-based pagination for user profile (first page — no cursor)
     List<PublicacionEntity> findByUsuarioIdAndEstaActivaTrueOrderByIdDesc(Integer usuarioId, Pageable pageable);
 

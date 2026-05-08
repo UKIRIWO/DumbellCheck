@@ -42,9 +42,9 @@ export class PostApiService {
       .pipe(map((r) => (r as { success: true; data: PageResponse<PostFeedItem> }).data));
   }
 
-  getPostById(id: number): Observable<PostFeedItem> {
+  getPostByPublicId(publicId: string): Observable<PostFeedItem> {
     return this.http
-      .get<ApiResponse<PostFeedItem>>(`${this.apiBaseUrl}/publicaciones/${id}`)
+      .get<ApiResponse<PostFeedItem>>(`${this.apiBaseUrl}/publicaciones/${encodeURIComponent(publicId)}`)
       .pipe(map((r) => (r as { success: true; data: PostFeedItem }).data));
   }
 

@@ -46,6 +46,7 @@ export interface EjercicioEnPost {
 
 export interface PostFeedItem {
   id: number;
+  publicId: string;
   usuario: UsuarioResumen;
   titulo: string;
   descripcion?: string;

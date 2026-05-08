@@ -6,6 +6,7 @@ import java.util.List;
 
 public record PostFeedItemResponse(
         Integer id,
+        String publicId,
         UsuarioResumen usuario,
         String titulo,
         String descripcion,

@@ -58,9 +58,9 @@ public class PostController {
                 PageRequest.of(page, Math.min(size, 50))));
     }
 
-    @GetMapping("/{id}")
-    public ApiSuccessResponse<PostFeedItemResponse> getById(@PathVariable Integer id) {
-        return ApiSuccessResponse.of(postService.getPostById(id));
+    @GetMapping("/{publicId}")
+    public ApiSuccessResponse<PostFeedItemResponse> getByPublicId(@PathVariable String publicId) {
+        return ApiSuccessResponse.of(postService.getPostByPublicId(publicId));
     }
 
     @PostMapping("/media")

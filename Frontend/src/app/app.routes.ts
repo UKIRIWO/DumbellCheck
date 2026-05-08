@@ -61,7 +61,7 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'workout/:id',
+    path: 'workout/:publicId',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/feed/pages/workout-detail-page/workout-detail-page.component').then(
