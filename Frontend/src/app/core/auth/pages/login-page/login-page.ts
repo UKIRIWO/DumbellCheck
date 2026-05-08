@@ -5,10 +5,11 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../services/auth-api.service';
 import { AuthStateService } from '../../../services/auth-state.service';
 import { AuthCard } from '../../components/auth-card/auth-card';
+import { PasswordField } from '../../../../shared/components/password-field/password-field';
 
 @Component({
   selector: 'app-login-page',
-  imports: [RouterLink, NgIf, ReactiveFormsModule, AuthCard],
+  imports: [RouterLink, NgIf, ReactiveFormsModule, AuthCard, PasswordField],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })

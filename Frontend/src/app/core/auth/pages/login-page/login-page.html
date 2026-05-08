@@ -19,11 +19,12 @@
       <label class="mb-1.5 block font-heading text-[0.82rem] font-semibold uppercase tracking-[0.04em] text-charcoal">
         Contrasena
       </label>
-      <input
-        type="password"
-        formControlName="password"
+      <app-password-field
+        [control]="form.controls.password"
         placeholder="••••••••"
-        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-3.5 py-3 text-[0.95rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
+        autocomplete="current-password"
+        inputId="login-password"
+        size="md"
       />
     </div>
 

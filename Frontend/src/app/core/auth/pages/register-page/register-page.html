@@ -56,11 +56,12 @@
 
     <div>
       <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Contrasena</label>
-      <input
-        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
-        type="password"
+      <app-password-field
+        [control]="form.controls.password"
         placeholder="Minimo 8 caracteres"
-        formControlName="password"
+        autocomplete="new-password"
+        inputId="register-password"
+        size="sm"
       />
       <div class="mt-1.5 h-1 overflow-hidden rounded-sm bg-[#e8edf2]">
         <div class="h-full rounded-sm bg-blue transition-all" [style.width.%]="passwordStrength().percent"></div>
@@ -70,11 +71,12 @@
 
     <div>
       <label class="mb-1 block font-heading text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-charcoal">Confirmar contrasena</label>
-      <input
-        class="w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] px-[13px] py-[11px] text-[0.92rem] text-charcoal outline-none transition focus:border-sky focus:bg-white"
-        type="password"
+      <app-password-field
+        [control]="form.controls.repeatPassword"
         placeholder="Repite la contrasena"
-        formControlName="repeatPassword"
+        autocomplete="new-password"
+        inputId="register-password-confirm"
+        size="sm"
       />
     </div>
 

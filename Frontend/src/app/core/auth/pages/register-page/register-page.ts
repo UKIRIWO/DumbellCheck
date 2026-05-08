@@ -5,10 +5,11 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Va
 import { RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../services/auth-api.service';
 import { AuthCard } from '../../components/auth-card/auth-card';
+import { PasswordField } from '../../../../shared/components/password-field/password-field';
 
 @Component({
   selector: 'app-register-page',
-  imports: [RouterLink, ReactiveFormsModule, NgIf, AuthCard],
+  imports: [RouterLink, ReactiveFormsModule, NgIf, AuthCard, PasswordField],
   templateUrl: './register-page.html',
   styleUrl: './register-page.scss',
 })
