@@ -1,64 +1,76 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription, EMPTY } from 'rxjs';
+import { catchError, distinctUntilChanged, map, switchMap, tap, finalize } from 'rxjs/operators';
 import { PostApiService } from '../../../../core/services/post-api.service';
+import { FeedSidebarContextService } from '../../../../core/services/feed-sidebar-context.service';
 import { PostFeedItem } from '../../../../core/models/post.model';
+import { WorkoutDetailHeader } from '../../components/workout-detail-header/workout-detail-header';
+import { WorkoutDetailMedia } from '../../components/workout-detail-media/workout-detail-media';
+import { WorkoutDetailExercises } from '../../components/workout-detail-exercises/workout-detail-exercises';
 
 @Component({
   selector: 'app-workout-detail-page',
-  imports: [DatePipe, RouterLink],
+  imports: [WorkoutDetailHeader, WorkoutDetailMedia, WorkoutDetailExercises],
   templateUrl: './workout-detail-page.component.html',
 })
-export class WorkoutDetailPageComponent implements OnInit {
+export class WorkoutDetailPageComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly postApi = inject(PostApiService);
+  private readonly sidebarContext = inject(FeedSidebarContextService);
+
+  private routeSub?: Subscription;
 
   post = signal<PostFeedItem | null>(null);
   loading = signal(true);
   errorMessage = signal('');
-  currentSlide = 0;
 
   ngOnInit(): void {
-    const publicId = this.route.snapshot.paramMap.get('publicId')?.trim() ?? '';
+    this.routeSub = this.route.paramMap
+      .pipe(
+        map((pm) => pm.get('publicId')?.trim() ?? ''),
+        distinctUntilChanged(),
+        switchMap((publicId) => {
+          this.sidebarContext.setHighlightedAuthor(null);
+          if (!/^[A-Za-z0-9_-]{21}$/.test(publicId)) {
+            this.post.set(null);
+            this.loading.set(false);
+            this.errorMessage.set('Publicación no válida.');
+            return EMPTY;
+          }
+          this.loading.set(true);
+          this.errorMessage.set('');
+          return this.postApi.getPostByPublicId(publicId).pipe(
+            tap({
+              next: (response) => {
+                this.post.set(response);
+                this.sidebarContext.setHighlightedAuthor(response.usuario.username);
+              },
+            }),
+            catchError(() => {
+              this.post.set(null);
+              this.errorMessage.set('No se pudo cargar la publicación.');
+              return EMPTY;
+            }),
+            finalize(() => this.loading.set(false)),
+          );
+        }),
+      )
+      .subscribe();
+  }
 
-    if (!/^[A-Za-z0-9_-]{21}$/.test(publicId)) {
-      this.loading.set(false);
-      this.errorMessage.set('Publicación no válida.');
-      return;
-    }
+  ngOnDestroy(): void {
+    this.routeSub?.unsubscribe();
+    this.sidebarContext.setHighlightedAuthor(null);
+  }
 
-    this.postApi.getPostByPublicId(publicId).subscribe({
-      next: (response) => {
-        this.post.set(response);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.errorMessage.set('No se pudo cargar la publicación.');
-      },
-    });
+  goBack(): void {
+    this.location.back();
   }
 
   get hasMedia(): boolean {
     return !!this.post()?.multimediaUrl;
-  }
-
-  get totalSlides(): number {
-    return this.hasMedia ? 2 : 1;
-  }
-
-  get isMediaVideo(): boolean {
-    const url = this.post()?.multimediaUrl;
-    if (!url) return false;
-    const lower = url.toLowerCase();
-    return lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov');
-  }
-
-  nextSlide(): void {
-    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
-  }
-
-  prevSlide(): void {
-    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
   }
 }

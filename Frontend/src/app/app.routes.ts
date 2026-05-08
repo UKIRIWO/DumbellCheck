@@ -54,19 +54,18 @@ export const routes: Routes = [
         loadChildren: () => import('./features/support/support.routes').then((m) => m.SUPPORT_ROUTES),
       },
       {
+        path: 'workout/:publicId',
+        loadComponent: () =>
+          import('./features/feed/pages/workout-detail-page/workout-detail-page.component').then(
+            (m) => m.WorkoutDetailPageComponent,
+          ),
+      },
+      {
         path: 'admin',
         canActivate: [adminGuard],
         loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
       },
     ],
-  },
-  {
-    path: 'workout/:publicId',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/feed/pages/workout-detail-page/workout-detail-page.component').then(
-        (m) => m.WorkoutDetailPageComponent,
-      ),
   },
   {
     path: '**',

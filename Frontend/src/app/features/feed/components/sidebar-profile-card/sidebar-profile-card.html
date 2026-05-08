@@ -1,0 +1,42 @@
+<section class="rounded-3xl border border-border bg-surface p-6 shadow-sm">
+  <div class="flex justify-center">
+    <a [routerLink]="['/app/profile', profile.username]" [attr.aria-label]="'Ver perfil de ' + profile.username">
+      <app-user-avatar size="xl" [username]="profile.username" [fotoPerfilUrl]="profile.fotoPerfilUrl" />
+    </a>
+  </div>
+
+  <a
+    [routerLink]="['/app/profile', profile.username]"
+    class="mt-4 block text-center font-heading text-[1.5rem] font-semibold leading-tight text-brand-text hover:underline"
+  >
+    {{ profile.nombre }}
+  </a>
+  <a
+    [routerLink]="['/app/profile', profile.username]"
+    class="mt-1 block text-center font-heading text-[1.5rem] leading-tight text-muted hover:underline"
+  >
+    {{ profile.username }}
+  </a>
+
+  <div class="mt-5 grid grid-cols-3 gap-2 text-center">
+    <div>
+      <p class="text-sm text-muted">Publicaciones</p>
+      <p class="font-heading text-[1.5rem] font-semibold leading-tight text-brand-text">{{ profile.contadorPublicaciones }}</p>
+    </div>
+    <div>
+      <p class="text-sm text-muted">Seguidores</p>
+      <p class="font-heading text-[1.5rem] font-semibold leading-tight text-brand-text">{{ profile.contadorSeguidores }}</p>
+    </div>
+    <div>
+      <p class="text-sm text-muted">Siguiendo</p>
+      <p class="font-heading text-[1.5rem] font-semibold leading-tight text-brand-text">{{ profile.contadorSeguidos }}</p>
+    </div>
+  </div>
+
+  <a
+    [routerLink]="ctaLink"
+    class="mt-5 block rounded-2xl bg-ice px-4 py-3 text-center font-heading text-lg font-semibold text-brand-text transition-colors hover:bg-sky/40"
+  >
+    {{ ctaLabel }}
+  </a>
+</section>

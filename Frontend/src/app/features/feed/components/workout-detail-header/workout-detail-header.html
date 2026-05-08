@@ -1,0 +1,29 @@
+<div class="flex items-center gap-3 px-4 pt-4 pb-3">
+  <a
+    [routerLink]="['/app/profile', post.usuario.username]"
+    class="shrink-0"
+    [attr.aria-label]="'Ver perfil de ' + post.usuario.username"
+  >
+    <app-user-avatar
+      size="sm"
+      [username]="post.usuario.username"
+      [fotoPerfilUrl]="post.usuario.fotoPerfilUrl"
+    />
+  </a>
+  <div class="min-w-0 flex-1">
+    <a
+      [routerLink]="['/app/profile', post.usuario.username]"
+      class="font-heading truncate text-sm font-semibold text-brand-text hover:underline"
+    >
+      {{ post.usuario.username }}
+    </a>
+    <p class="text-xs text-muted">{{ post.fechaCreacion | date: 'd MMM yyyy, HH:mm' : '' : 'es' }}</p>
+  </div>
+</div>
+
+<div class="px-4 pb-3">
+  <h1 class="font-heading text-lg font-semibold text-brand-text">{{ post.titulo }}</h1>
+  @if (post.descripcion) {
+    <p class="mt-1 text-sm text-muted">{{ post.descripcion }}</p>
+  }
+</div>

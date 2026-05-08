@@ -1,0 +1,42 @@
+<div class="border-t border-border px-4 py-4">
+  <p class="mb-4 text-xs font-semibold uppercase tracking-wide text-muted">Entrenamiento</p>
+  <div class="space-y-6">
+    @for (ej of ejercicios; track ej.id) {
+      <div class="rounded-xl border border-border bg-ice/50 p-4">
+        <div class="mb-3 flex items-center gap-2">
+          @if (ej.imagenUrl) {
+            <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="h-9 w-9 shrink-0 rounded-full bg-ice object-cover" />
+          } @else {
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ice">
+              <i class="mdi mdi-dumbbell text-base text-muted"></i>
+            </div>
+          }
+          <span class="font-heading text-sm font-semibold text-brand-blue">{{ ej.nombre }}</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="text-muted uppercase tracking-wide">
+                <th class="py-1.5 pr-3 text-left font-medium">Serie</th>
+                <th class="py-1.5 pr-3 text-right font-medium">KG</th>
+                <th class="py-1.5 pr-3 text-right font-medium">Reps</th>
+                <th class="py-1.5 text-right font-medium">Descanso</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of ej.series; track s.numeroSerie) {
+                <tr class="border-t border-borderSoft">
+                  <td class="py-1.5 pr-3 font-semibold text-brand-text">{{ s.numeroSerie }}</td>
+                  <td class="py-1.5 pr-3 text-right text-brand-text">{{ s.peso }}</td>
+                  <td class="py-1.5 pr-3 text-right text-brand-text">{{ s.repeticiones }}</td>
+                  <td class="py-1.5 text-right text-muted">{{ s.descansoSegundos ?? '—' }}s</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+</div>
