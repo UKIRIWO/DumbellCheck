@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { API_BASE_URL } from '../tokens/api-base-url.token';
 import { ApiResponse } from '../models/api-response.model';
-import { Perfil, UpdateProfileRequest, UsuarioEnlace, CreateLinkRequest } from '../models/profile.model';
+import { Perfil, UpdateProfileRequest, UsuarioEnlace, CreateLinkRequest, PerfilConnection } from '../models/profile.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileApiService {
@@ -49,5 +49,29 @@ export class ProfileApiService {
     return this.http
       .delete<ApiResponse<void>>(`${this.apiBaseUrl}/usuarios/me/enlaces/${id}`)
       .pipe(map(() => undefined));
+  }
+
+  seguirUsuario(username: string): Observable<Perfil> {
+    return this.http
+      .post<ApiResponse<Perfil>>(`${this.apiBaseUrl}/usuarios/${username}/seguir`, {})
+      .pipe(map((r) => (r as { success: true; data: Perfil }).data));
+  }
+
+  dejarDeSeguirUsuario(username: string): Observable<Perfil> {
+    return this.http
+      .delete<ApiResponse<Perfil>>(`${this.apiBaseUrl}/usuarios/${username}/seguir`)
+      .pipe(map((r) => (r as { success: true; data: Perfil }).data));
+  }
+
+  getSeguidores(username: string): Observable<PerfilConnection[]> {
+    return this.http
+      .get<ApiResponse<PerfilConnection[]>>(`${this.apiBaseUrl}/usuarios/${username}/seguidores`)
+      .pipe(map((r) => (r as { success: true; data: PerfilConnection[] }).data));
+  }
+
+  getSeguidos(username: string): Observable<PerfilConnection[]> {
+    return this.http
+      .get<ApiResponse<PerfilConnection[]>>(`${this.apiBaseUrl}/usuarios/${username}/seguidos`)
+      .pipe(map((r) => (r as { success: true; data: PerfilConnection[] }).data));
   }
 }

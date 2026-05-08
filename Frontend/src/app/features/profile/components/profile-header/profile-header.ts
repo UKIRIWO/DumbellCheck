@@ -10,8 +10,11 @@ import { ProfileLinkIcon } from '../profile-link-icon/profile-link-icon';
 })
 export class ProfileHeader {
   @Input({ required: true }) perfil!: Perfil;
+  @Input() followLoading = false;
   @Output() editClick = new EventEmitter<void>();
   @Output() followClick = new EventEmitter<void>();
+  @Output() seguidoresClick = new EventEmitter<void>();
+  @Output() seguidosClick = new EventEmitter<void>();
   @Output() messageClick = new EventEmitter<void>();
 
   get avatarLetter(): string {

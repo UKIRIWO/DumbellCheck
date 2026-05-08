@@ -1,44 +1,52 @@
-<div class="sticky top-4 max-h-[calc(100vh-1.5rem)] space-y-5 overflow-x-hidden overflow-y-auto pt-4 [scrollbar-gutter:stable]">
+<div class="sticky top-0 flex flex-col gap-5 max-h-[calc(100vh-5.5rem)] overflow-x-hidden pt-4 pb-2 [scrollbar-gutter:stable]">
+  
   @if (sidebarContext.highlightedUsername()) {
     @if (authorLoading()) {
-      <div class="animate-pulse rounded-3xl border border-border bg-surface p-6 shadow-sm">
+      <div class="shrink-0 animate-pulse rounded-3xl border border-border bg-surface p-6 shadow-sm">
         <div class="mx-auto h-20 w-20 rounded-full bg-border"></div>
         <div class="mx-auto mt-4 h-5 w-28 rounded bg-border"></div>
         <div class="mx-auto mt-2 h-4 w-20 rounded bg-border"></div>
       </div>
     } @else if (authorProfile(); as ap) {
       <app-sidebar-profile-card
+        class="shrink-0"
         [profile]="perfilToSidebar(ap)"
         [ctaLink]="ap.esPropio ? ['/app/profile'] : ['/app/profile', ap.username]"
         [ctaLabel]="ap.esPropio ? 'Ver tu perfil' : 'Ver perfil'"
+        (seguidoresClick)="openConnectionsModal(ap.username, 'seguidores')"
+        (seguidosClick)="openConnectionsModal(ap.username, 'seguidos')"
       />
     } @else if (authorError()) {
-      <p class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{{ authorError() }}</p>
+      <p class="shrink-0 rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{{ authorError() }}</p>
     }
   } @else {
     @if (loading()) {
-      <div class="animate-pulse rounded-3xl border border-border bg-surface p-6 shadow-sm">
+      <div class="shrink-0 animate-pulse rounded-3xl border border-border bg-surface p-6 shadow-sm">
         <div class="mx-auto h-20 w-20 rounded-full bg-border"></div>
         <div class="mx-auto mt-4 h-5 w-28 rounded bg-border"></div>
         <div class="mx-auto mt-2 h-4 w-20 rounded bg-border"></div>
       </div>
     } @else if (profile(); as me) {
       <app-sidebar-profile-card
+        class="shrink-0"
         [profile]="me"
         [ctaLink]="['/app/profile']"
         [ctaLabel]="'Ver tu perfil'"
+        (seguidoresClick)="openConnectionsModal(me.username, 'seguidores')"
+        (seguidosClick)="openConnectionsModal(me.username, 'seguidos')"
       />
     }
   }
 
   @if (!sidebarContext.highlightedUsername() && errorMessage()) {
-    <p class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
+    <p class="shrink-0 rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
   }
 
   @if (suggestions().length > 0) {
-    <section class="rounded-3xl border border-border bg-surface p-5 shadow-sm">
-      <h3 class="font-heading text-[1.5rem] font-semibold text-brand-text">Puede que conozcas...</h3>
-      <div class="mt-4 max-h-[320px] space-y-4 overflow-y-auto pr-1">
+    <section class="flex flex-col flex-1 min-h-0 rounded-3xl border border-border bg-surface p-5 shadow-sm">
+      <h3 class="shrink-0 font-heading text-[1.5rem] font-semibold text-brand-text">Puede que conozcas...</h3>
+      
+      <div class="mt-4 flex-1 min-h-0 space-y-4 overflow-y-auto pr-1">
         @for (suggestion of suggestions(); track suggestion.id) {
           <div class="flex items-center gap-3">
             <a
@@ -47,7 +55,7 @@
               [attr.aria-label]="'Ver perfil de ' + suggestion.username"
             >
               <app-user-avatar
-                size="lg"
+                size="md"
                 [username]="suggestion.username"
                 [fotoPerfilUrl]="suggestion.fotoPerfilUrl"
               />
@@ -56,13 +64,21 @@
               [routerLink]="['/app/profile', suggestion.username]"
               class="min-w-0 flex-1 hover:underline"
             >
-              <p class="truncate font-heading text-lg text-brand-text">{{ suggestion.username }}</p>
+              <p class="truncate font-heading text-base text-brand-text">{{ suggestion.username }}</p>
               @if (suggestion.nombre) {
-                <p class="truncate text-xl text-muted">{{ suggestion.nombre }}</p>
+                <p class="truncate text-lg text-muted">{{ suggestion.nombre }}</p>
               }
             </a>
-            <button type="button" class="shrink-0 font-heading text-xl font-semibold text-blue transition-colors hover:text-blueDark">
-              Seguir
+            <button
+              type="button"
+              class="shrink-0 cursor-pointer font-heading text-lg font-semibold transition-colors disabled:opacity-60"
+              [disabled]="isSuggestionActionLoading(suggestion.id)"
+              (click)="toggleSuggestionFollow(suggestion.id, suggestion.username)"
+              [class.text-blue]="!isSuggestionFollowed(suggestion.id)"
+              [class.hover:text-blueDark]="!isSuggestionFollowed(suggestion.id)"
+              [class.text-brand-text]="isSuggestionFollowed(suggestion.id)"
+            >
+              {{ isSuggestionFollowed(suggestion.id) ? 'Siguiendo' : 'Seguir' }}
             </button>
           </div>
         }
@@ -70,3 +86,12 @@
     </section>
   }
 </div>
+
+@if (modalUsername() && modalMode()) {
+  <app-follow-list-modal
+    [username]="modalUsername()!"
+    [mode]="modalMode()!"
+    (followChanged)="onModalFollowChanged($event)"
+    (closed)="closeConnectionsModal()"
+  />
+}

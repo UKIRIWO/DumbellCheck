@@ -7,10 +7,11 @@ import { Perfil } from '../../../../core/models/profile.model';
 import { UserAvatarComponent } from '../../../../shared/components/user-avatar/user-avatar.component';
 import { SidebarProfileCard } from '../sidebar-profile-card/sidebar-profile-card';
 import { SidebarProfile } from '../../../../core/models/user-sidebar.model';
+import { FollowListModal } from '../../../profile/components/follow-list-modal/follow-list-modal';
 
 @Component({
   selector: 'app-feed-right-sidebar',
-  imports: [RouterLink, UserAvatarComponent, SidebarProfileCard],
+  imports: [RouterLink, UserAvatarComponent, SidebarProfileCard, FollowListModal],
   templateUrl: './feed-right-sidebar.html',
   standalone: true,
 })
@@ -27,6 +28,10 @@ export class FeedRightSidebar implements OnInit {
   readonly authorProfile = signal<Perfil | null>(null);
   readonly authorLoading = signal(false);
   readonly authorError = signal('');
+  readonly modalUsername = signal<string | null>(null);
+  readonly modalMode = signal<'seguidores' | 'seguidos' | null>(null);
+  readonly suggestionFollowState = signal<Record<number, boolean>>({});
+  readonly suggestionActionLoading = signal<Record<number, boolean>>({});
 
   constructor() {
     effect((onCleanup) => {
@@ -63,6 +68,17 @@ export class FeedRightSidebar implements OnInit {
 
       onCleanup(() => sub.unsubscribe());
     });
+
+    effect(() => {
+      const current = this.suggestions();
+      this.suggestionFollowState.update((prev) => {
+        const next: Record<number, boolean> = {};
+        for (const s of current) {
+          next[s.id] = prev[s.id] ?? false;
+        }
+        return next;
+      });
+    });
   }
 
   ngOnInit(): void {
@@ -79,5 +95,82 @@ export class FeedRightSidebar implements OnInit {
       contadorSeguidos: p.contadorSeguidos,
       contadorPublicaciones: p.contadorPublicaciones,
     };
+  }
+
+  openConnectionsModal(username: string, mode: 'seguidores' | 'seguidos'): void {
+    this.modalUsername.set(username);
+    this.modalMode.set(mode);
+  }
+
+  closeConnectionsModal(): void {
+    this.modalUsername.set(null);
+    this.modalMode.set(null);
+  }
+
+  onModalFollowChanged(event: { userId: number; username: string; seguidoPorMi: boolean }): void {
+    // Keep "Puede que conozcas..." button state in sync with modal actions.
+    this.suggestionFollowState.update((prev) => ({ ...prev, [event.userId]: event.seguidoPorMi }));
+
+    this.currentUser.refresh(8).subscribe({ error: () => {} });
+
+    const highlighted = this.sidebarContext.highlightedUsername();
+    if (!highlighted) return;
+
+    this.profileApi.getPerfil(highlighted).subscribe({
+      next: (p) => this.authorProfile.set(p),
+      error: () => {},
+    });
+  }
+
+  isSuggestionFollowed(userId: number): boolean {
+    return this.suggestionFollowState()[userId] ?? false;
+  }
+
+  isSuggestionActionLoading(userId: number): boolean {
+    return !!this.suggestionActionLoading()[userId];
+  }
+
+  toggleSuggestionFollow(userId: number, username: string): void {
+    if (this.isSuggestionActionLoading(userId)) return;
+
+    const currentlyFollowed = this.isSuggestionFollowed(userId);
+    this.suggestionActionLoading.update((prev) => ({ ...prev, [userId]: true }));
+
+    const req$ = currentlyFollowed
+      ? this.profileApi.dejarDeSeguirUsuario(username)
+      : this.profileApi.seguirUsuario(username);
+
+    req$.subscribe({
+      next: () => {
+        this.suggestionFollowState.update((prev) => ({ ...prev, [userId]: !currentlyFollowed }));
+        this.suggestionActionLoading.update((prev) => ({ ...prev, [userId]: false }));
+
+        // Keep suggestion visible, but sync my "siguiendo" counter in the sidebar card.
+        this.profile.update((me) => {
+          if (!me) return me;
+          const delta = currentlyFollowed ? -1 : 1;
+          return {
+            ...me,
+            contadorSeguidos: Math.max(0, me.contadorSeguidos + delta),
+          };
+        });
+
+        const highlighted = this.sidebarContext.highlightedUsername();
+        if (highlighted === username) {
+          this.authorProfile.update((p) =>
+            p
+              ? {
+                  ...p,
+                  contadorSeguidores: Math.max(0, p.contadorSeguidores + (currentlyFollowed ? -1 : 1)),
+                  sigueAEsteUsuario: !currentlyFollowed,
+                }
+              : p,
+          );
+        }
+      },
+      error: () => {
+        this.suggestionActionLoading.update((prev) => ({ ...prev, [userId]: false }));
+      },
+    });
   }
 }

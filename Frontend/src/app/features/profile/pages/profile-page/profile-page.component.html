@@ -21,7 +21,11 @@
   <div class="overflow-hidden rounded-3xl border border-border bg-surface shadow-sm">
     <app-profile-header
       [perfil]="perfil()!"
+      [followLoading]="followLoading()"
       (editClick)="editOpen.set(true)"
+      (followClick)="onFollowClick()"
+      (seguidoresClick)="openSeguidoresModal()"
+      (seguidosClick)="openSeguidosModal()"
     />
   </div>
 
@@ -42,5 +46,13 @@
   <app-edit-profile-modal
     [perfil]="perfil()!"
     (closed)="onEditClosed($event)"
+  />
+}
+
+@if (followModalMode() && perfil()) {
+  <app-follow-list-modal
+    [username]="perfil()!.username"
+    [mode]="followModalMode()!"
+    (closed)="followModalMode.set(null)"
   />
 }

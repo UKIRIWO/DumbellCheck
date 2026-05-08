@@ -8,10 +8,11 @@ import { PostFeedItem } from '../../../../core/models/post.model';
 import { ProfileHeader } from '../../components/profile-header/profile-header';
 import { ProfilePostsGrid } from '../../components/profile-posts-grid/profile-posts-grid';
 import { EditProfileModal } from '../../components/edit-profile-modal/edit-profile-modal';
+import { FollowListModal } from '../../components/follow-list-modal/follow-list-modal';
 
 @Component({
   selector: 'app-profile-page',
-  imports: [ProfileHeader, ProfilePostsGrid, EditProfileModal],
+  imports: [ProfileHeader, ProfilePostsGrid, EditProfileModal, FollowListModal],
   templateUrl: './profile-page.component.html',
 })
 export class ProfilePageComponent implements OnInit {
@@ -28,6 +29,8 @@ export class ProfilePageComponent implements OnInit {
   readonly errorPerfil = signal('');
   readonly hasMore = signal(false);
   readonly editOpen = signal(false);
+  readonly followLoading = signal(false);
+  readonly followModalMode = signal<'seguidores' | 'seguidos' | null>(null);
 
   private cursor: number | undefined = undefined;
   private username = '';
@@ -87,5 +90,33 @@ export class ProfilePageComponent implements OnInit {
     if (updated.esPropio) {
       this.currentUser.refresh().subscribe({ error: () => {} });
     }
+  }
+
+  onFollowClick(): void {
+    const current = this.perfil();
+    if (!current || current.esPropio || this.followLoading()) return;
+
+    this.followLoading.set(true);
+    const request$ = current.sigueAEsteUsuario
+      ? this.profileApi.dejarDeSeguirUsuario(current.username)
+      : this.profileApi.seguirUsuario(current.username);
+
+    request$.subscribe({
+      next: (updated) => {
+        this.perfil.set(updated);
+        this.followLoading.set(false);
+      },
+      error: () => {
+        this.followLoading.set(false);
+      },
+    });
+  }
+
+  openSeguidoresModal(): void {
+    this.followModalMode.set('seguidores');
+  }
+
+  openSeguidosModal(): void {
+    this.followModalMode.set('seguidos');
   }
 }

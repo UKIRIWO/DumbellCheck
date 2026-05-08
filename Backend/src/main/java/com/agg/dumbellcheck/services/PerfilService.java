@@ -1,6 +1,7 @@
 package com.agg.dumbellcheck.services;
 
 import com.agg.dumbellcheck.dto.UserInfoDTO.*;
+import com.agg.dumbellcheck.entities.SeguidorEntity;
 import com.agg.dumbellcheck.entities.UsuarioEnlaceEntity;
 import com.agg.dumbellcheck.entities.UsuarioEntity;
 import com.agg.dumbellcheck.exceptions.ResourceConflictException;
@@ -10,11 +11,16 @@ import com.agg.dumbellcheck.mapper.UserInfoMapper;
 import com.agg.dumbellcheck.repositories.SeguidorRepository;
 import com.agg.dumbellcheck.repositories.UsuarioEnlaceRepository;
 import com.agg.dumbellcheck.repositories.UsuarioRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Comparator;
+import java.util.Set;
+import java.time.Instant;
+import java.util.stream.Collectors;
 
 @Service
 public class PerfilService {
@@ -26,18 +32,21 @@ public class PerfilService {
     private final SeguidorRepository seguidorRepository;
     private final UserInfoMapper mapper;
     private final MediaStorageService mediaStorageService;
+    private final EntityManager entityManager;
 
     public PerfilService(
             UsuarioRepository usuarioRepository,
             UsuarioEnlaceRepository enlaceRepository,
             SeguidorRepository seguidorRepository,
             UserInfoMapper mapper,
-            MediaStorageService mediaStorageService) {
+            MediaStorageService mediaStorageService,
+            EntityManager entityManager) {
         this.usuarioRepository = usuarioRepository;
         this.enlaceRepository = enlaceRepository;
         this.seguidorRepository = seguidorRepository;
         this.mapper = mapper;
         this.mediaStorageService = mediaStorageService;
+        this.entityManager = entityManager;
     }
 
     @Transactional(readOnly = true)
@@ -148,5 +157,92 @@ public class PerfilService {
         }
 
         enlaceRepository.delete(enlace);
+    }
+
+    @Transactional
+    public PerfilDto seguirUsuario(String viewerUsername, String targetUsername) {
+        UsuarioEntity viewer = usuarioRepository.findByUsername(viewerUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        UsuarioEntity target = usuarioRepository.findByUsername(targetUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + targetUsername));
+
+        if (viewer.getId().equals(target.getId())) {
+            throw new ResourceConflictException("No puedes seguirte a ti mismo");
+        }
+
+        if (!seguidorRepository.existsByUsuarioIdAndSeguidoId(viewer.getId(), target.getId())) {
+            SeguidorEntity seguidor = new SeguidorEntity();
+            seguidor.setUsuario(viewer);
+            seguidor.setSeguido(target);
+            seguidor.setFechaSeguimiento(Instant.now());
+            seguidorRepository.save(seguidor);
+        }
+
+        // Trigger updates counters in DB; force sync and clear persistence context
+        // so the response reads fresh values instead of stale managed entities.
+        entityManager.flush();
+        entityManager.clear();
+        return getPerfil(viewerUsername, targetUsername);
+    }
+
+    @Transactional
+    public PerfilDto dejarDeSeguirUsuario(String viewerUsername, String targetUsername) {
+        UsuarioEntity viewer = usuarioRepository.findByUsername(viewerUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        UsuarioEntity target = usuarioRepository.findByUsername(targetUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + targetUsername));
+
+        if (viewer.getId().equals(target.getId())) {
+            throw new ResourceConflictException("No puedes dejar de seguirte a ti mismo");
+        }
+
+        seguidorRepository.findByUsuarioIdAndSeguidoId(viewer.getId(), target.getId())
+                .ifPresent(seguidorRepository::delete);
+        // Trigger updates counters in DB; force sync and clear persistence context
+        // so the response reads fresh values instead of stale managed entities.
+        entityManager.flush();
+        entityManager.clear();
+        return getPerfil(viewerUsername, targetUsername);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PerfilConnectionDto> getSeguidores(String viewerUsername, String targetUsername) {
+        UsuarioEntity viewer = usuarioRepository.findByUsername(viewerUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        UsuarioEntity target = usuarioRepository.findByUsername(targetUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + targetUsername));
+
+        List<UsuarioEntity> usuarios = seguidorRepository.findSeguidoresUsuariosByUsuarioId(target.getId());
+        return mapConnections(viewer.getId(), usuarios);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PerfilConnectionDto> getSeguidos(String viewerUsername, String targetUsername) {
+        UsuarioEntity viewer = usuarioRepository.findByUsername(viewerUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        UsuarioEntity target = usuarioRepository.findByUsername(targetUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + targetUsername));
+
+        List<UsuarioEntity> usuarios = seguidorRepository.findSeguidosUsuariosByUsuarioId(target.getId());
+        return mapConnections(viewer.getId(), usuarios);
+    }
+
+    private List<PerfilConnectionDto> mapConnections(Integer viewerId, List<UsuarioEntity> usuarios) {
+        Set<Integer> seguidosPorMi = seguidorRepository.findSeguidoIdsByUsuarioId(viewerId).stream()
+                .collect(Collectors.toSet());
+
+        return usuarios.stream()
+                .map(u -> new PerfilConnectionDto(
+                        u.getId(),
+                        u.getUsername(),
+                        u.getNombre(),
+                        u.getFotoPerfilUrl(),
+                        seguidosPorMi.contains(u.getId()),
+                        viewerId.equals(u.getId())))
+                .sorted(Comparator
+                        .comparing(PerfilConnectionDto::esPropio).reversed()
+                        .thenComparing(Comparator.comparing(PerfilConnectionDto::seguidoPorMi).reversed())
+                        .thenComparing(PerfilConnectionDto::username, String.CASE_INSENSITIVE_ORDER))
+                .toList();
     }
 }

@@ -52,7 +52,8 @@
         @if (perfil.sigueAEsteUsuario) {
           <button
             type="button"
-            class="rounded-2xl border border-border bg-surface px-4 py-2 font-heading text-sm font-semibold text-brand-text shadow-sm hover:bg-ice transition-colors"
+            class="cursor-pointer rounded-2xl border border-border bg-surface px-4 py-2 font-heading text-sm font-semibold text-brand-text shadow-sm hover:bg-ice transition-colors disabled:opacity-60"
+            [disabled]="followLoading"
             (click)="followClick.emit()"
           >
             Siguiendo
@@ -60,7 +61,8 @@
         } @else {
           <button
             type="button"
-            class="rounded-2xl bg-primary-dark px-4 py-2 font-heading text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-opacity"
+            class="cursor-pointer rounded-2xl bg-primary-dark px-4 py-2 font-heading text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-opacity disabled:opacity-60"
+            [disabled]="followLoading"
             (click)="followClick.emit()"
           >
             Seguir
@@ -90,14 +92,22 @@
       <p class="font-heading text-lg font-bold text-brand-text leading-tight">{{ perfil.contadorPublicaciones }}</p>
       <p class="text-xs text-muted">publicaciones</p>
     </div>
-    <div class="text-center">
+    <button
+      type="button"
+      class="cursor-pointer text-center px-2 py-1"
+      (click)="seguidoresClick.emit()"
+    >
       <p class="font-heading text-lg font-bold text-brand-text leading-tight">{{ perfil.contadorSeguidores }}</p>
       <p class="text-xs text-muted">seguidores</p>
-    </div>
-    <div class="text-center">
+    </button>
+    <button
+      type="button"
+      class="cursor-pointer text-center px-2 py-1"
+      (click)="seguidosClick.emit()"
+    >
       <p class="font-heading text-lg font-bold text-brand-text leading-tight">{{ perfil.contadorSeguidos }}</p>
       <p class="text-xs text-muted">siguiendo</p>
-    </div>
+    </button>
   </div>
 
   

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SidebarProfile } from '../../../../core/models/user-sidebar.model';
 import { UserAvatarComponent } from '../../../../shared/components/user-avatar/user-avatar.component';
@@ -13,4 +13,6 @@ export class SidebarProfileCard {
   @Input({ required: true }) profile!: SidebarProfile;
   @Input({ required: true }) ctaLink!: (string | number)[];
   @Input({ required: true }) ctaLabel!: string;
+  @Output() seguidoresClick = new EventEmitter<void>();
+  @Output() seguidosClick = new EventEmitter<void>();
 }

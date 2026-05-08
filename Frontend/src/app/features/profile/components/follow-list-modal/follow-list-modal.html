@@ -1,0 +1,80 @@
+<div class="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 pb-4 pt-16" (click)="closed.emit()">
+  <section
+    class="w-full max-w-2xl rounded-3xl border border-border bg-surface shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center justify-between border-b border-border px-6 py-5">
+      <h2 class="font-heading text-3xl font-semibold text-brand-text">{{ title() }}</h2>
+      <button
+        type="button"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-muted transition-colors hover:bg-ice hover:text-brand-text"
+        (click)="closed.emit()"
+      >
+        <i class="mdi mdi-close text-3xl"></i>
+      </button>
+    </div>
+
+    <div class="px-6 py-4">
+      <div class="relative">
+        <i class="mdi mdi-magnify absolute left-4 top-1/2 -translate-y-1/2 text-muted text-2xl"></i>
+        <input
+          type="text"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          placeholder="Buscar usuarios"
+          class="w-full rounded-2xl border border-border bg-ice py-3 pl-12 pr-4 text-xl text-brand-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blue/30"
+        />
+      </div>
+    </div>
+
+    <div class="max-h-[58vh] overflow-y-auto px-6 pb-5">
+      @if (loading()) {
+        <div class="space-y-4 py-4">
+          @for (n of [1,2,3,4,5]; track n) {
+            <div class="animate-pulse rounded-2xl border border-border bg-ice p-4">
+              <div class="h-6 w-48 rounded bg-border"></div>
+            </div>
+          }
+        </div>
+      } @else if (error()) {
+        <p class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{{ error() }}</p>
+      } @else if (filteredUsers().length === 0) {
+        <p class="py-10 text-center text-muted">No hay usuarios para mostrar.</p>
+      } @else {
+        <div class="space-y-1">
+          @for (user of filteredUsers(); track user.id) {
+            <div class="flex items-center gap-3 rounded-2xl px-2 py-2">
+              <a [routerLink]="['/app/profile', user.username]" class="shrink-0" (click)="closed.emit()">
+                <app-user-avatar size="lg" [username]="user.username" [fotoPerfilUrl]="user.fotoPerfilUrl" />
+              </a>
+
+              <a [routerLink]="['/app/profile', user.username]" class="min-w-0 flex-1 hover:underline" (click)="closed.emit()">
+                <p class="truncate font-heading text-xl leading-tight text-brand-text">{{ user.username }}</p>
+                @if (user.nombre) {
+                  <p class="truncate text-lg leading-tight text-muted">{{ user.nombre }}</p>
+                }
+              </a>
+
+              @if (!user.esPropio) {
+                <button
+                  type="button"
+                  [disabled]="isActionLoading(user.id)"
+                  (click)="toggleFollow(user)"
+                  class="shrink-0 rounded-2xl px-4 py-2.5 font-heading text-lg font-semibold transition-colors disabled:opacity-60"
+                  [class.bg-blue]="!user.seguidoPorMi"
+                  [class.text-white]="!user.seguidoPorMi"
+                  [class.hover:bg-blueDark]="!user.seguidoPorMi"
+                  [class.bg-ice]="user.seguidoPorMi"
+                  [class.text-brand-text]="user.seguidoPorMi"
+                  [class.hover:bg-border]="user.seguidoPorMi"
+                >
+                  {{ user.seguidoPorMi ? 'Siguiendo' : 'Seguir' }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>

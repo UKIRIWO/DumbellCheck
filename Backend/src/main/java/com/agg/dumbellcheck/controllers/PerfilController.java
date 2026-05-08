@@ -61,4 +61,32 @@ public class PerfilController {
         perfilService.deleteEnlace(userDetails.getUsername(), id);
         return ApiSuccessResponse.of(null);
     }
+
+    @PostMapping("/{username}/seguir")
+    public ApiSuccessResponse<PerfilDto> seguirUsuario(
+            @PathVariable String username,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(perfilService.seguirUsuario(userDetails.getUsername(), username));
+    }
+
+    @DeleteMapping("/{username}/seguir")
+    public ApiSuccessResponse<PerfilDto> dejarDeSeguirUsuario(
+            @PathVariable String username,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(perfilService.dejarDeSeguirUsuario(userDetails.getUsername(), username));
+    }
+
+    @GetMapping("/{username}/seguidores")
+    public ApiSuccessResponse<java.util.List<PerfilConnectionDto>> getSeguidores(
+            @PathVariable String username,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(perfilService.getSeguidores(userDetails.getUsername(), username));
+    }
+
+    @GetMapping("/{username}/seguidos")
+    public ApiSuccessResponse<java.util.List<PerfilConnectionDto>> getSeguidos(
+            @PathVariable String username,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(perfilService.getSeguidos(userDetails.getUsername(), username));
+    }
 }

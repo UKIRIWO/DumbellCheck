@@ -10,6 +10,7 @@ import com.agg.dumbellcheck.dto.UserInfoDTO.UsuarioDto;
 import com.agg.dumbellcheck.entities.UsuarioEntity;
 import com.agg.dumbellcheck.exceptions.ResourceNotFoundException;
 import com.agg.dumbellcheck.mapper.UserInfoMapper;
+import com.agg.dumbellcheck.repositories.SeguidorRepository;
 import com.agg.dumbellcheck.repositories.UsuarioRepository;
 
 import java.util.List;
@@ -18,10 +19,15 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final SeguidorRepository seguidorRepository;
     private final UserInfoMapper usuarioMapper;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, UserInfoMapper usuarioMapper) {
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            SeguidorRepository seguidorRepository,
+            UserInfoMapper usuarioMapper) {
         this.usuarioRepository = usuarioRepository;
+        this.seguidorRepository = seguidorRepository;
         this.usuarioMapper = usuarioMapper;
     }
 
@@ -49,8 +55,8 @@ public class UsuarioService {
                 currentUser.getUsername(),
                 currentUser.getNombre(),
                 currentUser.getFotoPerfilUrl(),
-                currentUser.getContadorSeguidores(),
-                currentUser.getContadorSeguidos(),
+                (int) seguidorRepository.countBySeguidoId(currentUser.getId()),
+                (int) seguidorRepository.countByUsuarioId(currentUser.getId()),
                 currentUser.getContadorPublicaciones());
 
         return new SidebarDataDto(perfil, sugerencias);

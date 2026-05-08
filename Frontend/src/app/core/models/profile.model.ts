@@ -36,3 +36,12 @@ export interface CreateLinkRequest {
   plataforma: Plataforma;
   url: string;
 }
+
+export interface PerfilConnection {
+  id: number;
+  username: string;
+  nombre?: string;
+  fotoPerfilUrl?: string;
+  seguidoPorMi: boolean;
+  esPropio: boolean;
+}

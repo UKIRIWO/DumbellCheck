@@ -106,6 +106,15 @@ public final class UserInfoDTO {
         boolean sigueAEsteUsuario
     ) {}
 
+    public record PerfilConnectionDto(
+        Integer id,
+        String username,
+        String nombre,
+        String fotoPerfilUrl,
+        boolean seguidoPorMi,
+        boolean esPropio
+    ) {}
+
     public record PerfilUpdateRequest(
         @NotBlank @Size(max = 100) String nombre,
         @NotBlank @Size(max = 100) String apellido1,
