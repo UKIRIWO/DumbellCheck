@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, switchMap } from 'rxjs';
 import { ExerciseApiService } from '../../../../core/services/exercise-api.service';
@@ -10,7 +10,14 @@ import { Ejercicio, GrupoMuscular } from '../../../../core/models/exercise.model
   templateUrl: './exercise-selector.component.html',
 })
 export class ExerciseSelectorComponent implements OnInit {
+  /** Filtro de grupo recordado mientras se crea la misma publicación (lo establece el padre). */
+  @Input() savedGrupoMuscularId: number | undefined = undefined;
+
+  /** Ejercicios ya añadidos al entreno; no se listan de nuevo (misma referencia que en el padre). */
+  @Input() workoutExercises: ReadonlyArray<{ ejercicioId: number }> = [];
+
   @Output() ejercicioSelected = new EventEmitter<Ejercicio>();
+  @Output() grupoMuscularFilterChange = new EventEmitter<number | undefined>();
   @Output() closed = new EventEmitter<void>();
 
   private readonly exerciseApi = inject(ExerciseApiService);
@@ -25,6 +32,8 @@ export class ExerciseSelectorComponent implements OnInit {
   private readonly triggerSearch$ = new Subject<void>();
 
   ngOnInit(): void {
+    this.selectedGrupoId = this.savedGrupoMuscularId;
+
     this.exerciseApi.getGruposMusculares().subscribe((g) => this.grupos.set(g));
 
     this.triggerSearch$
@@ -40,7 +49,10 @@ export class ExerciseSelectorComponent implements OnInit {
       )
       .subscribe({
         next: (result) => {
-          this.ejercicios.set(result);
+          const yaEnEntreno = new Set(
+            (this.workoutExercises ?? []).map((e) => e.ejercicioId),
+          );
+          this.ejercicios.set(result.filter((ej) => !yaEnEntreno.has(ej.id)));
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
@@ -54,6 +66,7 @@ export class ExerciseSelectorComponent implements OnInit {
   }
 
   onGrupoChange(): void {
+    this.grupoMuscularFilterChange.emit(this.selectedGrupoId);
     this.triggerSearch$.next();
   }
 

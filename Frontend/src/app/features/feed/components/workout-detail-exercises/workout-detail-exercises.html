@@ -27,10 +27,10 @@
             <tbody>
               @for (s of ej.series; track s.numeroSerie) {
                 <tr class="border-t border-borderSoft">
-                  <td class="py-1.5 pr-3 font-semibold text-brand-text">{{ s.numeroSerie }}</td>
-                  <td class="py-1.5 pr-3 text-right text-brand-text">{{ s.peso }}</td>
-                  <td class="py-1.5 pr-3 text-right text-brand-text">{{ s.repeticiones }}</td>
-                  <td class="py-1.5 text-right text-muted">{{ s.descansoSegundos ?? '—' }}s</td>
+                  <td class="py-1.5 pr-3 text-base font-semibold text-brand-text">{{ s.numeroSerie }}</td>
+                  <td class="py-1.5 pr-3 text-base text-right text-brand-text">{{ s.peso }}</td>
+                  <td class="py-1.5 pr-3 text-base text-right text-brand-text">{{ s.repeticiones }}</td>
+                  <td class="py-1.5 text-base text-right text-muted">{{ s.descansoSegundos ?? '—' }}s</td>
                 </tr>
               }
             </tbody>

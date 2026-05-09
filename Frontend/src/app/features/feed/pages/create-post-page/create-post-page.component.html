@@ -1,7 +1,7 @@
 <div class="bg-surface mt-5 rounded-xl">
   <!-- Top bar -->
   <div class="sticky top-0 z-10 flex items-center justify-between border-b border-border px-4 py-3 bg-surface">
-    <button class="flex items-center gap-1 text-sm font-medium text-muted" type="button" (click)="goBack()">
+    <button class="flex items-center gap-1 text-sm font-medium text-muted cursor-pointer" type="button" (click)="goBack()">
       <i class="mdi mdi-arrow-left text-lg"></i>
       Volver
     </button>
@@ -9,7 +9,7 @@
     <h1 class="font-heading font-semibold text-base text-brand-text">Entreno</h1>
 
     <button
-      class="rounded-lg bg-brand-blue px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-40 transition-colors"
+      class="rounded-lg bg-brand-blue px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-40 transition-colors cursor-pointer"
       type="button" [disabled]="!canSubmit || submitting()" (click)="submit()">
       {{ submitting() ? 'Guardando…' : 'Terminar' }}
     </button>
@@ -72,7 +72,7 @@
         </div>
         }
         <span class="flex-1 font-heading font-semibold text-brand-blue">{{ ej.nombre }}</span>
-        <button class="text-muted hover:text-danger transition-colors" type="button" (click)="removeEjercicio(exIdx)"
+        <button class="text-muted hover:text-danger transition-colors cursor-pointer" type="button" (click)="removeEjercicio(exIdx)"
           aria-label="Eliminar ejercicio">
           <i class="mdi mdi-delete-outline text-xl"></i>
         </button>
@@ -126,7 +126,7 @@
                   [placeholder]="getDescansoPlaceholder(ej, sIdx)" [(ngModel)]="serie.descansoInput" />
               </td>
               <td class="py-1 pr-3 text-center">
-                <button class="text-muted hover:text-danger transition-colors disabled:opacity-30" type="button"
+                <button class="text-muted hover:text-danger transition-colors disabled:opacity-30 cursor-pointer" type="button"
                   (click)="removeSerie(ej, sIdx)" [disabled]="ej.series.length <= 1" aria-label="Eliminar serie">
                   <i class="mdi mdi-close text-base"></i>
                 </button>
@@ -158,7 +158,7 @@
   <!-- Add exercise button -->
   <div class="px-4 py-4">
     <button
-      class="w-full rounded-2xl bg-brand-blue py-4 text-sm font-semibold text-white hover:bg-blueDark transition-colors"
+      class="w-full rounded-2xl bg-brand-blue py-4 text-sm font-semibold text-white hover:bg-blueDark transition-colors cursor-pointer"
       type="button" (click)="showExerciseSelector.set(true)">
       <i class="mdi mdi-plus text-base"></i> Agregar Ejercicio
     </button>
@@ -166,6 +166,12 @@
 
   <!-- Exercise selector overlay -->
   @if (showExerciseSelector()) {
-  <app-exercise-selector (ejercicioSelected)="onEjercicioSelected($event)" (closed)="showExerciseSelector.set(false)" />
+  <app-exercise-selector
+    [savedGrupoMuscularId]="persistedSelectorGrupoId"
+    [workoutExercises]="exercises"
+    (ejercicioSelected)="onEjercicioSelected($event)"
+    (grupoMuscularFilterChange)="persistedSelectorGrupoId = $event"
+    (closed)="showExerciseSelector.set(false)"
+  />
   }
 </div>

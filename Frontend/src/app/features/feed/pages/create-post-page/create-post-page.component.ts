@@ -54,6 +54,9 @@ export class CreatePostPageComponent {
   exercises: WorkingEjercicio[] = [];
 
   showExerciseSelector = signal(false);
+  /** Grupo muscular del selector: se mantiene al añadir varios ejercicios; se resetea al crear otra publicación. */
+  persistedSelectorGrupoId: number | undefined = undefined;
+
   submitting = signal(false);
   errorMessage = signal('');
   selectedMediaFile: File | null = null;
@@ -193,6 +196,7 @@ export class CreatePostPageComponent {
       this.postApi.createPost(finalPayload).subscribe({
         next: () => {
           this.submitting.set(false);
+          this.persistedSelectorGrupoId = undefined;
           this.currentUser.refresh().subscribe({ error: () => {} });
           this.router.navigateByUrl('/app/feed');
         },

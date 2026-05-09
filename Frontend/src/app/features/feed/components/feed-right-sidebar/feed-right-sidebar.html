@@ -44,7 +44,7 @@
 
   @if (suggestions().length > 0) {
     <section class="flex flex-col flex-1 min-h-0 rounded-3xl border border-border bg-surface p-5 shadow-sm">
-      <h3 class="shrink-0 font-heading text-[1.5rem] font-semibold text-brand-text">Puede que conozcas...</h3>
+      <h3 class="shrink-0 font-heading text-xl font-semibold text-brand-text">Puede que conozcas...</h3>
       
       <div class="mt-4 flex-1 min-h-0 space-y-4 overflow-y-auto pr-1">
         @for (suggestion of suggestions(); track suggestion.id) {
@@ -71,7 +71,7 @@
             </a>
             <button
               type="button"
-              class="shrink-0 cursor-pointer font-heading text-lg font-semibold transition-colors disabled:opacity-60"
+              class="shrink-0 cursor-pointer font-heading text-lg font-semibold transition-colors disabled:opacity-60 pr-2"
               [disabled]="isSuggestionActionLoading(suggestion.id)"
               (click)="toggleSuggestionFollow(suggestion.id, suggestion.username)"
               [class.text-blue]="!isSuggestionFollowed(suggestion.id)"

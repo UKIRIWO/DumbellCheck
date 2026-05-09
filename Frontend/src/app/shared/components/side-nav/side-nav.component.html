@@ -1,72 +1,51 @@
 <div class="flex h-full flex-col justify-between bg-white border-r border-border">
   <div class="space-y-5 p-4">
+    <div class="flex items-center gap-2">
+      <img src="assets/logoApp/logo_low_poly.png" alt="DumbellCheck" class="h-6" />
+      <h1 class="text-xl font-bold ml-1">DumbellCheck</h1>
+    </div>
     <div class="relative">
       <i class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-muted text-base"></i>
-      <input
-        type="text"
-        placeholder="Buscar usuarios"
-        class="w-full rounded-2xl border border-border bg-ice px-10 py-2 text-sm text-brand-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blue/30"
-      />
+      <input type="text" placeholder="Buscar usuarios"
+        class="w-full rounded-2xl border border-border bg-ice px-10 py-2 text-sm text-brand-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blue/30" />
     </div>
 
     <nav class="space-y-3">
-      <a
-        routerLink="/app/feed"
-        routerLinkActive="bg-ice text-primary-dark"
-        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
-      >
-        <i class="mdi mdi-home-outline text-lg"></i>
-        Feed
+      <a routerLink="/app/feed" routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice">
+        <i class="mdi mdi-home-outline text-2xl"></i>
+        <p class="text-lg ml-2">Feed</p>
       </a>
 
-      <a
-        routerLink="/app/routines"
-        routerLinkActive="bg-ice text-primary-dark"
-        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
-      >
-        <i class="mdi mdi-dumbbell text-lg"></i>
-        Rutinas
+      <a routerLink="/app/routines" routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice">
+        <i class="mdi mdi-dumbbell text-2xl"></i>
+        <p class="text-lg ml-2">Rutinas</p>
       </a>
 
-      <a
-        routerLink="/app/profile"
-        routerLinkActive="bg-ice text-primary-dark"
-        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
-      >
-        <i class="mdi mdi-account-outline text-lg"></i>
-        Perfil
+      <a routerLink="/app/profile" routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice">
+        <i class="mdi mdi-account-outline text-2xl"></i>
+        <p class="text-lg ml-2">Perfil</p>
       </a>
     </nav>
   </div>
 
   <div class="border-t border-border p-4">
     <div class="flex items-center gap-3">
-      <a
-        [routerLink]="profileLink()"
-        class="shrink-0"
-        [attr.aria-label]="'Ver tu perfil'"
-      >
-        <app-user-avatar
-          size="md"
-          [username]="username()"
-          [fotoPerfilUrl]="fotoPerfilUrl()"
-        />
+      <a [routerLink]="profileLink()" class="shrink-0" [attr.aria-label]="'Ver tu perfil'">
+        <app-user-avatar size="md" [username]="username()" [fotoPerfilUrl]="fotoPerfilUrl()" />
       </a>
       <div class="min-w-0 flex-1 flex items-center justify-between gap-2">
-        <a
-          [routerLink]="profileLink()"
-          class="truncate font-heading text-sm font-semibold text-brand-text hover:underline"
-        >
+        <a [routerLink]="profileLink()"
+          class="truncate font-heading text-sm font-semibold text-brand-text hover:underline">
           {{ username() }}
         </a>
         <div class="flex shrink-0 items-center">
-          <app-logout-confirm-button
-            buttonIconClass="mdi mdi-logout-variant text-lg"
-            buttonClass="flex h-9 w-9 items-center justify-center rounded-full bg-ice text-brand-blue hover:bg-sky/40 transition-colors"
-          />
+          <app-logout-confirm-button buttonIconClass="mdi mdi-logout-variant text-lg"
+            buttonClass="flex h-9 w-9 items-center justify-center rounded-full bg-ice text-brand-blue hover:bg-sky/40 transition-colors" />
         </div>
       </div>
     </div>
   </div>
 </div>
-

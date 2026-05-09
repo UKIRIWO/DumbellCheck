@@ -1,7 +1,7 @@
 <!-- Tab bar -->
 <div class="mb-4 flex rounded-2xl bg-ice p-1 mt-4">
   <button
-    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors"
+    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors cursor-pointer"
     [class.bg-surface]="activeTab() === 'descubrir'"
     [class.text-primary-dark]="activeTab() === 'descubrir'"
     [class.shadow-sm]="activeTab() === 'descubrir'"
@@ -12,7 +12,7 @@
     Descubrir
   </button>
   <button
-    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors"
+    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors cursor-pointer"
     [class.bg-surface]="activeTab() === 'publico'"
     [class.text-primary-dark]="activeTab() === 'publico'"
     [class.shadow-sm]="activeTab() === 'publico'"
@@ -23,7 +23,7 @@
     Público
   </button>
   <button
-    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors"
+    class="flex-1 rounded-xl py-2 text-sm font-semibold transition-colors cursor-pointer"
     [class.bg-surface]="activeTab() === 'amigos'"
     [class.text-primary-dark]="activeTab() === 'amigos'"
     [class.shadow-sm]="activeTab() === 'amigos'"

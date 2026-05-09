@@ -1,7 +1,7 @@
 <section class="rounded-3xl border border-border bg-surface p-6 shadow-sm">
   <div class="flex justify-center">
     <a [routerLink]="['/app/profile', profile.username]" [attr.aria-label]="'Ver perfil de ' + profile.username">
-      <app-user-avatar size="lg" [username]="profile.username" [fotoPerfilUrl]="profile.fotoPerfilUrl" />
+      <app-user-avatar size="xl" [username]="profile.username" [fotoPerfilUrl]="profile.fotoPerfilUrl" />
     </a>
   </div>
 
@@ -21,21 +21,21 @@
   <div class="mt-5 grid grid-cols-3 gap-2 text-center">
     <div>
       <p class="text-sm text-muted">Publicaciones</p>
-      <p class="font-heading text-[1.5rem] font-semibold leading-tight text-brand-text">{{ profile.contadorPublicaciones }}</p>
+      <p class="font-heading text-[1.3rem] font-semibold leading-tight text-brand-text">{{ profile.contadorPublicaciones }}</p>
     </div>
     <button type="button" class="cursor-pointer text-center" (click)="seguidoresClick.emit()">
       <p class="text-sm text-muted">Seguidores</p>
-      <p class="font-heading text-[1.5rem] font-semibold leading-tight text-brand-text">{{ profile.contadorSeguidores }}</p>
+      <p class="font-heading text-[1.3rem] font-semibold leading-tight text-brand-text">{{ profile.contadorSeguidores }}</p>
     </button>
     <button type="button" class="cursor-pointer text-center" (click)="seguidosClick.emit()">
       <p class="text-sm text-muted">Siguiendo</p>
-      <p class="font-heading text-[1.5rem] font-semibold leading-tight text-brand-text">{{ profile.contadorSeguidos }}</p>
+      <p class="font-heading text-[1.3rem] font-semibold leading-tight text-brand-text">{{ profile.contadorSeguidos }}</p>
     </button>
   </div>
 
   <a
     [routerLink]="ctaLink"
-    class="mt-5 block rounded-2xl bg-ice px-4 py-3 text-center font-heading text-lg font-semibold text-brand-text transition-colors hover:bg-sky/40"
+    class="mt-5 block rounded-2xl bg-ice px-4 py-3 text-center font-heading text-base font-semibold text-brand-text transition-colors hover:bg-sky/40"
   >
     {{ ctaLabel }}
   </a>
