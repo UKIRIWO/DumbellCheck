@@ -2,12 +2,13 @@ import { Component, OnInit, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LogoutConfirmButton } from '../logout-confirm-button/logout-confirm-button';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
+import { UserSearchComponent } from '../user-search/user-search.component';
 import { AuthStateService } from '../../../core/services/auth-state.service';
 import { CurrentUserService } from '../../../core/services/current-user.service';
 
 @Component({
   selector: 'app-side-nav',
-  imports: [RouterLink, RouterLinkActive, LogoutConfirmButton, UserAvatarComponent],
+  imports: [RouterLink, RouterLinkActive, LogoutConfirmButton, UserAvatarComponent, UserSearchComponent],
   templateUrl: './side-nav.component.html',
 })
 export class SideNavComponent implements OnInit {

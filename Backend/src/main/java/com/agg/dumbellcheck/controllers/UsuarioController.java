@@ -10,8 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.agg.dumbellcheck.dto.ApiSuccessResponse;
 import com.agg.dumbellcheck.dto.UserInfoDTO.SidebarDataDto;
+import com.agg.dumbellcheck.dto.UserInfoDTO.SidebarSuggestionDto;
 import com.agg.dumbellcheck.dto.UserInfoDTO.UsuarioDto;
 import com.agg.dumbellcheck.services.UsuarioService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -33,5 +36,12 @@ public class UsuarioController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "6") int limit) {
         return ApiSuccessResponse.of(usuarioService.getSidebarData(userDetails.getUsername(), Math.min(limit, 20)));
+    }
+
+    @GetMapping("/search")
+    public ApiSuccessResponse<List<SidebarSuggestionDto>> searchUsuarios(
+            @RequestParam("q") String query,
+            @RequestParam(defaultValue = "10") int limit) {
+        return ApiSuccessResponse.of(usuarioService.searchUsuarios(query, limit));
     }
 }

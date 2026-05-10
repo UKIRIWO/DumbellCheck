@@ -1,5 +1,6 @@
 package com.agg.dumbellcheck.repositories;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -38,4 +39,15 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
             ) as suggestions ON u.id = suggestions.seguido_id
             """, nativeQuery = true)
     List<UsuarioEntity> findSuggestedUsers(@Param("userId") Integer userId, @Param("limit") int limit);
+
+    @Query("""
+            SELECT u FROM UsuarioEntity u
+            WHERE u.estaActivo = true
+              AND (
+                LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%'))
+                OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :q, '%'))
+              )
+            ORDER BY u.username ASC
+            """)
+    List<UsuarioEntity> searchUsuarios(@Param("q") String query, Pageable pageable);
 }

@@ -1,0 +1,68 @@
+<div class="relative">
+  <i class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-muted text-base"></i>
+  <input
+    type="text"
+    placeholder="Buscar usuarios"
+    autocomplete="off"
+    [value]="query()"
+    (input)="onInput($any($event.target).value)"
+    (focus)="onFocus()"
+    class="w-full rounded-2xl border border-border bg-ice px-10 py-2 text-sm text-brand-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blue/30"
+  />
+  @if (query().length > 0) {
+    <button
+      type="button"
+      (click)="clear()"
+      class="absolute right-2 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-muted hover:bg-border hover:text-brand-text transition-colors"
+      aria-label="Limpiar búsqueda"
+    >
+      <i class="mdi mdi-close text-base"></i>
+    </button>
+  }
+
+  @if (open() && query().trim().length > 0) {
+    <div
+      class="absolute left-0 right-0 top-full z-30 mt-2 max-h-80 overflow-y-auto rounded-2xl border border-border bg-white shadow-lg"
+    >
+      @if (loading()) {
+        <div class="space-y-2 p-3">
+          @for (n of [1, 2, 3]; track n) {
+            <div class="flex items-center gap-3 animate-pulse">
+              <div class="h-9 w-9 rounded-full bg-ice"></div>
+              <div class="flex-1 space-y-1">
+                <div class="h-3 w-24 rounded bg-ice"></div>
+                <div class="h-3 w-16 rounded bg-ice"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (results().length === 0) {
+        <p class="px-4 py-3 text-sm text-muted">Sin resultados.</p>
+      } @else {
+        <ul class="py-1">
+          @for (user of results(); track user.id) {
+            <li>
+              <button
+                type="button"
+                (click)="selectUser(user)"
+                class="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-ice cursor-pointer"
+              >
+                <app-user-avatar
+                  size="md"
+                  [username]="user.username"
+                  [fotoPerfilUrl]="user.fotoPerfilUrl"
+                />
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-semibold text-brand-text">{{ user.username }}</p>
+                  @if (user.nombre) {
+                    <p class="truncate text-xs text-muted">{{ user.nombre }}</p>
+                  }
+                </div>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

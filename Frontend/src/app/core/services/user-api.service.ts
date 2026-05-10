@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
-import { SidebarData } from '../models/user-sidebar.model';
+import { SidebarData, SidebarSuggestion } from '../models/user-sidebar.model';
 import { API_BASE_URL } from '../tokens/api-base-url.token';
 
 @Injectable({ providedIn: 'root' })
@@ -17,6 +17,14 @@ export class UserApiService {
         params: { limit: limit.toString() },
       })
       .pipe(map((r) => (r as { success: true; data: SidebarData }).data));
+  }
+
+  searchUsers(query: string, limit = 10): Observable<SidebarSuggestion[]> {
+    return this.http
+      .get<ApiResponse<SidebarSuggestion[]>>(`${this.apiBaseUrl}/usuarios/search`, {
+        params: { q: query, limit: limit.toString() },
+      })
+      .pipe(map((r) => (r as { success: true; data: SidebarSuggestion[] }).data));
   }
 }
 

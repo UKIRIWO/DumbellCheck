@@ -1,5 +1,6 @@
 package com.agg.dumbellcheck.services;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.agg.dumbellcheck.mapper.UserInfoMapper;
 import com.agg.dumbellcheck.repositories.SeguidorRepository;
 import com.agg.dumbellcheck.repositories.UsuarioRepository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -60,5 +62,21 @@ public class UsuarioService {
                 currentUser.getContadorPublicaciones());
 
         return new SidebarDataDto(perfil, sugerencias);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SidebarSuggestionDto> searchUsuarios(String query, int limit) {
+        String trimmed = query == null ? "" : query.trim();
+        if (trimmed.isEmpty()) {
+            return Collections.emptyList();
+        }
+        int safeLimit = Math.max(1, Math.min(limit, 30));
+        return usuarioRepository.searchUsuarios(trimmed, PageRequest.of(0, safeLimit)).stream()
+                .map(user -> new SidebarSuggestionDto(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getNombre(),
+                        user.getFotoPerfilUrl()))
+                .toList();
     }
 }
