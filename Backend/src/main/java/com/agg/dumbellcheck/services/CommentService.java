@@ -4,10 +4,12 @@ import com.agg.dumbellcheck.dto.CommentCreateRequest;
 import com.agg.dumbellcheck.dto.CommentResponse;
 import com.agg.dumbellcheck.entities.ComentarioEntity;
 import com.agg.dumbellcheck.entities.PublicacionEntity;
+import com.agg.dumbellcheck.entities.TipoLike;
 import com.agg.dumbellcheck.entities.UsuarioEntity;
 import com.agg.dumbellcheck.exceptions.ResourceNotFoundException;
 import com.agg.dumbellcheck.exceptions.UnauthorizedActionException;
 import com.agg.dumbellcheck.repositories.ComentarioRepository;
+import com.agg.dumbellcheck.repositories.LikeRepository;
 import com.agg.dumbellcheck.repositories.PublicacionRepository;
 import com.agg.dumbellcheck.repositories.UsuarioRepository;
 
@@ -35,20 +37,25 @@ public class CommentService {
     private final ComentarioRepository comentarioRepository;
     private final PublicacionRepository publicacionRepository;
     private final UsuarioRepository usuarioRepository;
+    private final LikeRepository likeRepository;
 
     public CommentService(
             ComentarioRepository comentarioRepository,
             PublicacionRepository publicacionRepository,
-            UsuarioRepository usuarioRepository) {
+            UsuarioRepository usuarioRepository,
+            LikeRepository likeRepository) {
         this.comentarioRepository = comentarioRepository;
         this.publicacionRepository = publicacionRepository;
         this.usuarioRepository = usuarioRepository;
+        this.likeRepository = likeRepository;
     }
 
     @Transactional(readOnly = true)
-    public List<CommentResponse> getCommentsByPublicId(String publicId) {
+    public List<CommentResponse> getCommentsByPublicId(String publicId, String currentUsername) {
         PublicacionEntity publicacion = publicacionRepository.findByPublicIdAndEstaActivaTrue(publicId)
                 .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
+        UsuarioEntity currentUser = usuarioRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         List<ComentarioEntity> comments = comentarioRepository.findAllByPublicacionIdWithUsuario(publicacion.getId());
         Map<Integer, ComentarioEntity> rootEntities = new LinkedHashMap<>();
@@ -68,6 +75,7 @@ public class CommentService {
         }
 
         Map<String, String> validMentions = resolveValidMentions(collectAllMentions(comments));
+        Set<Integer> likedCommentIds = likedCommentIds(currentUser.getId(), comments);
 
         return rootEntities.values().stream()
                 .filter(root -> {
@@ -77,7 +85,8 @@ public class CommentService {
                 .map(root -> toResponse(
                         root,
                         activeRepliesByRootId.getOrDefault(root.getId(), Collections.emptyList()),
-                        validMentions))
+                        validMentions,
+                        likedCommentIds))
                 .toList();
     }
 
@@ -137,7 +146,7 @@ public class CommentService {
 
         comentarioRepository.save(comentario);
         Map<String, String> validMentions = resolveValidMentions(extractMentionsLowercase(comentario.getTexto()));
-        return toResponse(comentario, Collections.emptyList(), validMentions);
+        return toResponse(comentario, Collections.emptyList(), validMentions, Collections.emptySet());
     }
 
     private ComentarioEntity resolveRootComment(ComentarioEntity comment) {
@@ -151,7 +160,8 @@ public class CommentService {
     private CommentResponse toResponse(
             ComentarioEntity c,
             List<ComentarioEntity> replies,
-            Map<String, String> validMentions) {
+            Map<String, String> validMentions,
+            Set<Integer> likedCommentIds) {
         boolean eliminado = !c.isEstaActivo();
         UsuarioEntity u = c.getUsuario();
         CommentResponse.UsuarioResumen usuarioDto = eliminado
@@ -167,14 +177,26 @@ public class CommentService {
                 c.getComentarioPadre() != null ? c.getComentarioPadre().getId() : null,
                 texto,
                 c.getContadorLikes(),
+                !eliminado && likedCommentIds.contains(c.getId()),
                 eliminado,
                 c.getFechaCreacion(),
                 usuarioDto,
                 menciones,
                 replies.stream()
-                        .map(reply -> toResponse(reply, Collections.emptyList(), validMentions))
+                        .map(reply -> toResponse(reply, Collections.emptyList(), validMentions, likedCommentIds))
                         .toList()
         );
+    }
+
+    private Set<Integer> likedCommentIds(Integer usuarioId, List<ComentarioEntity> comments) {
+        List<Integer> commentIds = comments.stream()
+                .filter(ComentarioEntity::isEstaActivo)
+                .map(ComentarioEntity::getId)
+                .toList();
+        if (commentIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return new HashSet<>(likeRepository.findLikedReferenceIds(usuarioId, TipoLike.comentario, commentIds));
     }
 
     private Set<String> collectAllMentions(List<ComentarioEntity> comments) {

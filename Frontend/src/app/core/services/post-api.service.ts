@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { API_BASE_URL } from '../tokens/api-base-url.token';
 import { ApiResponse } from '../models/api-response.model';
+import { LikeToggleResponse } from '../models/like.model';
 import { CreatePostRequest, PostFeedItem, PageResponse, CursorPageResponse } from '../models/post.model';
 
 @Injectable({ providedIn: 'root' })
@@ -46,6 +47,15 @@ export class PostApiService {
     return this.http
       .get<ApiResponse<PostFeedItem>>(`${this.apiBaseUrl}/publicaciones/${encodeURIComponent(publicId)}`)
       .pipe(map((r) => (r as { success: true; data: PostFeedItem }).data));
+  }
+
+  toggleLike(publicId: string): Observable<LikeToggleResponse> {
+    return this.http
+      .post<ApiResponse<LikeToggleResponse>>(
+        `${this.apiBaseUrl}/publicaciones/${encodeURIComponent(publicId)}/like`,
+        {},
+      )
+      .pipe(map((r) => (r as { success: true; data: LikeToggleResponse }).data));
   }
 
   uploadMedia(file: File): Observable<string> {

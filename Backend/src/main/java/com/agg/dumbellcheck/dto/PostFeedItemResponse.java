@@ -12,6 +12,7 @@ public record PostFeedItemResponse(
         String descripcion,
         String multimediaUrl,
         Integer contadorLikes,
+        boolean meGusta,
         Integer contadorComentarios,
         Instant fechaCreacion,
         List<EjercicioEnPost> ejercicios

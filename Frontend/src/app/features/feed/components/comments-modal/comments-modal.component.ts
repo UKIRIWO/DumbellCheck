@@ -49,6 +49,7 @@ export class CommentsModalComponent implements OnChanges {
   readonly newComment = signal('');
   readonly submitting = signal(false);
   readonly replyTarget = signal<ReplyTarget | null>(null);
+  readonly likingCommentId = signal<number | null>(null);
 
   readonly currentUsername = computed(() => this.currentUser.profile()?.username ?? '');
   readonly currentFotoPerfilUrl = computed(
@@ -146,6 +147,42 @@ export class CommentsModalComponent implements OnChanges {
     if (comment.eliminado || !comment.usuario) return false;
     const me = this.currentUsername();
     return !!me && comment.usuario.username === me;
+  }
+
+  toggleCommentLike(comment: Comment): void {
+    if (comment.eliminado || this.likingCommentId() !== null) return;
+
+    this.likingCommentId.set(comment.id);
+    this.commentApi.toggleLike(this.post.publicId, comment.id).subscribe({
+      next: (response) => {
+        this.comments.update((prev) =>
+          prev.map((root) => {
+            if (root.id === comment.id) {
+              return {
+                ...root,
+                meGusta: response.meGusta,
+                contadorLikes: response.contadorLikes,
+              };
+            }
+
+            return {
+              ...root,
+              respuestas: root.respuestas.map((reply) =>
+                reply.id === comment.id
+                  ? {
+                      ...reply,
+                      meGusta: response.meGusta,
+                      contadorLikes: response.contadorLikes,
+                    }
+                  : reply,
+              ),
+            };
+          }),
+        );
+        this.likingCommentId.set(null);
+      },
+      error: () => this.likingCommentId.set(null),
+    });
   }
 
   deleteComment(comment: Comment, parent?: Comment): void {

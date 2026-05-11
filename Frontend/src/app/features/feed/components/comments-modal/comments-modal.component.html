@@ -135,6 +135,22 @@
                       }
                     </div>
                   </div>
+                  <button
+                    type="button"
+                    (click)="toggleCommentLike(comment)"
+                    [disabled]="likingCommentId() === comment.id"
+                    class="ml-auto flex shrink-0 items-center gap-1 rounded-full text-xs transition-colors hover:text-danger disabled:cursor-not-allowed disabled:opacity-60"
+                    [class.text-danger]="comment.meGusta"
+                    [class.text-muted]="!comment.meGusta"
+                    [attr.aria-label]="comment.meGusta ? 'Quitar like del comentario' : 'Dar like al comentario'"
+                  >
+                    <i
+                      class="mdi text-base"
+                      [class.mdi-heart]="comment.meGusta"
+                      [class.mdi-heart-outline]="!comment.meGusta"
+                    ></i>
+                    {{ comment.contadorLikes }}
+                  </button>
                 </div>
               }
 
@@ -196,6 +212,22 @@
                           }
                         </div>
                       </div>
+                      <button
+                        type="button"
+                        (click)="toggleCommentLike(reply)"
+                        [disabled]="likingCommentId() === reply.id"
+                        class="ml-auto flex shrink-0 items-center gap-1 rounded-full text-xs transition-colors hover:text-danger disabled:cursor-not-allowed disabled:opacity-60"
+                        [class.text-danger]="reply.meGusta"
+                        [class.text-muted]="!reply.meGusta"
+                        [attr.aria-label]="reply.meGusta ? 'Quitar like del comentario' : 'Dar like al comentario'"
+                      >
+                        <i
+                          class="mdi text-base"
+                          [class.mdi-heart]="reply.meGusta"
+                          [class.mdi-heart-outline]="!reply.meGusta"
+                        ></i>
+                        {{ reply.contadorLikes }}
+                      </button>
                     </li>
                   }
                 </ul>

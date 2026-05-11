@@ -9,6 +9,7 @@ export interface Comment {
   comentarioPadreId: number | null;
   texto: string | null;
   contadorLikes: number;
+  meGusta: boolean;
   eliminado: boolean;
   fechaCreacion: string;
   usuario: CommentUserSummary | null;

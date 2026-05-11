@@ -2,8 +2,10 @@ package com.agg.dumbellcheck.controllers;
 
 import com.agg.dumbellcheck.dto.ApiSuccessResponse;
 import com.agg.dumbellcheck.dto.CursorPageResponse;
+import com.agg.dumbellcheck.dto.LikeToggleResponse;
 import com.agg.dumbellcheck.dto.PostCreateRequest;
 import com.agg.dumbellcheck.dto.PostFeedItemResponse;
+import com.agg.dumbellcheck.services.LikeService;
 import com.agg.dumbellcheck.services.MediaStorageService;
 import com.agg.dumbellcheck.services.PostService;
 import jakarta.validation.Valid;
@@ -20,10 +22,12 @@ public class PostController {
 
     private final PostService postService;
     private final MediaStorageService mediaStorageService;
+    private final LikeService likeService;
 
-    public PostController(PostService postService, MediaStorageService mediaStorageService) {
+    public PostController(PostService postService, MediaStorageService mediaStorageService, LikeService likeService) {
         this.postService = postService;
         this.mediaStorageService = mediaStorageService;
+        this.likeService = likeService;
     }
 
     @PostMapping
@@ -36,8 +40,11 @@ public class PostController {
     @GetMapping("/publico")
     public ApiSuccessResponse<Page<PostFeedItemResponse>> getFeedPublico(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ApiSuccessResponse.of(postService.getFeedPublico(PageRequest.of(page, Math.min(size, 50))));
+            @RequestParam(defaultValue = "20") int size,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(postService.getFeedPublico(
+                userDetails.getUsername(),
+                PageRequest.of(page, Math.min(size, 50))));
     }
 
     @GetMapping("/amigos")
@@ -59,8 +66,17 @@ public class PostController {
     }
 
     @GetMapping("/{publicId}")
-    public ApiSuccessResponse<PostFeedItemResponse> getByPublicId(@PathVariable String publicId) {
-        return ApiSuccessResponse.of(postService.getPostByPublicId(publicId));
+    public ApiSuccessResponse<PostFeedItemResponse> getByPublicId(
+            @PathVariable String publicId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(postService.getPostByPublicId(publicId, userDetails.getUsername()));
+    }
+
+    @PostMapping("/{publicId}/like")
+    public ApiSuccessResponse<LikeToggleResponse> toggleLike(
+            @PathVariable String publicId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(likeService.togglePublicationLike(publicId, userDetails.getUsername()));
     }
 
     @PostMapping("/media")
@@ -72,7 +88,12 @@ public class PostController {
     public ApiSuccessResponse<CursorPageResponse<PostFeedItemResponse>> getByUser(
             @PathVariable String username,
             @RequestParam(required = false) Integer cursor,
-            @RequestParam(defaultValue = "18") int size) {
-        return ApiSuccessResponse.of(postService.getPostsByUser(username, cursor, size));
+            @RequestParam(defaultValue = "18") int size,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ApiSuccessResponse.of(postService.getPostsByUser(
+                username,
+                userDetails.getUsername(),
+                cursor,
+                size));
     }
 }

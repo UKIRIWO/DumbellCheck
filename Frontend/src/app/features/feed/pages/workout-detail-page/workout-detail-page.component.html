@@ -31,10 +31,18 @@
       }
 
       <div class="flex items-center gap-4 border-t border-border px-4 py-3">
-        <span class="flex items-center gap-1.5 text-sm text-muted">
-          <i class="mdi mdi-heart-outline text-base"></i>
+        <button
+          type="button"
+          (click)="toggleLike()"
+          [disabled]="liking()"
+          class="flex items-center gap-1.5 rounded-full text-sm transition-colors hover:text-danger disabled:cursor-not-allowed disabled:opacity-60"
+          [class.text-danger]="p.meGusta"
+          [class.text-muted]="!p.meGusta"
+          [attr.aria-label]="p.meGusta ? 'Quitar like' : 'Dar like'"
+        >
+          <i class="mdi text-base" [class.mdi-heart]="p.meGusta" [class.mdi-heart-outline]="!p.meGusta"></i>
           {{ p.contadorLikes }}
-        </span>
+        </button>
         <button
           type="button"
           (click)="openComments()"

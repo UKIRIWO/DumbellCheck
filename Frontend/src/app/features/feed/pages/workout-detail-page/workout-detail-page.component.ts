@@ -28,6 +28,7 @@ export class WorkoutDetailPageComponent implements OnInit, OnDestroy {
   loading = signal(true);
   errorMessage = signal('');
   commentsOpen = signal(false);
+  liking = signal(false);
 
   ngOnInit(): void {
     this.routeSub = this.route.paramMap
@@ -78,6 +79,24 @@ export class WorkoutDetailPageComponent implements OnInit, OnDestroy {
 
   openComments(): void {
     this.commentsOpen.set(true);
+  }
+
+  toggleLike(): void {
+    const current = this.post();
+    if (!current || this.liking()) return;
+
+    this.liking.set(true);
+    this.postApi.toggleLike(current.publicId).subscribe({
+      next: (response) => {
+        this.post.set({
+          ...current,
+          meGusta: response.meGusta,
+          contadorLikes: response.contadorLikes,
+        });
+        this.liking.set(false);
+      },
+      error: () => this.liking.set(false),
+    });
   }
 
   closeComments(): void {

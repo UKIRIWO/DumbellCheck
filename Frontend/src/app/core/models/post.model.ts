@@ -52,6 +52,7 @@ export interface PostFeedItem {
   descripcion?: string;
   multimediaUrl?: string;
   contadorLikes: number;
+  meGusta: boolean;
   contadorComentarios: number;
   fechaCreacion: string;
   ejercicios: EjercicioEnPost[];

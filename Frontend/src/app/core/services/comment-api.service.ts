@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { API_BASE_URL } from '../tokens/api-base-url.token';
 import { ApiResponse } from '../models/api-response.model';
 import { Comment, CreateCommentRequest } from '../models/comment.model';
+import { LikeToggleResponse } from '../models/like.model';
 
 @Injectable({ providedIn: 'root' })
 export class CommentApiService {
@@ -35,5 +36,14 @@ export class CommentApiService {
         `${this.apiBaseUrl}/publicaciones/${encodeURIComponent(publicId)}/comentarios/${commentId}`,
       )
       .pipe(map(() => undefined));
+  }
+
+  toggleLike(publicId: string, commentId: number): Observable<LikeToggleResponse> {
+    return this.http
+      .post<ApiResponse<LikeToggleResponse>>(
+        `${this.apiBaseUrl}/publicaciones/${encodeURIComponent(publicId)}/comentarios/${commentId}/like`,
+        {},
+      )
+      .pipe(map((r) => (r as { success: true; data: LikeToggleResponse }).data));
   }
 }

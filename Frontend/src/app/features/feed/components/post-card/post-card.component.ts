@@ -1,6 +1,7 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, Input, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { PostApiService } from '../../../../core/services/post-api.service';
 import { PostFeedItem } from '../../../../core/models/post.model';
 import { UserAvatarComponent } from '../../../../shared/components/user-avatar/user-avatar.component';
 import { CommentsModalComponent } from '../comments-modal/comments-modal.component';
@@ -11,9 +12,12 @@ import { CommentsModalComponent } from '../comments-modal/comments-modal.compone
   templateUrl: './post-card.component.html',
 })
 export class PostCardComponent {
+  private readonly postApi = inject(PostApiService);
+
   @Input({ required: true }) post!: PostFeedItem;
   currentSlide = 0;
   readonly commentsOpen = signal(false);
+  readonly liking = signal(false);
 
   get visibleEjercicios() {
     return this.post.ejercicios.slice(0, 5);
@@ -67,6 +71,21 @@ export class PostCardComponent {
 
   closeComments(): void {
     this.commentsOpen.set(false);
+  }
+
+  toggleLike(event: Event): void {
+    event.stopPropagation();
+    if (this.liking()) return;
+
+    this.liking.set(true);
+    this.postApi.toggleLike(this.post.publicId).subscribe({
+      next: (response) => {
+        this.post.meGusta = response.meGusta;
+        this.post.contadorLikes = response.contadorLikes;
+        this.liking.set(false);
+      },
+      error: () => this.liking.set(false),
+    });
   }
 
   onCommentCreated(): void {
