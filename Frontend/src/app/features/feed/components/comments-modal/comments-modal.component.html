@@ -98,7 +98,11 @@
                     </span>
                   </div>
                   <p class="mt-0.5 whitespace-pre-wrap break-words text-sm text-brand-text">
-                    {{ comment.texto }}
+                    <app-comment-text
+                      [texto]="comment.texto"
+                      [mencionesValidas]="comment.mencionesValidas"
+                      (mentionClick)="closed.emit()"
+                    />
                   </p>
                   <button
                     type="button"
@@ -141,7 +145,11 @@
                           </span>
                         </div>
                         <p class="mt-0.5 whitespace-pre-wrap break-words text-sm text-brand-text">
-                          {{ reply.texto }}
+                          <app-comment-text
+                            [texto]="reply.texto"
+                            [mencionesValidas]="reply.mencionesValidas"
+                            (mentionClick)="closed.emit()"
+                          />
                         </p>
                         <button
                           type="button"

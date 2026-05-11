@@ -16,12 +16,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CommentService {
+
+    private static final Pattern MENTION_PATTERN = Pattern.compile("@([A-Za-z0-9_]{1,50})");
 
     private final ComentarioRepository comentarioRepository;
     private final PublicacionRepository publicacionRepository;
@@ -58,8 +66,13 @@ public class CommentService {
             }
         }
 
+        Map<String, String> validMentions = resolveValidMentions(collectAllMentions(comments));
+
         return rootEntities.values().stream()
-                .map(root -> toResponse(root, repliesByRootId.getOrDefault(root.getId(), Collections.emptyList())))
+                .map(root -> toResponse(
+                        root,
+                        repliesByRootId.getOrDefault(root.getId(), Collections.emptyList()),
+                        validMentions))
                 .toList();
     }
 
@@ -86,7 +99,8 @@ public class CommentService {
         comentario.setFechaCreacion(Instant.now());
 
         comentarioRepository.save(comentario);
-        return toResponse(comentario, Collections.emptyList());
+        Map<String, String> validMentions = resolveValidMentions(extractMentionsLowercase(comentario.getTexto()));
+        return toResponse(comentario, Collections.emptyList(), validMentions);
     }
 
     private ComentarioEntity resolveRootComment(ComentarioEntity comment) {
@@ -97,7 +111,10 @@ public class CommentService {
         return root;
     }
 
-    private CommentResponse toResponse(ComentarioEntity c, List<ComentarioEntity> replies) {
+    private CommentResponse toResponse(
+            ComentarioEntity c,
+            List<ComentarioEntity> replies,
+            Map<String, String> validMentions) {
         UsuarioEntity u = c.getUsuario();
         return new CommentResponse(
                 c.getId(),
@@ -110,9 +127,56 @@ public class CommentService {
                         u.getUsername(),
                         u.getFotoPerfilUrl()
                 ),
+                mentionsForText(c.getTexto(), validMentions),
                 replies.stream()
-                        .map(reply -> toResponse(reply, Collections.emptyList()))
+                        .map(reply -> toResponse(reply, Collections.emptyList(), validMentions))
                         .toList()
         );
+    }
+
+    private Set<String> collectAllMentions(List<ComentarioEntity> comments) {
+        Set<String> mentions = new LinkedHashSet<>();
+        for (ComentarioEntity comment : comments) {
+            mentions.addAll(extractMentionsLowercase(comment.getTexto()));
+        }
+        return mentions;
+    }
+
+    private Set<String> extractMentionsLowercase(String texto) {
+        if (texto == null || texto.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<String> result = new LinkedHashSet<>();
+        Matcher matcher = MENTION_PATTERN.matcher(texto);
+        while (matcher.find()) {
+            result.add(matcher.group(1).toLowerCase(Locale.ROOT));
+        }
+        return result;
+    }
+
+    private Map<String, String> resolveValidMentions(Set<String> usernamesLowercase) {
+        if (usernamesLowercase.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> result = new LinkedHashMap<>();
+        for (String realUsername : usuarioRepository.findExistingUsernames(usernamesLowercase)) {
+            result.put(realUsername.toLowerCase(Locale.ROOT), realUsername);
+        }
+        return result;
+    }
+
+    private List<String> mentionsForText(String texto, Map<String, String> validMentions) {
+        if (validMentions.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Set<String> alreadyAdded = new HashSet<>();
+        List<String> result = new ArrayList<>();
+        for (String mentionLower : extractMentionsLowercase(texto)) {
+            String realUsername = validMentions.get(mentionLower);
+            if (realUsername != null && alreadyAdded.add(realUsername)) {
+                result.add(realUsername);
+            }
+        }
+        return result;
     }
 }

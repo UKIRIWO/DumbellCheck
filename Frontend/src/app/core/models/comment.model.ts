@@ -11,6 +11,7 @@ export interface Comment {
   contadorLikes: number;
   fechaCreacion: string;
   usuario: CommentUserSummary;
+  mencionesValidas: string[];
   respuestas: Comment[];
 }
 

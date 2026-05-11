@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.agg.dumbellcheck.entities.UsuarioEntity;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.List;
 
@@ -50,4 +51,11 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
             ORDER BY u.username ASC
             """)
     List<UsuarioEntity> searchUsuarios(@Param("q") String query, Pageable pageable);
+
+    @Query("""
+            SELECT u.username FROM UsuarioEntity u
+            WHERE u.estaActivo = true
+              AND LOWER(u.username) IN :usernamesLowercase
+            """)
+    List<String> findExistingUsernames(@Param("usernamesLowercase") Collection<String> usernamesLowercase);
 }

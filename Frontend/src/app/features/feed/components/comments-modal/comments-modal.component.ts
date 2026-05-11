@@ -20,6 +20,7 @@ import { CurrentUserService } from '../../../../core/services/current-user.servi
 import { Comment } from '../../../../core/models/comment.model';
 import { PostFeedItem } from '../../../../core/models/post.model';
 import { UserAvatarComponent } from '../../../../shared/components/user-avatar/user-avatar.component';
+import { CommentTextComponent } from '../comment-text/comment-text.component';
 
 type ReplyTarget = {
   rootCommentId: number;
@@ -29,7 +30,7 @@ type ReplyTarget = {
 @Component({
   selector: 'app-comments-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, DatePipe, UserAvatarComponent],
+  imports: [CommonModule, FormsModule, RouterLink, DatePipe, UserAvatarComponent, CommentTextComponent],
   templateUrl: './comments-modal.component.html',
 })
 export class CommentsModalComponent implements OnChanges {

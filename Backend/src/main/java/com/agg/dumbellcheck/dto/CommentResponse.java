@@ -10,6 +10,7 @@ public record CommentResponse(
         Integer contadorLikes,
         Instant fechaCreacion,
         UsuarioResumen usuario,
+        List<String> mencionesValidas,
         List<CommentResponse> respuestas
 ) {
 
