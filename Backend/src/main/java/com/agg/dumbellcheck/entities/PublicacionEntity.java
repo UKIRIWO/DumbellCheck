@@ -26,10 +26,6 @@ public class PublicacionEntity {
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rutina_origen_id")
-    private RutinaEntity rutinaOrigen;
-
     @Column(nullable = false)
     private String titulo;
 

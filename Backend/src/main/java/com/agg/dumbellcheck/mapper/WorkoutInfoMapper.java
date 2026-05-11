@@ -53,7 +53,6 @@ public interface WorkoutInfoMapper {
 
     @Mapping(target = "usuario.id", source = "usuarioId")
     @Mapping(target = "ejercicios", ignore = true)
-    @Mapping(target = "publicacionesOrigen", ignore = true)
     @Mapping(target = "mensajesCompartidos", ignore = true)
     RutinaEntity toRutinaEntity(RutinaDto dto);
 

@@ -17,6 +17,20 @@
 
   <!-- Post metadata -->
   <div class="px-4 pt-4 space-y-3 ">
+    <!-- Load from routine template -->
+    <button
+      type="button"
+      (click)="openTemplatePicker()"
+      class="flex w-full items-center gap-2 rounded-xl border border-dashed border-border bg-ice px-4 py-2.5 text-sm font-medium text-muted transition-colors hover:border-brand-blue hover:text-brand-blue"
+    >
+      <i class="mdi mdi-clipboard-list-outline text-base"></i>
+      @if (plantillaAplicada) {
+        <span class="text-brand-blue">Plantilla aplicada — Cambiar</span>
+      } @else {
+        Usar rutina como plantilla
+      }
+    </button>
+
     <input
       class="w-full rounded-xl border border-border bg-ice px-4 py-3 text-sm text-brand-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary-dark"
       type="text" placeholder="Título del entrenamiento *" [(ngModel)]="titulo" maxlength="200" />
@@ -175,3 +189,62 @@
   />
   }
 </div>
+
+<!-- Template picker modal -->
+@if (showTemplatePicker()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+    (click)="closeTemplatePicker()"
+  >
+    <section
+      class="flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+      style="max-height: 80vh"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="flex items-center justify-between border-b border-border px-5 py-4">
+        <h2 class="font-heading text-lg font-semibold text-brand-text">Usar rutina como plantilla</h2>
+        <button
+          type="button"
+          (click)="closeTemplatePicker()"
+          class="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-ice"
+        >
+          <i class="mdi mdi-close text-xl"></i>
+        </button>
+      </header>
+
+      <div class="flex-1 overflow-y-auto px-5 py-4">
+        @if (templateLoading()) {
+          <div class="space-y-3">
+            @for (n of [1, 2, 3]; track n) {
+              <div class="animate-pulse rounded-xl border border-border p-4">
+                <div class="h-4 w-40 rounded bg-ice"></div>
+                <div class="mt-2 h-3 w-full rounded bg-ice"></div>
+              </div>
+            }
+          </div>
+        } @else if (templateRoutines().length === 0) {
+          <p class="py-8 text-center text-sm text-muted">No tienes rutinas guardadas aún.</p>
+        } @else {
+          <ul class="space-y-3">
+            @for (routine of templateRoutines(); track routine.publicId) {
+              <li>
+                <button
+                  type="button"
+                  (click)="selectTemplate(routine)"
+                  class="w-full rounded-xl border border-border bg-surface px-4 py-3 text-left transition-colors hover:border-brand-blue hover:bg-ice"
+                >
+                  <p class="font-heading text-sm font-semibold text-brand-text">{{ routine.nombre }}</p>
+                  @if (routine.nombresEjercicios.length > 0) {
+                    <p class="mt-0.5 truncate text-xs text-muted">
+                      {{ routine.nombresEjercicios.slice(0, 4).join(', ') }}{{ routine.nombresEjercicios.length > 4 ? '…' : '' }}
+                    </p>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+  </div>
+}

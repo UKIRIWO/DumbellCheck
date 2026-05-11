@@ -1,0 +1,135 @@
+<section class="mt-4 pb-8">
+  <button
+    type="button"
+    class="mb-4 inline-flex cursor-pointer items-center gap-1 text-sm font-medium text-muted hover:text-primary-dark"
+    (click)="goBack()"
+  >
+    <i class="mdi mdi-arrow-left text-lg"></i>
+    Volver
+  </button>
+
+  @if (loading()) {
+    <div class="animate-pulse space-y-3 rounded-2xl border border-border bg-surface p-4 shadow-sm">
+      <div class="h-4 w-32 rounded bg-border"></div>
+      <div class="h-6 w-2/3 rounded bg-border"></div>
+      <div class="h-4 w-1/2 rounded bg-border"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="rounded-xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
+  } @else if (routine(); as r) {
+    <article class="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+
+      <!-- Header -->
+      <div class="flex items-start gap-3 border-b border-border px-5 py-4">
+        <a
+          [routerLink]="['/app/profile', r.usuario.username]"
+          class="shrink-0"
+          [attr.aria-label]="'Ver perfil de ' + r.usuario.username"
+        >
+          <app-user-avatar
+            size="md"
+            [username]="r.usuario.username"
+            [fotoPerfilUrl]="r.usuario.fotoPerfilUrl ?? null"
+          />
+        </a>
+        <div class="min-w-0 flex-1">
+          <a
+            [routerLink]="['/app/profile', r.usuario.username]"
+            class="block truncate font-heading text-sm font-semibold text-brand-text hover:underline"
+          >
+            {{ r.usuario.username }}
+          </a>
+          <p class="text-xs text-muted">
+            {{ r.fechaCreacion | date: 'd MMM yyyy' : '' : 'es' }}
+          </p>
+          <h1 class="mt-1 font-heading text-xl font-bold text-brand-text">{{ r.nombre }}</h1>
+          @if (r.descripcion) {
+            <p class="mt-1 text-sm text-brand-text">{{ r.descripcion }}</p>
+          }
+        </div>
+      </div>
+
+      <!-- Exercises -->
+      @if (ejerciciosForDisplay().length > 0) {
+        <app-workout-detail-exercises [ejercicios]="ejerciciosForDisplay()" />
+      }
+
+      <!-- Action footer -->
+      <div class="flex flex-col gap-2 border-t border-border px-5 py-4">
+        <!-- Copy link button -->
+        <button
+          type="button"
+          (click)="copyLink()"
+          class="flex w-full items-center justify-center gap-2 rounded-xl border border-border py-2.5 text-sm font-semibold text-brand-text transition-colors hover:bg-ice"
+        >
+          @if (copySuccess()) {
+            <i class="mdi mdi-check text-base text-success"></i>
+            <span class="text-success">Enlace copiado</span>
+          } @else {
+            <i class="mdi mdi-link-variant text-base"></i>
+            Copiar enlace
+          }
+        </button>
+
+        @if (isOwner()) {
+          <button
+            type="button"
+            (click)="editRoutine()"
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-blue py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blueDark"
+          >
+            <i class="mdi mdi-pencil-outline text-base"></i>
+            Editar rutina
+          </button>
+
+          <button
+            type="button"
+            (click)="openDeleteModal()"
+            class="flex w-full items-center justify-center gap-2 rounded-xl border border-danger py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-red-50"
+          >
+            <i class="mdi mdi-trash-can-outline text-base"></i>
+            Eliminar rutina
+          </button>
+        }
+      </div>
+    </article>
+  }
+</section>
+
+<!-- Delete confirmation modal -->
+@if (showDeleteModal()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+    (click)="cancelDelete()"
+  >
+    <div
+      class="w-full max-w-sm overflow-hidden rounded-2xl bg-surface shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="px-6 py-5">
+        <h3 class="font-heading text-lg font-semibold text-brand-text">Eliminar rutina</h3>
+        <p class="mt-2 text-sm text-muted">
+          ¿Seguro que quieres eliminar la rutina
+          <span class="font-semibold text-brand-text">"{{ routine()?.nombre }}"</span>?
+          Esta acción no se puede deshacer.
+        </p>
+      </div>
+      <div class="flex gap-3 border-t border-border px-6 py-4">
+        <button
+          type="button"
+          (click)="cancelDelete()"
+          class="flex-1 rounded-xl border border-border py-2 text-sm font-semibold text-brand-text transition-colors hover:bg-ice"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          (click)="confirmDelete()"
+          [disabled]="deleting()"
+          class="flex-1 rounded-xl bg-danger py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60"
+        >
+          {{ deleting() ? 'Eliminando…' : 'Eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

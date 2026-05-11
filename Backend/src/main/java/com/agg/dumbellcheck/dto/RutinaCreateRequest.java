@@ -6,21 +6,20 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-public record PostCreateRequest(
-        @NotBlank String titulo,
+public record RutinaCreateRequest(
+        @NotBlank String nombre,
         String descripcion,
-        String multimediaUrl,
-        @NotEmpty @Valid List<EjercicioRequest> ejercicios
+        @NotEmpty @Valid List<EjercicioRutinaRequest> ejercicios
 ) {
 
-    public record EjercicioRequest(
+    public record EjercicioRutinaRequest(
             @NotNull Integer ejercicioId,
             Integer orden,
             String notas,
-            @NotEmpty @Valid List<SerieRequest> series
+            @NotEmpty @Valid List<SerieRutinaRequest> series
     ) {}
 
-    public record SerieRequest(
+    public record SerieRutinaRequest(
             @NotNull @Positive Integer numeroSerie,
             @NotNull @Positive Integer repeticiones,
             @NotNull @DecimalMin("0.0") BigDecimal peso,

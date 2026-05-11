@@ -11,7 +11,6 @@ public final class PostInfoDTO {
     public record PublicacionDto(
         Integer id,
         Integer usuarioId,
-        Integer rutinaOrigenId,
         String titulo,
         String descripcion,
         String multimediaUrl,

@@ -70,8 +70,6 @@ public class PostService {
         publicacion.setEstaActiva(true);
         publicacion.setFechaCreacion(Instant.now());
 
-        // rutinaOrigenId reserved for future "post from template" flow
-
         publicacionRepository.save(publicacion);
 
         List<PostFeedItemResponse.EjercicioEnPost> ejerciciosResponse = new ArrayList<>();

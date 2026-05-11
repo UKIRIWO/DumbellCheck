@@ -25,11 +25,9 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PostInfoMapper {
     @Mapping(target = "usuarioId", source = "usuario.id")
-    @Mapping(target = "rutinaOrigenId", source = "rutinaOrigen.id")
     PublicacionDto toPublicacionDto(PublicacionEntity entity);
 
     @Mapping(target = "usuario.id", source = "usuarioId")
-    @Mapping(target = "rutinaOrigen.id", source = "rutinaOrigenId")
     @Mapping(target = "ejercicios", ignore = true)
     @Mapping(target = "comentarios", ignore = true)
     PublicacionEntity toPublicacionEntity(PublicacionDto dto);

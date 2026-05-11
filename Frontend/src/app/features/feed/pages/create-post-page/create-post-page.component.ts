@@ -1,10 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostApiService } from '../../../../core/services/post-api.service';
+import { RoutineApiService } from '../../../../core/services/routine-api.service';
 import { CurrentUserService } from '../../../../core/services/current-user.service';
 import { Ejercicio } from '../../../../core/models/exercise.model';
 import { CreatePostRequest } from '../../../../core/models/post.model';
+import { RoutineListItem, Routine } from '../../../../core/models/routine.model';
 import { ExerciseSelectorComponent } from '../../components/exercise-selector/exercise-selector.component';
 
 export interface WorkingSerie {
@@ -44,16 +46,24 @@ function isValidRestInput(input: string): boolean {
   imports: [FormsModule, ExerciseSelectorComponent],
   templateUrl: './create-post-page.component.html',
 })
-export class CreatePostPageComponent {
+export class CreatePostPageComponent implements OnInit {
   private readonly postApi = inject(PostApiService);
+  private readonly routineApi = inject(RoutineApiService);
   private readonly currentUser = inject(CurrentUserService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   titulo = '';
   descripcion = '';
   exercises: WorkingEjercicio[] = [];
+  /** UI-only flag: indica que el formulario fue precargado desde una rutina (solo informativo, no se persiste). */
+  plantillaAplicada = false;
 
   showExerciseSelector = signal(false);
+  showTemplatePicker = signal(false);
+  templateRoutines = signal<RoutineListItem[]>([]);
+  templateLoading = signal(false);
   /** Grupo muscular del selector: se mantiene al añadir varios ejercicios; se resetea al crear otra publicación. */
   persistedSelectorGrupoId: number | undefined = undefined;
 
@@ -64,6 +74,45 @@ export class CreatePostPageComponent {
   mediaType: 'image' | 'video' | null = null;
 
   readonly isValidRest = isValidRestInput;
+
+  ngOnInit(): void {
+    // Navigation state is synchronously available (set by the routines list page).
+    // Falls back to query param for direct URL access (?rutina=xxx).
+    const navState = (window.history.state ?? {}) as { preloadRutinaPublicId?: string };
+    const rutinaPublicId =
+      navState.preloadRutinaPublicId ?? this.route.snapshot.queryParamMap.get('rutina') ?? null;
+    if (rutinaPublicId) {
+      this.loadTemplateByPublicId(rutinaPublicId);
+    }
+  }
+
+  private loadTemplateByPublicId(publicId: string): void {
+    this.templateLoading.set(true);
+    this.routineApi.getRutina(publicId).subscribe({
+      next: (routine) => {
+        this.titulo = routine.nombre;
+        this.descripcion = routine.descripcion ?? '';
+        this.plantillaAplicada = true;
+        this.exercises = routine.ejercicios.map((ej) => ({
+          ejercicioId: ej.ejercicioId,
+          nombre: ej.nombre,
+          imagenUrl: ej.imagenUrl ?? undefined,
+          notas: ej.notas ?? undefined,
+          series: ej.series.map((s) => ({
+            repeticiones: s.repeticiones,
+            peso: s.peso,
+            descansoInput: s.descansoSegundos != null ? String(s.descansoSegundos) : '',
+          })),
+        }));
+        this.templateLoading.set(false);
+        // Plain class properties need an explicit detectChanges() when set from an
+        // async callback inside a lazily-loaded component to guarantee the template
+        // re-renders.
+        this.cdr.detectChanges();
+      },
+      error: () => this.templateLoading.set(false),
+    });
+  }
 
   get canSubmit(): boolean {
     return (
@@ -145,6 +194,47 @@ export class CreatePostPageComponent {
     return null;
   }
 
+  openTemplatePicker(): void {
+    this.showTemplatePicker.set(true);
+    this.templateLoading.set(true);
+    this.routineApi.getMyRutinas().subscribe({
+      next: (data) => {
+        this.templateRoutines.set(data);
+        this.templateLoading.set(false);
+      },
+      error: () => this.templateLoading.set(false),
+    });
+  }
+
+  selectTemplate(listItem: RoutineListItem): void {
+    this.templateLoading.set(true);
+    this.routineApi.getRutina(listItem.publicId).subscribe({
+      next: (routine: Routine) => {
+        this.titulo = routine.nombre;
+        this.descripcion = routine.descripcion ?? '';
+        this.plantillaAplicada = true;
+        this.exercises = routine.ejercicios.map((ej) => ({
+          ejercicioId: ej.ejercicioId,
+          nombre: ej.nombre,
+          imagenUrl: ej.imagenUrl ?? undefined,
+          notas: ej.notas ?? undefined,
+          series: ej.series.map((s) => ({
+            repeticiones: s.repeticiones,
+            peso: s.peso,
+            descansoInput: s.descansoSegundos != null ? String(s.descansoSegundos) : '',
+          })),
+        }));
+        this.showTemplatePicker.set(false);
+        this.templateLoading.set(false);
+      },
+      error: () => this.templateLoading.set(false),
+    });
+  }
+
+  closeTemplatePicker(): void {
+    this.showTemplatePicker.set(false);
+  }
+
   private buildSeriesPayload(ex: WorkingEjercicio): CreatePostRequest['ejercicios'][number]['series'] {
     const result: CreatePostRequest['ejercicios'][number]['series'] = [];
     let lastReps: number | null = null;
@@ -197,6 +287,7 @@ export class CreatePostPageComponent {
         next: () => {
           this.submitting.set(false);
           this.persistedSelectorGrupoId = undefined;
+          this.plantillaAplicada = false;
           this.currentUser.refresh().subscribe({ error: () => {} });
           this.router.navigateByUrl('/app/feed');
         },
