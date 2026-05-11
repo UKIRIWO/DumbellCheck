@@ -125,7 +125,7 @@
                       @if (canDelete(comment)) {
                         <button
                           type="button"
-                          (click)="deleteComment(comment)"
+                          (click)="askDeleteComment(comment)"
                           class="flex items-center font-heading text-xs font-semibold text-muted transition-colors hover:text-danger"
                           aria-label="Eliminar comentario"
                           title="Eliminar"
@@ -202,7 +202,7 @@
                           @if (canDelete(reply)) {
                             <button
                               type="button"
-                              (click)="deleteComment(reply, comment)"
+                              (click)="askDeleteComment(reply, comment)"
                               class="flex items-center font-heading text-xs font-semibold text-muted transition-colors hover:text-danger"
                               aria-label="Eliminar comentario"
                               title="Eliminar"
@@ -280,3 +280,41 @@
     </footer>
   </section>
 </div>
+
+<!-- Delete comment confirmation modal -->
+@if (pendingDelete()) {
+  <div
+    class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4"
+    (click)="cancelDeleteComment()"
+  >
+    <div
+      class="w-full max-w-sm overflow-hidden rounded-2xl bg-surface shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="px-6 py-5">
+        <h3 class="font-heading text-lg font-semibold text-brand-text">Eliminar comentario</h3>
+        <p class="mt-2 text-sm text-muted">
+          ¿Seguro que quieres eliminar este comentario? Esta acción no se puede deshacer.
+        </p>
+      </div>
+      <div class="flex gap-3 border-t border-border px-6 py-4">
+        <button
+          type="button"
+          (click)="cancelDeleteComment()"
+          [disabled]="deletingComment()"
+          class="flex-1 rounded-xl border border-border py-2 text-sm font-semibold text-brand-text transition-colors hover:bg-ice disabled:opacity-60"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          (click)="confirmDeleteComment()"
+          [disabled]="deletingComment()"
+          class="flex-1 rounded-xl bg-danger py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60"
+        >
+          {{ deletingComment() ? 'Eliminando…' : 'Eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

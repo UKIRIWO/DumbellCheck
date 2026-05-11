@@ -50,6 +50,8 @@ export class CommentsModalComponent implements OnChanges {
   readonly submitting = signal(false);
   readonly replyTarget = signal<ReplyTarget | null>(null);
   readonly likingCommentId = signal<number | null>(null);
+  readonly pendingDelete = signal<{ comment: Comment; parent?: Comment } | null>(null);
+  readonly deletingComment = signal(false);
 
   readonly currentUsername = computed(() => this.currentUser.profile()?.username ?? '');
   readonly currentFotoPerfilUrl = computed(
@@ -185,10 +187,21 @@ export class CommentsModalComponent implements OnChanges {
     });
   }
 
-  deleteComment(comment: Comment, parent?: Comment): void {
+  askDeleteComment(comment: Comment, parent?: Comment): void {
     if (!this.canDelete(comment)) return;
-    const confirmed = window.confirm('¿Seguro que quieres eliminar este comentario?');
-    if (!confirmed) return;
+    this.pendingDelete.set({ comment, parent });
+  }
+
+  cancelDeleteComment(): void {
+    if (this.deletingComment()) return;
+    this.pendingDelete.set(null);
+  }
+
+  confirmDeleteComment(): void {
+    const target = this.pendingDelete();
+    if (!target || this.deletingComment()) return;
+    const { comment, parent } = target;
+    this.deletingComment.set(true);
 
     this.commentApi.deleteComment(this.post.publicId, comment.id).subscribe({
       next: () => {
@@ -220,9 +233,13 @@ export class CommentsModalComponent implements OnChanges {
             this.comments.update((prev) => prev.filter((root) => root.id !== comment.id));
           }
         }
+        this.deletingComment.set(false);
+        this.pendingDelete.set(null);
         this.commentDeleted.emit();
       },
       error: () => {
+        this.deletingComment.set(false);
+        this.pendingDelete.set(null);
         this.errorMessage.set('No se pudo eliminar el comentario.');
       },
     });
