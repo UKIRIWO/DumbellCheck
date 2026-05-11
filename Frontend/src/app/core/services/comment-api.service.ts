@@ -28,4 +28,12 @@ export class CommentApiService {
       )
       .pipe(map((r) => (r as { success: true; data: Comment }).data));
   }
+
+  deleteComment(publicId: string, commentId: number): Observable<void> {
+    return this.http
+      .delete<ApiResponse<void>>(
+        `${this.apiBaseUrl}/publicaciones/${encodeURIComponent(publicId)}/comentarios/${commentId}`,
+      )
+      .pipe(map(() => undefined));
+  }
 }

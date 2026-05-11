@@ -92,4 +92,13 @@ export class WorkoutDetailPageComponent implements OnInit, OnDestroy {
       contadorComentarios: (current.contadorComentarios ?? 0) + 1,
     });
   }
+
+  onCommentDeleted(): void {
+    const current = this.post();
+    if (!current) return;
+    this.post.set({
+      ...current,
+      contadorComentarios: Math.max(0, (current.contadorComentarios ?? 0) - 1),
+    });
+  }
 }

@@ -8,6 +8,7 @@ public record CommentResponse(
         Integer comentarioPadreId,
         String texto,
         Integer contadorLikes,
+        boolean eliminado,
         Instant fechaCreacion,
         UsuarioResumen usuario,
         List<String> mencionesValidas,

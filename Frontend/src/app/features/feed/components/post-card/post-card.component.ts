@@ -72,4 +72,8 @@ export class PostCardComponent {
   onCommentCreated(): void {
     this.post.contadorComentarios = (this.post.contadorComentarios ?? 0) + 1;
   }
+
+  onCommentDeleted(): void {
+    this.post.contadorComentarios = Math.max(0, (this.post.contadorComentarios ?? 0) - 1);
+  }
 }

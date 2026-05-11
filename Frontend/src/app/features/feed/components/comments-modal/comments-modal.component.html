@@ -70,74 +70,98 @@
         <ul class="space-y-5">
           @for (comment of comments(); track comment.id) {
             <li>
-              <div class="flex items-start gap-3">
-                <a
-                  [routerLink]="['/app/profile', comment.usuario.username]"
-                  (click)="closed.emit()"
-                  class="shrink-0"
-                  [attr.aria-label]="'Ver perfil de ' + comment.usuario.username"
-                >
-                  <app-user-avatar
-                    size="sm"
-                    [username]="comment.usuario.username"
-                    [fotoPerfilUrl]="comment.usuario.fotoPerfilUrl"
-                  />
-                </a>
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-center gap-2">
-                    <a
-                      [routerLink]="['/app/profile', comment.usuario.username]"
-                      (click)="closed.emit()"
-                      class="truncate font-heading text-sm font-semibold text-brand-text hover:underline"
-                    >
-                      {{ comment.usuario.username }}
-                    </a>
-                    <span class="text-xs text-muted">·</span>
-                    <span class="text-xs text-muted">
-                      {{ comment.fechaCreacion | date: 'd MMM yyyy, HH:mm' : '' : 'es' }}
-                    </span>
+              @if (comment.eliminado) {
+                <div class="flex items-start gap-3">
+                  <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ice text-muted">
+                    <i class="mdi mdi-comment-remove-outline text-base"></i>
                   </div>
-                  <p class="mt-0.5 whitespace-pre-wrap break-words text-sm text-brand-text">
-                    <app-comment-text
-                      [texto]="comment.texto"
-                      [mencionesValidas]="comment.mencionesValidas"
-                      (mentionClick)="closed.emit()"
-                    />
-                  </p>
-                  <button
-                    type="button"
-                    (click)="replyTo(comment)"
-                    class="mt-1 font-heading text-xs font-semibold text-muted transition-colors hover:text-brand-blue"
-                  >
-                    Responder
-                  </button>
+                  <div class="min-w-0 flex-1 pt-1">
+                    <p class="text-sm italic text-muted">Comentario eliminado</p>
+                  </div>
                 </div>
-              </div>
+              } @else {
+                <div class="flex items-start gap-3">
+                  <a
+                    [routerLink]="['/app/profile', comment.usuario!.username]"
+                    (click)="closed.emit()"
+                    class="shrink-0"
+                    [attr.aria-label]="'Ver perfil de ' + comment.usuario!.username"
+                  >
+                    <app-user-avatar
+                      size="sm"
+                      [username]="comment.usuario!.username"
+                      [fotoPerfilUrl]="comment.usuario!.fotoPerfilUrl"
+                    />
+                  </a>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                      <a
+                        [routerLink]="['/app/profile', comment.usuario!.username]"
+                        (click)="closed.emit()"
+                        class="truncate font-heading text-sm font-semibold text-brand-text hover:underline"
+                      >
+                        {{ comment.usuario!.username }}
+                      </a>
+                      <span class="text-xs text-muted">·</span>
+                      <span class="text-xs text-muted">
+                        {{ comment.fechaCreacion | date: 'd MMM yyyy, HH:mm' : '' : 'es' }}
+                      </span>
+                    </div>
+                    <p class="mt-0.5 whitespace-pre-wrap break-words text-sm text-brand-text">
+                      <app-comment-text
+                        [texto]="comment.texto ?? ''"
+                        [mencionesValidas]="comment.mencionesValidas"
+                        (mentionClick)="closed.emit()"
+                      />
+                    </p>
+                    <div class="mt-1 flex items-center gap-3">
+                      <button
+                        type="button"
+                        (click)="replyTo(comment)"
+                        class="font-heading text-xs font-semibold text-muted transition-colors hover:text-brand-blue"
+                      >
+                        Responder
+                      </button>
+                      @if (canDelete(comment)) {
+                        <button
+                          type="button"
+                          (click)="deleteComment(comment)"
+                          class="flex items-center font-heading text-xs font-semibold text-muted transition-colors hover:text-danger"
+                          aria-label="Eliminar comentario"
+                          title="Eliminar"
+                        >
+                          <i class="mdi mdi-trash-can-outline text-sm"></i>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
 
               @if (comment.respuestas.length > 0) {
                 <ul class="mt-3 space-y-3 border-l border-border pl-4 ml-4">
                   @for (reply of comment.respuestas; track reply.id) {
                     <li class="flex items-start gap-3">
                       <a
-                        [routerLink]="['/app/profile', reply.usuario.username]"
+                        [routerLink]="['/app/profile', reply.usuario!.username]"
                         (click)="closed.emit()"
                         class="shrink-0"
-                        [attr.aria-label]="'Ver perfil de ' + reply.usuario.username"
+                        [attr.aria-label]="'Ver perfil de ' + reply.usuario!.username"
                       >
                         <app-user-avatar
                           size="sm"
-                          [username]="reply.usuario.username"
-                          [fotoPerfilUrl]="reply.usuario.fotoPerfilUrl"
+                          [username]="reply.usuario!.username"
+                          [fotoPerfilUrl]="reply.usuario!.fotoPerfilUrl"
                         />
                       </a>
                       <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2">
                           <a
-                            [routerLink]="['/app/profile', reply.usuario.username]"
+                            [routerLink]="['/app/profile', reply.usuario!.username]"
                             (click)="closed.emit()"
                             class="truncate font-heading text-sm font-semibold text-brand-text hover:underline"
                           >
-                            {{ reply.usuario.username }}
+                            {{ reply.usuario!.username }}
                           </a>
                           <span class="text-xs text-muted">·</span>
                           <span class="text-xs text-muted">
@@ -146,18 +170,31 @@
                         </div>
                         <p class="mt-0.5 whitespace-pre-wrap break-words text-sm text-brand-text">
                           <app-comment-text
-                            [texto]="reply.texto"
+                            [texto]="reply.texto ?? ''"
                             [mencionesValidas]="reply.mencionesValidas"
                             (mentionClick)="closed.emit()"
                           />
                         </p>
-                        <button
-                          type="button"
-                          (click)="replyTo(reply, comment)"
-                          class="mt-1 font-heading text-xs font-semibold text-muted transition-colors hover:text-brand-blue"
-                        >
-                          Responder
-                        </button>
+                        <div class="mt-1 flex items-center gap-3">
+                          <button
+                            type="button"
+                            (click)="replyTo(reply, comment)"
+                            class="font-heading text-xs font-semibold text-muted transition-colors hover:text-brand-blue"
+                          >
+                            Responder
+                          </button>
+                          @if (canDelete(reply)) {
+                            <button
+                              type="button"
+                              (click)="deleteComment(reply, comment)"
+                              class="flex items-center font-heading text-xs font-semibold text-muted transition-colors hover:text-danger"
+                              aria-label="Eliminar comentario"
+                              title="Eliminar"
+                            >
+                              <i class="mdi mdi-trash-can-outline text-sm"></i>
+                            </button>
+                          }
+                        </div>
                       </div>
                     </li>
                   }

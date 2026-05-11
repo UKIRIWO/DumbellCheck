@@ -34,4 +34,13 @@ public class CommentController {
         return ApiSuccessResponse.of(
                 commentService.createComment(publicId, userDetails.getUsername(), request));
     }
+
+    @DeleteMapping("/{commentId}")
+    public ApiSuccessResponse<Void> deleteComment(
+            @PathVariable String publicId,
+            @PathVariable Integer commentId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        commentService.deleteComment(publicId, commentId, userDetails.getUsername());
+        return ApiSuccessResponse.of(null);
+    }
 }

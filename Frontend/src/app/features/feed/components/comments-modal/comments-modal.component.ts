@@ -40,6 +40,7 @@ export class CommentsModalComponent implements OnChanges {
   @Input({ required: true }) post!: PostFeedItem;
   @Output() closed = new EventEmitter<void>();
   @Output() commentCreated = new EventEmitter<Comment>();
+  @Output() commentDeleted = new EventEmitter<void>();
   @ViewChild('commentInput') private commentInput?: ElementRef<HTMLInputElement>;
 
   readonly comments = signal<Comment[]>([]);
@@ -123,6 +124,7 @@ export class CommentsModalComponent implements OnChanges {
   }
 
   replyTo(comment: Comment, rootComment?: Comment): void {
+    if (!comment.usuario) return;
     const root = rootComment ?? comment;
     this.replyTarget.set({
       rootCommentId: root.id,
@@ -138,6 +140,55 @@ export class CommentsModalComponent implements OnChanges {
 
   cancelReply(): void {
     this.replyTarget.set(null);
+  }
+
+  canDelete(comment: Comment): boolean {
+    if (comment.eliminado || !comment.usuario) return false;
+    const me = this.currentUsername();
+    return !!me && comment.usuario.username === me;
+  }
+
+  deleteComment(comment: Comment, parent?: Comment): void {
+    if (!this.canDelete(comment)) return;
+    const confirmed = window.confirm('¿Seguro que quieres eliminar este comentario?');
+    if (!confirmed) return;
+
+    this.commentApi.deleteComment(this.post.publicId, comment.id).subscribe({
+      next: () => {
+        if (parent) {
+          this.comments.update((prev) =>
+            prev.map((root) =>
+              root.id === parent.id
+                ? { ...root, respuestas: root.respuestas.filter((r) => r.id !== comment.id) }
+                : root,
+            ),
+          );
+        } else {
+          const hasReplies = (comment.respuestas?.length ?? 0) > 0;
+          if (hasReplies) {
+            this.comments.update((prev) =>
+              prev.map((root) =>
+                root.id === comment.id
+                  ? {
+                      ...root,
+                      eliminado: true,
+                      texto: null,
+                      usuario: null,
+                      mencionesValidas: [],
+                    }
+                  : root,
+              ),
+            );
+          } else {
+            this.comments.update((prev) => prev.filter((root) => root.id !== comment.id));
+          }
+        }
+        this.commentDeleted.emit();
+      },
+      error: () => {
+        this.errorMessage.set('No se pudo eliminar el comentario.');
+      },
+    });
   }
 
   onBackdropClick(): void {

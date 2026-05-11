@@ -15,10 +15,11 @@ public interface ComentarioRepository extends JpaRepository<ComentarioEntity, In
             JOIN FETCH c.usuario
             LEFT JOIN FETCH c.comentarioPadre
             WHERE c.publicacion.id = :publicacionId
-              AND c.estaActivo = true
             ORDER BY c.fechaCreacion ASC, c.id ASC
             """)
-    List<ComentarioEntity> findActiveByPublicacionId(@Param("publicacionId") Integer publicacionId);
+    List<ComentarioEntity> findAllByPublicacionIdWithUsuario(@Param("publicacionId") Integer publicacionId);
 
     Optional<ComentarioEntity> findByIdAndPublicacionIdAndEstaActivoTrue(Integer id, Integer publicacionId);
+
+    boolean existsByComentarioPadreIdAndEstaActivoTrue(Integer comentarioPadreId);
 }

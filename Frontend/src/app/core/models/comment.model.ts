@@ -7,10 +7,11 @@ export interface CommentUserSummary {
 export interface Comment {
   id: number;
   comentarioPadreId: number | null;
-  texto: string;
+  texto: string | null;
   contadorLikes: number;
+  eliminado: boolean;
   fechaCreacion: string;
-  usuario: CommentUserSummary;
+  usuario: CommentUserSummary | null;
   mencionesValidas: string[];
   respuestas: Comment[];
 }
