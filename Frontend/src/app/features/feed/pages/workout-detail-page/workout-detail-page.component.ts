@@ -9,10 +9,11 @@ import { PostFeedItem } from '../../../../core/models/post.model';
 import { WorkoutDetailHeader } from '../../components/workout-detail-header/workout-detail-header';
 import { WorkoutDetailMedia } from '../../components/workout-detail-media/workout-detail-media';
 import { WorkoutDetailExercises } from '../../components/workout-detail-exercises/workout-detail-exercises';
+import { CommentsModalComponent } from '../../components/comments-modal/comments-modal.component';
 
 @Component({
   selector: 'app-workout-detail-page',
-  imports: [WorkoutDetailHeader, WorkoutDetailMedia, WorkoutDetailExercises],
+  imports: [WorkoutDetailHeader, WorkoutDetailMedia, WorkoutDetailExercises, CommentsModalComponent],
   templateUrl: './workout-detail-page.component.html',
 })
 export class WorkoutDetailPageComponent implements OnInit, OnDestroy {
@@ -26,6 +27,7 @@ export class WorkoutDetailPageComponent implements OnInit, OnDestroy {
   post = signal<PostFeedItem | null>(null);
   loading = signal(true);
   errorMessage = signal('');
+  commentsOpen = signal(false);
 
   ngOnInit(): void {
     this.routeSub = this.route.paramMap
@@ -72,5 +74,22 @@ export class WorkoutDetailPageComponent implements OnInit, OnDestroy {
 
   get hasMedia(): boolean {
     return !!this.post()?.multimediaUrl;
+  }
+
+  openComments(): void {
+    this.commentsOpen.set(true);
+  }
+
+  closeComments(): void {
+    this.commentsOpen.set(false);
+  }
+
+  onCommentCreated(): void {
+    const current = this.post();
+    if (!current) return;
+    this.post.set({
+      ...current,
+      contadorComentarios: (current.contadorComentarios ?? 0) + 1,
+    });
   }
 }

@@ -128,9 +128,22 @@
       <i class="mdi mdi-heart-outline text-base"></i>
       {{ post.contadorLikes }}
     </span>
-    <span class="flex items-center gap-1.5 text-sm text-muted">
+    <button
+      type="button"
+      (click)="openComments($event)"
+      class="flex items-center gap-1.5 rounded-full text-sm text-muted transition-colors hover:text-brand-blue cursor-pointer"
+      [attr.aria-label]="'Ver comentarios'"
+    >
       <i class="mdi mdi-comment-outline text-base"></i>
       {{ post.contadorComentarios }}
-    </span>
+    </button>
   </div>
 </article>
+
+@if (commentsOpen()) {
+  <app-comments-modal
+    [post]="post"
+    (closed)="closeComments()"
+    (commentCreated)="onCommentCreated()"
+  />
+}

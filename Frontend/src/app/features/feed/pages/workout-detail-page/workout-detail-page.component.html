@@ -35,11 +35,24 @@
           <i class="mdi mdi-heart-outline text-base"></i>
           {{ p.contadorLikes }}
         </span>
-        <span class="flex items-center gap-1.5 text-sm text-muted">
+        <button
+          type="button"
+          (click)="openComments()"
+          class="flex items-center gap-1.5 rounded-full text-sm text-muted transition-colors hover:text-brand-blue"
+          aria-label="Ver comentarios"
+        >
           <i class="mdi mdi-comment-outline text-base"></i>
           {{ p.contadorComentarios }}
-        </span>
+        </button>
       </div>
     </article>
+
+    @if (commentsOpen()) {
+      <app-comments-modal
+        [post]="p"
+        (closed)="closeComments()"
+        (commentCreated)="onCommentCreated()"
+      />
+    }
   }
 </section>

@@ -8,6 +8,8 @@ Frontend/.angular/
 
 # Backend
 Backend/target/
+Backend/.bin/
+.bin/
 
 # IDE/OS
 .idea/

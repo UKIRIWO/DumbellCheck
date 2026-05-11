@@ -1,0 +1,137 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+  (click)="onBackdropClick()"
+>
+  <section
+    class="flex w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+    style="max-height: 85vh"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header: post author info + close button -->
+    <header class="flex items-start gap-3 border-b border-border px-5 py-4">
+      <a
+        [routerLink]="['/app/profile', post.usuario.username]"
+        (click)="closed.emit()"
+        class="shrink-0"
+        [attr.aria-label]="'Ver perfil de ' + post.usuario.username"
+      >
+        <app-user-avatar
+          size="md"
+          [username]="post.usuario.username"
+          [fotoPerfilUrl]="post.usuario.fotoPerfilUrl ?? null"
+        />
+      </a>
+
+      <div class="min-w-0 flex-1">
+        <a
+          [routerLink]="['/app/profile', post.usuario.username]"
+          (click)="closed.emit()"
+          class="block truncate font-heading text-lg font-semibold text-brand-text hover:underline"
+        >
+          {{ post.usuario.username }}
+        </a>
+        <p class="text-xs text-muted">
+          {{ post.fechaCreacion | date: 'd MMM yyyy, HH:mm' : '' : 'es' }}
+        </p>
+        <p class="mt-1 truncate font-heading text-base text-brand-text">{{ post.titulo }}</p>
+      </div>
+
+      <button
+        type="button"
+        (click)="closed.emit()"
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-ice hover:text-brand-text"
+        aria-label="Cerrar"
+      >
+        <i class="mdi mdi-close text-2xl"></i>
+      </button>
+    </header>
+
+    <!-- Comments list -->
+    <div class="flex-1 overflow-y-auto px-5 py-4">
+      @if (loading()) {
+        <div class="space-y-3">
+          @for (n of [1, 2, 3]; track n) {
+            <div class="flex animate-pulse gap-3">
+              <div class="h-9 w-9 shrink-0 rounded-full bg-ice"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-3 w-32 rounded bg-ice"></div>
+                <div class="h-3 w-48 rounded bg-ice"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (errorMessage()) {
+        <p class="rounded-xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
+      } @else if (comments().length === 0) {
+        <p class="py-10 text-center text-sm text-muted">
+          Aún no hay comentarios. Sé el primero en comentar.
+        </p>
+      } @else {
+        <ul class="space-y-4">
+          @for (comment of comments(); track comment.id) {
+            <li class="flex items-start gap-3">
+              <a
+                [routerLink]="['/app/profile', comment.usuario.username]"
+                (click)="closed.emit()"
+                class="shrink-0"
+                [attr.aria-label]="'Ver perfil de ' + comment.usuario.username"
+              >
+                <app-user-avatar
+                  size="sm"
+                  [username]="comment.usuario.username"
+                  [fotoPerfilUrl]="comment.usuario.fotoPerfilUrl"
+                />
+              </a>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <a
+                    [routerLink]="['/app/profile', comment.usuario.username]"
+                    (click)="closed.emit()"
+                    class="truncate font-heading text-sm font-semibold text-brand-text hover:underline"
+                  >
+                    {{ comment.usuario.username }}
+                  </a>
+                  <span class="text-xs text-muted">·</span>
+                  <span class="text-xs text-muted">
+                    {{ comment.fechaCreacion | date: 'd MMM yyyy, HH:mm' : '' : 'es' }}
+                  </span>
+                </div>
+                <p class="mt-0.5 whitespace-pre-wrap break-words text-sm text-brand-text">
+                  {{ comment.texto }}
+                </p>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- Footer: write a comment -->
+    <footer class="border-t border-border px-5 py-3">
+      <div class="flex items-center gap-3">
+        <app-user-avatar
+          size="sm"
+          [username]="currentUsername()"
+          [fotoPerfilUrl]="currentFotoPerfilUrl()"
+        />
+        <input
+          type="text"
+          [ngModel]="newComment()"
+          (ngModelChange)="newComment.set($event)"
+          (keydown)="onTextareaKeydown($event)"
+          [disabled]="submitting()"
+          placeholder="Escribe un comentario..."
+          class="flex-1 rounded-2xl border border-border bg-ice px-4 py-2 text-sm text-brand-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blue/30 disabled:opacity-60"
+        />
+        <button
+          type="button"
+          (click)="submitComment()"
+          [disabled]="!canSubmit()"
+          class="font-heading text-sm font-semibold text-brand-blue transition-colors hover:text-blueDark disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {{ submitting() ? 'Publicando...' : 'Publicar' }}
+        </button>
+      </div>
+    </footer>
+  </section>
+</div>

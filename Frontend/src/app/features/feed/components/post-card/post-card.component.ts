@@ -1,17 +1,19 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PostFeedItem } from '../../../../core/models/post.model';
 import { UserAvatarComponent } from '../../../../shared/components/user-avatar/user-avatar.component';
+import { CommentsModalComponent } from '../comments-modal/comments-modal.component';
 
 @Component({
   selector: 'app-post-card',
-  imports: [DatePipe, RouterLink, UserAvatarComponent],
+  imports: [DatePipe, RouterLink, UserAvatarComponent, CommentsModalComponent],
   templateUrl: './post-card.component.html',
 })
 export class PostCardComponent {
   @Input({ required: true }) post!: PostFeedItem;
   currentSlide = 0;
+  readonly commentsOpen = signal(false);
 
   get visibleEjercicios() {
     return this.post.ejercicios.slice(0, 5);
@@ -56,5 +58,18 @@ export class PostCardComponent {
 
   blockPostNavigation(event: Event): void {
     event.stopPropagation();
+  }
+
+  openComments(event: Event): void {
+    event.stopPropagation();
+    this.commentsOpen.set(true);
+  }
+
+  closeComments(): void {
+    this.commentsOpen.set(false);
+  }
+
+  onCommentCreated(): void {
+    this.post.contadorComentarios = (this.post.contadorComentarios ?? 0) + 1;
   }
 }
