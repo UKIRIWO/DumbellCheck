@@ -14,7 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CommentService {
@@ -37,8 +41,25 @@ public class CommentService {
         PublicacionEntity publicacion = publicacionRepository.findByPublicIdAndEstaActivaTrue(publicId)
                 .orElseThrow(() -> new ResourceNotFoundException("Publicación no encontrada"));
 
-        return comentarioRepository.findActiveByPublicacionId(publicacion.getId()).stream()
-                .map(this::toResponse)
+        List<ComentarioEntity> comments = comentarioRepository.findActiveByPublicacionId(publicacion.getId());
+        Map<Integer, ComentarioEntity> rootEntities = new LinkedHashMap<>();
+        Map<Integer, List<ComentarioEntity>> repliesByRootId = new LinkedHashMap<>();
+
+        for (ComentarioEntity comment : comments) {
+            ComentarioEntity parent = comment.getComentarioPadre();
+            if (parent == null) {
+                rootEntities.put(comment.getId(), comment);
+                repliesByRootId.putIfAbsent(comment.getId(), new ArrayList<>());
+            } else {
+                Integer rootId = parent.getComentarioPadre() == null
+                        ? parent.getId()
+                        : parent.getComentarioPadre().getId();
+                repliesByRootId.computeIfAbsent(rootId, ignored -> new ArrayList<>()).add(comment);
+            }
+        }
+
+        return rootEntities.values().stream()
+                .map(root -> toResponse(root, repliesByRootId.getOrDefault(root.getId(), Collections.emptyList())))
                 .toList();
     }
 
@@ -54,18 +75,33 @@ public class CommentService {
         comentario.setPublicacion(publicacion);
         comentario.setUsuario(usuario);
         comentario.setTexto(request.texto().trim());
+        if (request.comentarioPadreId() != null) {
+            ComentarioEntity requestedParent = comentarioRepository
+                    .findByIdAndPublicacionIdAndEstaActivoTrue(request.comentarioPadreId(), publicacion.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Comentario padre no encontrado"));
+            comentario.setComentarioPadre(resolveRootComment(requestedParent));
+        }
         comentario.setContadorLikes(0);
         comentario.setEstaActivo(true);
         comentario.setFechaCreacion(Instant.now());
 
         comentarioRepository.save(comentario);
-        return toResponse(comentario);
+        return toResponse(comentario, Collections.emptyList());
     }
 
-    private CommentResponse toResponse(ComentarioEntity c) {
+    private ComentarioEntity resolveRootComment(ComentarioEntity comment) {
+        ComentarioEntity root = comment;
+        while (root.getComentarioPadre() != null) {
+            root = root.getComentarioPadre();
+        }
+        return root;
+    }
+
+    private CommentResponse toResponse(ComentarioEntity c, List<ComentarioEntity> replies) {
         UsuarioEntity u = c.getUsuario();
         return new CommentResponse(
                 c.getId(),
+                c.getComentarioPadre() != null ? c.getComentarioPadre().getId() : null,
                 c.getTexto(),
                 c.getContadorLikes(),
                 c.getFechaCreacion(),
@@ -73,7 +109,10 @@ public class CommentService {
                         u.getId(),
                         u.getUsername(),
                         u.getFotoPerfilUrl()
-                )
+                ),
+                replies.stream()
+                        .map(reply -> toResponse(reply, Collections.emptyList()))
+                        .toList()
         );
     }
 }
