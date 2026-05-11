@@ -1,0 +1,202 @@
+<!-- Header -->
+<div class="mb-5 flex flex-wrap items-center justify-between gap-3 mt-3">
+  <h1 class="font-heading text-2xl font-bold text-brand-text">Estadísticas</h1>
+
+  <!-- Period selector -->
+  <div class="flex rounded-xl border border-border bg-ice p-1 gap-1">
+    @for (opt of periodOptions; track opt.value) {
+      <button
+        type="button"
+        (click)="selectPeriod(opt.value)"
+        class="rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors cursor-pointer"
+        [class.bg-surface]="selectedMonths() === opt.value"
+        [class.shadow-sm]="selectedMonths() === opt.value"
+        [class.text-brand-blue]="selectedMonths() === opt.value"
+        [class.text-muted]="selectedMonths() !== opt.value"
+      >
+        {{ opt.label }}
+      </button>
+    }
+  </div>
+</div>
+
+<!-- Loading skeleton -->
+@if (loading()) {
+  <div class="space-y-4 animate-pulse">
+    <div class="grid grid-cols-2 gap-3">
+      @for (n of [1, 2, 3, 4]; track n) {
+        <div class="rounded-2xl border border-border bg-surface p-4 h-24"></div>
+      }
+    </div>
+    <div class="rounded-2xl border border-border bg-surface p-4 h-40"></div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-2xl border border-border bg-surface p-4 h-56"></div>
+      <div class="rounded-2xl border border-border bg-surface p-4 h-56"></div>
+    </div>
+  </div>
+
+} @else if (errorMessage()) {
+  <p class="rounded-xl bg-red-50 px-4 py-3 text-sm text-danger">{{ errorMessage() }}</p>
+
+} @else if (stats(); as s) {
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-2 gap-3 mb-4">
+    <div class="rounded-2xl border border-border bg-surface px-4 py-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-muted">Entrenos</p>
+      <p class="mt-1 font-heading text-3xl font-bold text-brand-text">{{ s.totalWorkouts }}</p>
+      <p class="text-xs text-muted">en {{ selectedMonths() }} {{ selectedMonths() === 1 ? 'mes' : 'meses' }}</p>
+    </div>
+    <div class="rounded-2xl border border-border bg-surface px-4 py-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-muted">Volumen total</p>
+      <p class="mt-1 font-heading text-3xl font-bold text-brand-blue">{{ formatVolume(s.totalVolumenKg) }}</p>
+      <p class="text-xs text-muted">reps × peso</p>
+    </div>
+    <div class="rounded-2xl border border-border bg-surface px-4 py-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-muted">Series</p>
+      <p class="mt-1 font-heading text-3xl font-bold text-brand-text">{{ s.totalSeries | number }}</p>
+      <p class="text-xs text-muted">series realizadas</p>
+    </div>
+    <div class="rounded-2xl border border-border bg-surface px-4 py-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-muted">Repeticiones</p>
+      <p class="mt-1 font-heading text-3xl font-bold text-brand-text">{{ s.totalRepeticiones | number }}</p>
+      <p class="text-xs text-muted">repeticiones totales</p>
+    </div>
+  </div>
+
+  <!-- Weekly activity chart -->
+  <section class="mb-4 rounded-2xl border border-border bg-surface px-5 py-4 shadow-sm">
+    <h2 class="mb-4 font-heading text-sm font-semibold text-brand-text">Actividad semanal</h2>
+
+    @if (s.actividadSemanal.length === 0) {
+      <p class="py-4 text-center text-sm text-muted">Sin datos de actividad.</p>
+    } @else {
+      <div class="flex items-end gap-0.5" style="height: 88px">
+        @for (week of s.actividadSemanal; track week.semana) {
+          <div class="group relative flex flex-1 flex-col items-center gap-1">
+            <div
+              class="relative flex w-full flex-1 cursor-pointer flex-col justify-end"
+            >
+              <div
+                class="w-full min-h-[3px] rounded-t-sm transition-all group-hover:opacity-80"
+                [class.bg-brand-blue]="week.cantidad > 0"
+                [class.bg-border]="week.cantidad === 0"
+                [style.height.px]="barHeight(week.cantidad)"
+              ></div>
+
+              <!-- Tooltip -->
+              <div
+                class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded-lg bg-brand-text px-2 py-1 text-[10px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+              >
+                {{ week.cantidad }} {{ week.cantidad === 1 ? 'entreno' : 'entrenos' }}
+                <span class="block text-[9px] font-normal opacity-80">semana {{ week.semana }}</span>
+              </div>
+            </div>
+            @if (week.isNewMonth) {
+              <span class="text-[9px] leading-none text-muted truncate w-full text-center">
+                {{ week.semana.split(' ')[1] }}
+              </span>
+            } @else {
+              <span class="text-[9px] leading-none text-transparent select-none">·</span>
+            }
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Muscle group volume + Best lifts -->
+  <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+    <!-- Volume by muscle group -->
+    <section class="rounded-2xl border border-border bg-surface px-5 py-4 shadow-sm">
+      <h2 class="mb-4 font-heading text-sm font-semibold text-brand-text">Volumen por grupo muscular</h2>
+
+      @if (s.volumenPorGrupo.length === 0) {
+        <p class="py-4 text-center text-sm text-muted">Sin datos.</p>
+      } @else {
+        <ul class="space-y-3">
+          @for (group of s.volumenPorGrupo; track group.grupo) {
+            <li>
+              <div class="mb-1 flex items-center justify-between gap-2">
+                <span class="truncate text-xs font-semibold text-brand-text">{{ group.grupo }}</span>
+                <span class="shrink-0 text-xs text-muted">{{ formatVolume(group.volumenKg) }}</span>
+              </div>
+              <div class="h-2 w-full overflow-hidden rounded-full bg-ice">
+                <div
+                  class="h-full rounded-full bg-brand-blue transition-all"
+                  [style.width.%]="groupWidthPercent(group.volumenKg)"
+                ></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Best lifts (PRs) -->
+    <section class="rounded-2xl border border-border bg-surface px-5 py-4 shadow-sm">
+      <h2 class="mb-4 font-heading text-sm font-semibold text-brand-text">Mejores marcas</h2>
+
+      @if (s.mejoresMarcas.length === 0) {
+        <p class="py-4 text-center text-sm text-muted">Sin datos.</p>
+      } @else {
+        <ul class="space-y-2.5">
+          @for (lift of s.mejoresMarcas; track lift.ejercicio; let i = $index) {
+            <li class="flex items-center gap-3">
+              @if (lift.imagenUrl) {
+                <img [src]="lift.imagenUrl" [alt]="lift.ejercicio"
+                  class="h-8 w-8 shrink-0 rounded-full object-cover bg-ice" />
+              } @else {
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ice">
+                  <i class="mdi mdi-dumbbell text-sm text-muted"></i>
+                </div>
+              }
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-xs font-semibold text-brand-text">{{ lift.ejercicio }}</p>
+              </div>
+              <span class="shrink-0 rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-bold text-brand-blue">
+                {{ lift.maxPesoKg | number: '1.0-1' }} kg
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <!-- Most frequent exercises -->
+  <section class="rounded-2xl border border-border bg-surface px-5 py-4 shadow-sm mb-3">
+    <h2 class="mb-4 font-heading text-sm font-semibold text-brand-text">Ejercicios más frecuentes</h2>
+
+    @if (s.ejerciciosMasFrecuentes.length === 0) {
+      <p class="py-4 text-center text-sm text-muted">Sin datos.</p>
+    } @else {
+      <ul class="space-y-3">
+        @for (ex of s.ejerciciosMasFrecuentes; track ex.ejercicio) {
+          <li>
+            <div class="mb-1 flex items-center gap-3">
+              @if (ex.imagenUrl) {
+                <img [src]="ex.imagenUrl" [alt]="ex.ejercicio"
+                  class="h-6 w-6 shrink-0 rounded-full object-cover bg-ice" />
+              } @else {
+                <div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ice">
+                  <i class="mdi mdi-dumbbell text-xs text-muted"></i>
+                </div>
+              }
+              <span class="flex-1 truncate text-xs font-semibold text-brand-text">{{ ex.ejercicio }}</span>
+              <span class="shrink-0 text-xs text-muted">{{ ex.veces }} {{ ex.veces === 1 ? 'vez' : 'veces' }}</span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-ice">
+              <div
+                class="h-full rounded-full bg-sky transition-all"
+                [style.width.%]="freqWidthPercent(ex.veces)"
+              ></div>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+}

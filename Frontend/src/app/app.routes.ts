@@ -50,6 +50,10 @@ export const routes: Routes = [
         loadChildren: () => import('./features/routines/routines.routes').then((m) => m.ROUTINES_ROUTES),
       },
       {
+        path: 'stats',
+        loadChildren: () => import('./features/stats/stats.routes').then((m) => m.STATS_ROUTES),
+      },
+      {
         path: 'support',
         loadChildren: () => import('./features/support/support.routes').then((m) => m.SUPPORT_ROUTES),
       },
