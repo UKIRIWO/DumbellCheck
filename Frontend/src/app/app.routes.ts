@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { memberGuard } from './core/guards/member.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
@@ -30,35 +31,43 @@ export const routes: Routes = [
       },
       {
         path: 'feed',
+        canActivate: [memberGuard],
         loadChildren: () => import('./features/feed/feed.routes').then((m) => m.FEED_ROUTES),
       },
       {
         path: 'profile',
+        canActivate: [memberGuard],
         loadChildren: () => import('./features/profile/profile.routes').then((m) => m.PROFILE_ROUTES),
       },
       {
         path: 'chats',
+        canActivate: [memberGuard],
         loadChildren: () => import('./features/chats/chats.routes').then((m) => m.CHATS_ROUTES),
       },
       {
         path: 'notifications',
+        canActivate: [memberGuard],
         loadChildren: () =>
           import('./features/notifications/notifications.routes').then((m) => m.NOTIFICATIONS_ROUTES),
       },
       {
         path: 'routines',
+        canActivate: [memberGuard],
         loadChildren: () => import('./features/routines/routines.routes').then((m) => m.ROUTINES_ROUTES),
       },
       {
         path: 'stats',
+        canActivate: [memberGuard],
         loadChildren: () => import('./features/stats/stats.routes').then((m) => m.STATS_ROUTES),
       },
       {
         path: 'support',
+        canActivate: [memberGuard],
         loadChildren: () => import('./features/support/support.routes').then((m) => m.SUPPORT_ROUTES),
       },
       {
         path: 'workout/:publicId',
+        canActivate: [memberGuard],
         loadComponent: () =>
           import('./features/feed/pages/workout-detail-page/workout-detail-page.component').then(
             (m) => m.WorkoutDetailPageComponent,

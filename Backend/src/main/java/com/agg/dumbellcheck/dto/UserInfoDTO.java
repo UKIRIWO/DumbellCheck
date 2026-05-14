@@ -19,6 +19,7 @@ public final class UserInfoDTO {
     public record BaneoDto(
         Integer id,
         Integer usuarioId,
+        String usuarioUsername,
         Instant baneadoHasta,
         boolean baneadoPermanentemente,
         String motivoBaneo,

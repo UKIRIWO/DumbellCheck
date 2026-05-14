@@ -1,7 +1,11 @@
 <main class="min-h-screen w-full pb-20 pt-6 lg:pb-0 lg:pt-0">
   <div class="mx-auto w-full max-w-md px-4 lg:max-w-none lg:flex lg:items-start lg:px-0">
     <aside class="hidden lg:sticky lg:top-0 lg:block lg:h-screen lg:w-[20vw] lg:self-start lg:shrink-0">
-      <app-side-nav />
+      @if (isAdminRoute()) {
+        <app-admin-side-nav />
+      } @else {
+        <app-side-nav />
+      }
     </aside>
 
     <section
@@ -21,7 +25,8 @@
   </div>
 </main>
 
-<div class="lg:hidden">
-  <app-bottom-nav />
-</div>
-
+@if (!isAdminRoute()) {
+  <div class="lg:hidden">
+    <app-bottom-nav />
+  </div>
+}

@@ -10,29 +10,37 @@ import com.agg.dumbellcheck.entities.UsuarioEntity;
 import com.agg.dumbellcheck.exceptions.ResourceConflictException;
 import com.agg.dumbellcheck.exceptions.UnauthorizedActionException;
 import com.agg.dumbellcheck.mapper.UserInfoMapper;
+import com.agg.dumbellcheck.entities.BaneoEntity;
+import com.agg.dumbellcheck.exceptions.UserBannedException;
+import com.agg.dumbellcheck.repositories.BaneoRepository;
 import com.agg.dumbellcheck.repositories.UsuarioRepository;
 import com.agg.dumbellcheck.security.JwtService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
+    private final BaneoRepository baneoRepository;
     private final UserInfoMapper userInfoMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     public AuthService(
             UsuarioRepository usuarioRepository,
+            BaneoRepository baneoRepository,
             UserInfoMapper userInfoMapper,
             PasswordEncoder passwordEncoder,
             JwtService jwtService) {
         this.usuarioRepository = usuarioRepository;
+        this.baneoRepository = baneoRepository;
         this.userInfoMapper = userInfoMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -81,6 +89,15 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
             throw new UnauthorizedActionException("Credenciales incorrectas");
+        }
+
+        Optional<BaneoEntity> activeBan = baneoRepository
+                .findActiveBans(usuario.getId(), Instant.now(), PageRequest.of(0, 1))
+                .stream().findFirst();
+        if (activeBan.isPresent()) {
+            BaneoEntity ban = activeBan.get();
+            throw new UserBannedException(new UserBannedException.BanInfo(
+                    ban.getMotivoBaneo(), ban.getBaneadoHasta(), ban.isBaneadoPermanentemente()));
         }
 
         String accessToken = buildAccessToken(usuario);

@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.agg.dumbellcheck.exceptions.UserBannedException;
+
 import com.agg.dumbellcheck.dto.ApiErrorResponse;
 
 @ControllerAdvice
@@ -29,6 +31,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleConflict(ResourceConflictException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiErrorResponse.of(exception.getMessage(), "RESOURCE_CONFLICT"));
+    }
+
+    @ExceptionHandler(UserBannedException.class)
+    public ResponseEntity<ApiErrorResponse> handleBanned(UserBannedException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiErrorResponse.of(exception.getMessage(), "USER_BANNED", exception.getBanInfo()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})

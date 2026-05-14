@@ -29,6 +29,7 @@ public interface UserInfoMapper {
     UsuarioDto toUsuarioDto(UsuarioEntity entity);
 
     @Mapping(target = "usuarioId", source = "usuario.id")
+    @Mapping(target = "usuarioUsername", source = "usuario.username")
     BaneoDto toBaneoDto(BaneoEntity entity);
 
     @Mapping(target = "usuario.id", source = "usuarioId")

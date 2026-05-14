@@ -1,0 +1,68 @@
+<div class="flex h-full flex-col justify-between border-r border-border bg-white">
+  <div class="space-y-4 p-4">
+    <!-- Brand -->
+    <div class="flex items-center gap-2 px-2 py-1">
+      <i class="mdi mdi-shield-crown-outline text-2xl text-brand-blue"></i>
+      <span class="font-heading text-lg font-bold text-brand-text">Admin Panel</span>
+    </div>
+
+    <!-- Nav links -->
+    <nav class="space-y-1">
+      <a
+        routerLink="/app/admin/usuarios"
+        routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
+      >
+        <i class="mdi mdi-account-group-outline text-xl"></i>
+        <span class="text-base">Usuarios</span>
+      </a>
+      <a
+        routerLink="/app/admin/publicaciones"
+        routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
+      >
+        <i class="mdi mdi-text-box-multiple-outline text-xl"></i>
+        <span class="text-base">Publicaciones</span>
+      </a>
+      <a
+        routerLink="/app/admin/comentarios"
+        routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
+      >
+        <i class="mdi mdi-comment-multiple-outline text-xl"></i>
+        <span class="text-base">Comentarios</span>
+      </a>
+      <a
+        routerLink="/app/admin/baneos"
+        routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
+      >
+        <i class="mdi mdi-account-cancel-outline text-xl"></i>
+        <span class="text-base">Baneos</span>
+      </a>
+      <a
+        routerLink="/app/admin/ejercicios"
+        routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice"
+      >
+        <i class="mdi mdi-dumbbell text-xl"></i>
+        <span class="text-base">Ejercicios</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Profile footer -->
+  <div class="border-t border-border p-4">
+    <div class="flex items-center gap-3">
+      <app-user-avatar size="sm" [username]="username()" [fotoPerfilUrl]="fotoPerfilUrl()" />
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm font-semibold text-brand-text">{{ username() }}</p>
+        <p class="text-xs text-muted">Administrador</p>
+      </div>
+      <app-logout-confirm-button
+        buttonIconClass="mdi mdi-logout-variant text-lg"
+        buttonClass="flex h-9 w-9 items-center justify-center rounded-full bg-ice text-brand-blue hover:bg-sky/40 transition-colors"
+      />
+    </div>
+  </div>
+</div>

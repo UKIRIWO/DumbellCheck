@@ -1,5 +1,5 @@
-import { NgIf } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { DatePipe, NgIf } from '@angular/common';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../services/auth-api.service';
@@ -7,13 +7,19 @@ import { AuthStateService } from '../../../services/auth-state.service';
 import { AuthCard } from '../../components/auth-card/auth-card';
 import { PasswordField } from '../../../../shared/components/password-field/password-field';
 
+interface BanData {
+  motivoBaneo?: string;
+  baneadoHasta?: string;
+  baneadoPermanentemente: boolean;
+}
+
 @Component({
   selector: 'app-login-page',
-  imports: [RouterLink, NgIf, ReactiveFormsModule, AuthCard, PasswordField],
+  imports: [RouterLink, NgIf, DatePipe, ReactiveFormsModule, AuthCard, PasswordField],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authApiService = inject(AuthApiService);
   private readonly authStateService = inject(AuthStateService);
@@ -22,6 +28,15 @@ export class LoginPage {
   readonly submitting = signal(false);
   readonly errorMessage = signal('');
   readonly successMessage = signal('');
+  readonly banData = signal<BanData | null>(null);
+
+  ngOnInit(): void {
+    // Ban data is passed via router navigation state — only present right after being kicked
+    const state = (window.history.state ?? {}) as { banData?: BanData };
+    if (state.banData) {
+      this.banData.set(state.banData);
+    }
+  }
 
   readonly form = this.fb.nonNullable.group({
     principal: ['', [Validators.required]],
@@ -59,6 +74,11 @@ export class LoginPage {
       },
       error: (error) => {
         this.submitting.set(false);
+        const errorCode = error?.error?.errorCode as string | undefined;
+        if (errorCode === 'USER_BANNED') {
+          this.banData.set(error.error.data as BanData);
+          return;
+        }
         const apiMessage = (error?.error?.error as string | undefined) ?? '';
         this.errorMessage.set(apiMessage || 'Credenciales incorrectas.');
       },
