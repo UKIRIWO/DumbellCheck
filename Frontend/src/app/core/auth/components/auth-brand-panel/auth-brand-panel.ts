@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-auth-brand-panel',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './auth-brand-panel.html',
   styleUrl: './auth-brand-panel.scss',
 })

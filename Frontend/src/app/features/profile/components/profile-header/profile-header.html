@@ -37,17 +37,17 @@
       @if (perfil.esPropio) {
         <button
           type="button"
-          class="rounded-2xl border border-border bg-surface px-4 py-2 font-heading text-sm font-semibold text-brand-text shadow-sm hover:bg-ice transition-colors"
+          class="rounded-2xl border border-border bg-surface px-4 py-2 font-heading text-sm font-semibold text-brand-text shadow-sm hover:bg-ice transition-colors cursor-pointer"
           (click)="editClick.emit()"
         >
           Editar perfil
         </button>
-        <button
-          type="button"
-          class="rounded-2xl bg-primary-dark px-4 py-2 font-heading text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-opacity"
+        <a
+          class="rounded-2xl bg-primary-dark px-4 py-2 font-heading text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-opacity cursor-pointer"
+          routerLink="/app/stats"
         >
           Mis estadísticas
-        </button>
+      </a>
       } @else {
         @if (perfil.sigueAEsteUsuario) {
           <button
