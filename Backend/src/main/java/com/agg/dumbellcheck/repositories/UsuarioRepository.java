@@ -62,6 +62,27 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
             """)
     List<String> findExistingUsernames(@Param("usernamesLowercase") Collection<String> usernamesLowercase);
 
+    /** Chat user search: following-first, excludes self and ADMIN. */
+    @Query(value = """
+            SELECT u.*,
+                   CASE WHEN s.seguido_id IS NOT NULL THEN 0 ELSE 1 END AS sigo_rank
+            FROM usuarios u
+            LEFT JOIN seguidores s ON s.usuario_id = :myId AND s.seguido_id = u.id
+            WHERE u.id != :myId
+              AND u.rol != 'ADMIN'
+              AND u.esta_activo = 1
+              AND (:q IS NULL
+                   OR LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%'))
+                   OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :q, '%')))
+            ORDER BY sigo_rank ASC, u.username ASC
+            LIMIT :lim OFFSET :off
+            """, nativeQuery = true)
+    List<UsuarioEntity> searchUsersForChat(
+            @Param("myId") Integer myId,
+            @Param("q") String q,
+            @Param("lim") int lim,
+            @Param("off") long off);
+
     /** Admin search: username matches first, then email-only matches. Native query for CASE WHEN ordering. */
     @Query(value = """
             SELECT * FROM usuarios

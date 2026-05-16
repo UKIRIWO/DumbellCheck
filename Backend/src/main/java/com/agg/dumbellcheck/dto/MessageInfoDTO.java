@@ -10,6 +10,7 @@ public final class MessageInfoDTO {
 
     public record ChatDto(
         Integer id,
+        String publicId,
         String nombre,
         String tipo,
         Integer creadorId,

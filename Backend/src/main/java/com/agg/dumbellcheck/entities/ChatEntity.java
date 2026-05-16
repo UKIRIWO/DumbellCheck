@@ -1,5 +1,6 @@
 package com.agg.dumbellcheck.entities;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,15 +19,18 @@ public class ChatEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "public_id", unique = true, nullable = false, length = 21)
+    private String publicId;
+
     @Column
     private String nombre;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('MensajeDirecto','Grupo','Soporte')")
+    @Column(nullable = false, columnDefinition = "ENUM('directo','grupo','soporte')")
     private TipoChat tipo;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "creador_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creador_id")
     private UsuarioEntity creador;
 
     @Column(name = "foto_grupo_url")
@@ -50,4 +54,11 @@ public class ChatEntity {
 
     @OneToMany(mappedBy = "chat")
     private List<UsuarioChatEntity> participantes = new ArrayList<>();
+
+    @PrePersist
+    public void generatePublicId() {
+        if (this.publicId == null) {
+            this.publicId = NanoIdUtils.randomNanoId();
+        }
+    }
 }

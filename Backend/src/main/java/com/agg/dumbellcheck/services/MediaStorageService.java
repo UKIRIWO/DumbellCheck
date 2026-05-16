@@ -48,6 +48,10 @@ public class MediaStorageService {
         return upload(file, "dumbellcheck/banners", IMAGE_TYPES, MAX_SIZE_BYTES);
     }
 
+    public String storeGroupPhoto(MultipartFile file) {
+        return upload(file, "dumbellcheck/grupos", IMAGE_TYPES, MAX_SIZE_BYTES);
+    }
+
     private String upload(MultipartFile file, String folder, Set<String> allowedTypes, long maxBytes) {
         if (file == null || file.isEmpty()) {
             throw new ResourceConflictException("El archivo es obligatorio");

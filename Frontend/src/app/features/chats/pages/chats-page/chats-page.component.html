@@ -1,2 +1,90 @@
-<h1 class="font-heading text-2xl font-semibold">Chats</h1>
-<p class="mt-2 text-sm text-brand-gray">Feature scaffold ready for mensajes_chat and incidencias.</p>
+<div class="flex h-[calc(100vh-2rem)] overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+
+  <!-- Left panel: chat list -->
+  <aside
+    class="flex w-[300px] shrink-0 flex-col border-r border-border"
+    [class.hidden]="activeChatPublicId() !== null"
+    [class.lg:flex]="activeChatPublicId() !== null"
+    [class.flex]="activeChatPublicId() === null || true"
+  >
+    <!-- Header -->
+    <div class="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+      <h2 class="font-heading text-base font-semibold text-brand-text">Mensajes</h2>
+      <button
+        type="button"
+        (click)="showNewModal.set(true)"
+        title="Nuevo grupo"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:bg-ice transition-colors cursor-pointer"
+      >
+        <i class="mdi mdi-account-multiple-plus-outline text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Chat list -->
+    <div class="flex-1 overflow-y-auto px-2 py-2">
+      @if (loading() && chats().length === 0) {
+        <div class="space-y-2 p-3 animate-pulse">
+          @for (n of [1,2,3,4,5]; track n) {
+            <div class="flex items-center gap-3 rounded-2xl p-2">
+              <div class="h-10 w-10 rounded-full bg-ice shrink-0"></div>
+              <div class="flex-1 space-y-1.5">
+                <div class="h-3 w-28 rounded bg-ice"></div>
+                <div class="h-2.5 w-40 rounded bg-ice"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (chats().length === 0) {
+        <div class="flex flex-col items-center justify-center py-16 text-center">
+          <i class="mdi mdi-message-text-outline text-5xl text-border"></i>
+          <p class="mt-3 text-sm text-muted">No tienes chats aún.</p>
+          <button type="button" (click)="showNewModal.set(true)"
+            class="mt-3 rounded-2xl bg-brand-blue px-4 py-2 text-sm font-semibold text-white cursor-pointer hover:bg-blueDark transition-colors">
+            Nuevo grupo
+          </button>
+        </div>
+      } @else {
+        @for (chat of chats(); track chat.publicId) {
+          <div (click)="selectChat(chat)">
+            <app-chat-list-item
+              [chat]="chat"
+              [active]="activeChatPublicId() === chat.publicId"
+              [myUsername]="myUsername()?.username ?? ''"
+            />
+          </div>
+        }
+      }
+    </div>
+  </aside>
+
+  <!-- Right panel: chat detail -->
+  <main class="flex min-w-0 flex-1 flex-col">
+    @if (activeChat(); as chat) {
+      <app-chat-detail
+        [chat]="chat"
+        [myUsername]="myUsername()?.username ?? ''"
+        (chatUpdated)="onChatUpdated()"
+        (chatDetailUpdated)="onChatDetailUpdated($event)"
+        (leftChat)="onChatLeft()"
+        class="h-full flex flex-col"
+      />
+    } @else if (activeChatPublicId()) {
+      <div class="flex h-full flex-col items-center justify-center gap-3">
+        <span class="text-sm text-muted animate-pulse">Cargando chat…</span>
+      </div>
+    } @else {
+      <div class="flex h-full flex-col items-center justify-center gap-3 text-center">
+        <i class="mdi mdi-message-outline text-6xl text-border"></i>
+        <p class="text-sm text-muted">Selecciona un chat para empezar</p>
+      </div>
+    }
+  </main>
+</div>
+
+<!-- New group modal -->
+@if (showNewModal()) {
+  <app-new-chat-modal
+    (closed)="showNewModal.set(false)"
+    (chatCreated)="onNewChatCreated($event)"
+  />
+}

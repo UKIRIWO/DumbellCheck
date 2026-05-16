@@ -1,0 +1,57 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+  (click)="closed.emit()"
+>
+  <section
+    class="flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+    style="max-height: 80vh"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="flex items-center justify-between border-b border-border px-5 py-4">
+      <h2 class="font-heading text-lg font-semibold text-brand-text">Enviar rutina</h2>
+      <button
+        type="button"
+        (click)="closed.emit()"
+        class="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-ice cursor-pointer"
+      >
+        <i class="mdi mdi-close text-xl"></i>
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto px-5 py-4">
+      @if (loading()) {
+        <div class="space-y-3">
+          @for (n of [1, 2, 3]; track n) {
+            <div class="animate-pulse rounded-xl border border-border p-4">
+              <div class="h-4 w-40 rounded bg-ice"></div>
+              <div class="mt-2 h-3 w-full rounded bg-ice"></div>
+            </div>
+          }
+        </div>
+      } @else if (errorMessage()) {
+        <p class="py-8 text-center text-sm text-danger">{{ errorMessage() }}</p>
+      } @else if (routines().length === 0) {
+        <p class="py-8 text-center text-sm text-muted">No tienes rutinas guardadas aún.</p>
+      } @else {
+        <ul class="space-y-3">
+          @for (routine of routines(); track routine.publicId) {
+            <li>
+              <button
+                type="button"
+                (click)="select(routine)"
+                class="w-full rounded-xl border border-border bg-surface px-4 py-3 text-left transition-colors hover:border-brand-blue hover:bg-ice cursor-pointer"
+              >
+                <p class="font-heading text-sm font-semibold text-brand-text">{{ routine.nombre }}</p>
+                @if (routine.nombresEjercicios.length > 0) {
+                  <p class="mt-0.5 truncate text-xs text-muted">
+                    {{ routine.nombresEjercicios.slice(0, 4).join(', ') }}{{ routine.nombresEjercicios.length > 4 ? '…' : '' }}
+                  </p>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </section>
+</div>

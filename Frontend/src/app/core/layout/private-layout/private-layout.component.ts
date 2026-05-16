@@ -25,6 +25,8 @@ export class PrivateLayoutComponent {
 
   readonly hideSidebar = computed(() => {
     const url = this.url();
-    return url.startsWith('/app/profile') || url.startsWith('/app/admin');
+    return url.startsWith('/app/profile')
+      || url.startsWith('/app/admin')
+      || url.startsWith('/app/chats');
   });
 }

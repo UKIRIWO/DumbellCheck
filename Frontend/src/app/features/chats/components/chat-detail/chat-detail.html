@@ -1,0 +1,178 @@
+<div class="flex h-full flex-col">
+  <!-- Chat header -->
+  <div class="flex shrink-0 items-center border-b border-border bg-surface">
+    <button
+      type="button"
+      (click)="exitChat()"
+      title="Volver a la lista"
+      class="flex h-12 w-11 shrink-0 items-center justify-center text-muted transition-colors hover:bg-ice hover:text-brand-text cursor-pointer"
+    >
+      <i class="mdi mdi-arrow-left text-xl"></i>
+    </button>
+    <button
+      type="button"
+      (click)="openInfoModal()"
+      class="flex min-w-0 flex-1 items-center gap-3 py-3 pr-4 text-left transition-colors hover:bg-ice/60 cursor-pointer"
+    >
+      <app-user-avatar size="md" [username]="otherUsername" [fotoPerfilUrl]="fotoUrl" />
+      <div class="min-w-0 flex-1">
+        <p class="truncate font-heading text-sm font-semibold text-brand-text">{{ title }}</p>
+        <p class="text-xs text-muted">{{ subtitleLine }}</p>
+      </div>
+      <i class="mdi mdi-chevron-right shrink-0 text-xl text-muted"></i>
+    </button>
+  </div>
+
+  @if (showInfoModal()) {
+    <app-chat-info-modal
+      [chat]="chat"
+      [myUsername]="myUsername"
+      (closed)="closeInfoModal()"
+      (updated)="onChatInfoUpdated($event)"
+      (chatLeft)="onChatLeft()"
+    />
+  }
+
+  @if (showRoutinePicker()) {
+    <app-chat-routine-picker-modal
+      (closed)="closeRoutinePicker()"
+      (routineSelected)="sendRoutine($event)"
+    />
+  }
+
+  @if (errorMessage()) {
+    <p class="shrink-0 bg-red-50 px-4 py-2 text-xs text-danger">{{ errorMessage() }}</p>
+  }
+
+  <!-- Messages area -->
+  <div
+    #messagesContainer
+    class="flex-1 overflow-y-auto px-4 py-3 space-y-1"
+    (scroll)="$any($event.target).scrollTop < 120 && loadOlderMessages()"
+  >
+    @if (loadingOlder()) {
+      <div class="flex justify-center py-2">
+        <span class="text-xs text-muted animate-pulse">Cargando mensajes anteriores…</span>
+      </div>
+    }
+
+    @if (loading() && messages().length === 0) {
+      <div class="space-y-3 pt-4 animate-pulse">
+        @for (n of [1,2,3,4,5]; track n) {
+          <div class="flex gap-2" [class.flex-row-reverse]="n % 2 === 0">
+            <div class="h-8 w-8 rounded-full bg-ice shrink-0"></div>
+            <div class="h-9 rounded-2xl bg-ice" [style.width]="(n * 37 + 80) + 'px'"></div>
+          </div>
+        }
+      </div>
+    } @else if (!loading() && messages().length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <i class="mdi mdi-message-outline text-5xl text-border"></i>
+        <p class="mt-3 text-sm text-muted">No hay mensajes aún. ¡Empieza la conversación!</p>
+      </div>
+    } @else {
+      @for (msg of messages(); track msg.id; let i = $index) {
+        <app-chat-message-item
+          [message]="msg"
+          [showAvatar]="chat.esGrupo && shouldShowAvatar(messages(), i)"
+          (deleteClick)="onDelete($event)"
+          (editSave)="onEditSave($event)"
+          (replyClick)="setReply($event)"
+        />
+      }
+    }
+  </div>
+
+  <!-- Input area -->
+  <div class="shrink-0 border-t border-border bg-surface px-4 py-3">
+    <!-- Media preview -->
+    @if (mediaPreviewUrl()) {
+      <div class="mb-2 flex items-center gap-2">
+        @if (mediaType() === 'image') {
+          <img [src]="mediaPreviewUrl()!" alt="preview" class="h-16 rounded-xl object-cover" />
+        } @else {
+          <video [src]="mediaPreviewUrl()!" class="h-16 rounded-xl" muted></video>
+        }
+        <button type="button" (click)="clearMedia()"
+          class="rounded-full bg-danger/10 p-1.5 text-danger hover:bg-danger/20 cursor-pointer">
+          <i class="mdi mdi-close text-sm"></i>
+        </button>
+      </div>
+    }
+
+    @if (hasMediaAttached) {
+      <p class="mb-2 text-[11px] text-muted">Con multimedia adjunta no puedes escribir texto en el mismo mensaje.</p>
+    }
+
+    <!-- Reply preview -->
+    @if (replyTarget(); as reply) {
+      <div class="mb-2 flex items-center justify-between rounded-xl bg-ice px-3 py-2 text-xs">
+        <div class="min-w-0">
+          <span class="font-semibold text-brand-blue">{{ reply.username }}</span>
+          <p class="truncate text-muted">{{ reply.preview }}</p>
+        </div>
+        <button type="button" (click)="cancelReply()" class="ml-2 shrink-0 text-muted hover:text-danger cursor-pointer">
+          <i class="mdi mdi-close text-sm"></i>
+        </button>
+      </div>
+    }
+
+    <div class="flex items-end gap-2">
+      <input #fileInput type="file" accept="image/*,video/*" class="hidden" (change)="onFileSelected($event)" />
+
+      <div class="relative shrink-0" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          (click)="toggleAttachMenu(); $event.stopPropagation()"
+          [disabled]="sending()"
+          class="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-ice transition-colors disabled:opacity-40 cursor-pointer"
+        >
+          <i class="mdi mdi-paperclip text-xl"></i>
+        </button>
+
+        @if (showAttachMenu()) {
+          <div
+            class="absolute bottom-full left-0 z-20 mb-2 min-w-[10.5rem] overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-lg"
+            (click)="$event.stopPropagation()"
+          >
+            <button
+              type="button"
+              (click)="openMediaPicker()"
+              class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-brand-text hover:bg-ice cursor-pointer"
+            >
+              <i class="mdi mdi-image-outline text-lg text-brand-blue"></i>
+              Multimedia
+            </button>
+            <button
+              type="button"
+              (click)="openRoutinePicker()"
+              class="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-brand-text hover:bg-ice cursor-pointer"
+            >
+              <i class="mdi mdi-dumbbell text-lg text-brand-blue"></i>
+              Rutina
+            </button>
+          </div>
+        }
+      </div>
+
+      <input
+        type="text"
+        [ngModel]="newMessage()"
+        (ngModelChange)="newMessage.set($event)"
+        (keydown)="onKeydown($event)"
+        [disabled]="textInputDisabled"
+        [placeholder]="hasMediaAttached ? 'Quita el adjunto para escribir texto' : 'Escribe un mensaje…'"
+        class="flex-1 rounded-2xl border border-border bg-ice px-4 py-2 text-sm text-brand-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand-blue/30 disabled:opacity-60 disabled:cursor-not-allowed"
+      />
+
+      <button
+        type="button"
+        (click)="send()"
+        [disabled]="(!newMessage().trim() && !mediaFile()) || sending()"
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white transition-colors hover:bg-blueDark disabled:opacity-40 cursor-pointer"
+      >
+        <i class="mdi mdi-send text-base"></i>
+      </button>
+    </div>
+  </div>
+</div>
