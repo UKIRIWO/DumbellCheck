@@ -18,12 +18,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Optional;
 
-/**
- * Runs after {@link JwtAuthenticationFilter}. On every authenticated request, checks
- * whether the user has an active ban; if so, short-circuits with 403 USER_BANNED.
- *
- * Registered in {@link SecurityConfig} to avoid double-registration as a servlet filter.
- */
 @Component
 public class BanCheckFilter extends OncePerRequestFilter {
 

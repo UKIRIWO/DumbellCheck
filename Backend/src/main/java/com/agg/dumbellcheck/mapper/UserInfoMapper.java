@@ -1,11 +1,4 @@
-/*
-usuarios (Perfil, auth, estadísticas de seguidores).
 
-baneos (Historial de sanciones por usuario).
-
-seguidores (Relación seguidor/seguido).
-notificaciones (Alertas de actividad social).
-*/
 
 package com.agg.dumbellcheck.mapper;
 
@@ -20,9 +13,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
-/**
- * Single file containing all mappers related to User Identity and Social Domain.
- */
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserInfoMapper {
     @BeanMapping(ignoreUnmappedSourceProperties = "password")

@@ -38,7 +38,7 @@ export class AdminApiService {
     return p;
   }
 
-  // ── Usuarios ──────────────────────────────────────────────────────────
+
 
   getUsers(
     page: number,
@@ -67,7 +67,7 @@ export class AdminApiService {
     return this.http.delete<void>(`${this.apiBaseUrl}/admin/usuarios/${id}`).pipe(map(() => undefined));
   }
 
-  // ── Publicaciones ─────────────────────────────────────────────────────
+
 
   getPosts(
     page: number,
@@ -95,7 +95,7 @@ export class AdminApiService {
       .pipe(map(() => undefined));
   }
 
-  // ── Comentarios ───────────────────────────────────────────────────────
+
 
   getComments(
     page: number,
@@ -117,7 +117,7 @@ export class AdminApiService {
       .pipe(map(() => undefined));
   }
 
-  // ── Baneos ────────────────────────────────────────────────────────────
+
 
   getBans(
     page: number,
@@ -151,7 +151,7 @@ export class AdminApiService {
       .pipe(map(() => undefined));
   }
 
-  // ── Ejercicios ────────────────────────────────────────────────────────
+
 
   getEjercicios(
     page: number,

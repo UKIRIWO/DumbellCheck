@@ -36,7 +36,6 @@ export class AdminBansPage implements OnInit {
   readonly editingRow = signal<EditingBan | null>(null);
   readonly saving = signal(false);
 
-  /** Position of the ⋮ button that triggered the current edit — used to anchor the floating panel. */
   private menuBtnRect: DOMRect | null = null;
 
   readonly floatPanel = signal<{ top: number; left: number } | null>(null);
@@ -95,8 +94,6 @@ export class AdminBansPage implements OnInit {
   @HostListener('document:click')
   closeMenu(): void { this.menuOpenItem.set(null); }
 
-  // ── Inline edit ───────────────────────────────────────────────────────
-
   startEdit(ban: AdminBan): void {
     this.menuOpenItem.set(null);
     if (this.menuBtnRect) {
@@ -149,8 +146,6 @@ export class AdminBansPage implements OnInit {
     this.editingRow.set({ ...row, [field]: value });
   }
 
-  // ── Desbanear (soft-expire) ───────────────────────────────────────────
-
   desbanear(ban: AdminBan): void {
     this.menuOpenItem.set(null);
     const req: AdminBanUpdateRequest = {
@@ -167,8 +162,6 @@ export class AdminBansPage implements OnInit {
       error: () => this.errorMessage.set('Error al desbanear.'),
     });
   }
-
-  // ── Delete (hard) ─────────────────────────────────────────────────────
 
   askDelete(ban: AdminBan): void { this.menuOpenItem.set(null); this.pendingDelete.set(ban); }
   cancelDelete(): void { this.pendingDelete.set(null); }
@@ -188,8 +181,6 @@ export class AdminBansPage implements OnInit {
       error: () => { this.errorMessage.set('Error eliminando.'); this.deleting.set(false); this.pendingDelete.set(null); },
     });
   }
-
-  // ── Helpers ───────────────────────────────────────────────────────────
 
   private toLocalDatetime(iso: string): string {
     const d = new Date(iso);

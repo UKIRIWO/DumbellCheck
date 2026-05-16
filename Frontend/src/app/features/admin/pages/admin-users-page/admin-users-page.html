@@ -1,6 +1,5 @@
 <div class="rounded-2xl border border-border bg-surface shadow-sm overflow-hidden">
-  <!-- Toolbar -->
-  <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border">
+    <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border">
     <h2 class="font-heading text-base font-semibold text-brand-text">Usuarios</h2>
     <form (ngSubmit)="search()" class="flex gap-2">
       <input
@@ -54,7 +53,6 @@
         <tbody class="divide-y divide-border">
           @for (user of page()?.content ?? []; track user.id) {
             <tr class="group hover:bg-ice/50 transition-colors">
-              <!-- 3-dots -->
               <td class="px-2 py-3 text-center">
                 <button type="button" (click)="openMenu($event, user)"
                   class="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg px-2 py-1 text-lg font-bold text-muted hover:bg-ice cursor-pointer leading-none">
@@ -64,7 +62,6 @@
               <td class="px-4 py-3 text-muted">{{ user.id }}</td>
               <td class="px-4 py-3 font-semibold text-brand-text">{{ user.username }}</td>
               <td class="px-4 py-3 text-muted">{{ user.email }}</td>
-              <!-- Rol: select auto-save -->
               <td class="px-4 py-3">
                 <select
                   [ngModel]="user.rol"
@@ -103,7 +100,6 @@
   }
 </div>
 
-<!-- Dropdown menu -->
 @if (menuOpenItem(); as item) {
   <div class="fixed z-50 min-w-[160px] rounded-xl border border-border bg-surface shadow-xl py-1"
     [style.top.px]="menuPos().top" [style.left.px]="menuPos().left"
@@ -126,7 +122,6 @@
   </div>
 }
 
-<!-- View user modal -->
 @if (viewUser(); as u) {
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
     (click)="viewUser.set(null)">
@@ -203,7 +198,6 @@
   </div>
 }
 
-<!-- Ban modal -->
 @if (banTarget(); as user) {
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" (click)="closeBan()">
     <div class="w-full max-w-sm overflow-hidden rounded-2xl bg-surface shadow-xl" (click)="$event.stopPropagation()">
@@ -244,7 +238,6 @@
   </div>
 }
 
-<!-- Delete confirmation -->
 @if (pendingDelete()) {
   <app-admin-confirm-modal
     title="Eliminar usuario"

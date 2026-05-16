@@ -21,8 +21,6 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    // ── Usuarios ──────────────────────────────────────────────────────────
-
     @GetMapping("/usuarios")
     public ApiSuccessResponse<Page<UsuarioDto>> listUsers(
             @RequestParam(required = false) String q,
@@ -46,8 +44,6 @@ public class AdminController {
         return ApiSuccessResponse.of(null);
     }
 
-    // ── Publicaciones ─────────────────────────────────────────────────────
-
     @GetMapping("/publicaciones")
     public ApiSuccessResponse<Page<AdminPostDto>> listPosts(
             @RequestParam(defaultValue = "0") int page,
@@ -68,8 +64,6 @@ public class AdminController {
         return ApiSuccessResponse.of(null);
     }
 
-    // ── Comentarios ───────────────────────────────────────────────────────
-
     @GetMapping("/comentarios")
     public ApiSuccessResponse<Page<AdminCommentDto>> listComments(
             @RequestParam(defaultValue = "0") int page,
@@ -84,8 +78,6 @@ public class AdminController {
         adminService.deleteComment(id);
         return ApiSuccessResponse.of(null);
     }
-
-    // ── Baneos ────────────────────────────────────────────────────────────
 
     @GetMapping("/baneos")
     public ApiSuccessResponse<Page<BaneoDto>> listBans(
@@ -113,8 +105,6 @@ public class AdminController {
         adminService.deleteBan(id);
         return ApiSuccessResponse.of(null);
     }
-
-    // ── Ejercicios ────────────────────────────────────────────────────────
 
     @GetMapping("/ejercicios")
     public ApiSuccessResponse<Page<AdminEjercicioDto>> listEjercicios(

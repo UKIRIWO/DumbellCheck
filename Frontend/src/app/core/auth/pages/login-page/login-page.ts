@@ -31,7 +31,7 @@ export class LoginPage implements OnInit {
   readonly banData = signal<BanData | null>(null);
 
   ngOnInit(): void {
-    // Ban data is passed via router navigation state — only present right after being kicked
+
     const state = (window.history.state ?? {}) as { banData?: BanData };
     if (state.banData) {
       this.banData.set(state.banData);

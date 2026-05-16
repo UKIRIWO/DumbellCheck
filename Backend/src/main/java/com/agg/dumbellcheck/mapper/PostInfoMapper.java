@@ -1,16 +1,6 @@
 package com.agg.dumbellcheck.mapper;
 
-/*
-publicaciones (El post del entrenamiento).
 
-ejercicios_publicacion (Ejercicios realizados en ese post).
-
-detalles_series (Las series, pesos y repeticiones reales).
-
-comentarios (Interacción en el post).
-
-likes (Reacciones).
-*/
 
 import com.agg.dumbellcheck.dto.PostInfoDTO.*;
 import com.agg.dumbellcheck.entities.ComentarioEntity;

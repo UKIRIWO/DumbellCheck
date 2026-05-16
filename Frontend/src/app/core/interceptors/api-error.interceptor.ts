@@ -10,15 +10,15 @@ export const apiErrorInterceptor: HttpInterceptorFn = (request, next) => {
 
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Auth endpoints handle their own errors (login, register, refresh)
+
       const isAuthEndpoint = request.url.includes('/auth/');
 
       if (error.status === 403 && error.error?.errorCode === 'USER_BANNED') {
         if (isAuthEndpoint) {
-          // Let the login page handle it (show the ban modal itself)
+
           return throwError(() => error);
         }
-        // Non-auth: already logged in but now banned — kick them out
+
         authStateService.clearSession();
         router.navigate(['/auth/login'], {
           state: { banData: error.error?.data ?? null },

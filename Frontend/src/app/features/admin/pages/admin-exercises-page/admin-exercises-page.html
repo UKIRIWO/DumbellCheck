@@ -83,7 +83,6 @@
                   </div>
                 }
               </td>
-              <!-- Nombre (editable) -->
               <td class="px-4 py-3 font-semibold text-brand-text">
                 @if (editingRow()?.id === ej.id) {
                   <input type="text" [ngModel]="editingRow()!.nombre" (ngModelChange)="updateEditField('nombre', $event)"
@@ -92,7 +91,6 @@
                   {{ ej.nombre }}
                 }
               </td>
-              <!-- Descripción (editable) -->
               <td class="px-4 py-3 max-w-xs truncate text-muted">
                 @if (editingRow()?.id === ej.id) {
                   <input type="text" [ngModel]="editingRow()!.descripcion" (ngModelChange)="updateEditField('descripcion', $event)"
@@ -103,7 +101,6 @@
               </td>
               <td class="px-4 py-3 text-muted">
                 {{ ej.fechaCreacion | date:'d MMM yyyy':'':'es' }}
-                <!-- Save / cancel when editing -->
                 @if (editingRow()?.id === ej.id) {
                   <div class="mt-1 flex gap-2">
                     <button type="button" (click)="saveEdit()" [disabled]="saving()"

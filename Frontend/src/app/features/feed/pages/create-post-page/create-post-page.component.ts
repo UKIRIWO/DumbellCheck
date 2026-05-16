@@ -57,14 +57,14 @@ export class CreatePostPageComponent implements OnInit {
   titulo = '';
   descripcion = '';
   exercises: WorkingEjercicio[] = [];
-  /** UI-only flag: indica que el formulario fue precargado desde una rutina (solo informativo, no se persiste). */
+
   plantillaAplicada = false;
 
   showExerciseSelector = signal(false);
   showTemplatePicker = signal(false);
   templateRoutines = signal<RoutineListItem[]>([]);
   templateLoading = signal(false);
-  /** Grupo muscular del selector: se mantiene al añadir varios ejercicios; se resetea al crear otra publicación. */
+
   persistedSelectorGrupoId: number | undefined = undefined;
 
   submitting = signal(false);
@@ -76,8 +76,7 @@ export class CreatePostPageComponent implements OnInit {
   readonly isValidRest = isValidRestInput;
 
   ngOnInit(): void {
-    // Navigation state is synchronously available (set by the routines list page).
-    // Falls back to query param for direct URL access (?rutina=xxx).
+
     const navState = (window.history.state ?? {}) as { preloadRutinaPublicId?: string };
     const rutinaPublicId =
       navState.preloadRutinaPublicId ?? this.route.snapshot.queryParamMap.get('rutina') ?? null;
@@ -105,9 +104,7 @@ export class CreatePostPageComponent implements OnInit {
           })),
         }));
         this.templateLoading.set(false);
-        // Plain class properties need an explicit detectChanges() when set from an
-        // async callback inside a lazily-loaded component to guarantee the template
-        // re-renders.
+
         this.cdr.detectChanges();
       },
       error: () => this.templateLoading.set(false),

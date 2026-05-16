@@ -47,7 +47,7 @@ public class AdminService {
         this.userInfoMapper = userInfoMapper;
     }
 
-    // ── Usuarios ──────────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public Page<UsuarioDto> listUsers(String q, int page, int size, String sortBy, String sortDir) {
@@ -82,7 +82,7 @@ public class AdminService {
         usuarioRepository.deleteById(id);
     }
 
-    // ── Publicaciones ─────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public Page<AdminPostDto> listPosts(int page, int size, String sortBy, String sortDir) {
@@ -106,7 +106,7 @@ public class AdminService {
         publicacionRepository.deleteById(id);
     }
 
-    // ── Comentarios ───────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public Page<AdminCommentDto> listComments(int page, int size, String sortBy, String sortDir) {
@@ -122,7 +122,7 @@ public class AdminService {
         comentarioRepository.deleteById(id);
     }
 
-    // ── Baneos ────────────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public Page<BaneoDto> listBans(int page, int size, String sortBy, String sortDir) {
@@ -169,7 +169,7 @@ public class AdminService {
         baneoRepository.deleteById(id);
     }
 
-    // ── Ejercicios ────────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public Page<AdminEjercicioDto> listEjercicios(int page, int size, String sortBy, String sortDir) {
@@ -205,7 +205,7 @@ public class AdminService {
         ejercicioRepository.deleteById(id);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
+
 
     private Pageable buildPageable(int page, int size, String sortBy, String sortDir, Set<String> allowed, String defaultField) {
         String field = (sortBy != null && allowed.contains(sortBy)) ? sortBy : defaultField;

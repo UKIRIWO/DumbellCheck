@@ -2,7 +2,6 @@
   class="group flex gap-2"
   [class.flex-row-reverse]="message.esMio"
 >
-  <!-- Avatar (only for others) -->
   @if (!message.esMio && showAvatar) {
     <a [routerLink]="['/app/profile', message.username]" class="shrink-0 self-end">
       <app-user-avatar size="sm" [username]="message.username" [fotoPerfilUrl]="message.fotoPerfilUrl ?? null" />
@@ -12,7 +11,6 @@
   }
 
   <div class="flex max-w-[72%] flex-col" [class.items-end]="message.esMio">
-    <!-- Sender name (for others in groups) -->
     @if (!message.esMio && showAvatar) {
       <a [routerLink]="['/app/profile', message.username]"
         class="mb-0.5 text-[10px] font-semibold text-brand-blue hover:underline">
@@ -20,7 +18,6 @@
       </a>
     }
 
-    <!-- Reply reference -->
     @if (message.mensajeReferenciaId) {
       <div class="mb-1 rounded-lg border-l-2 border-brand-blue bg-ice px-3 py-1.5 text-xs text-muted">
         <span class="font-semibold text-brand-blue">{{ message.mensajeReferenciaUsername }}</span>
@@ -28,7 +25,6 @@
       </div>
     }
 
-    <!-- Bubble -->
     @if (message.eliminado) {
       <div class="rounded-2xl border border-border bg-ice px-4 py-2.5">
         <p class="text-xs italic text-muted">Mensaje eliminado</p>
@@ -80,14 +76,12 @@
       </div>
     }
 
-    <!-- Meta row -->
     @if (!message.eliminado) {
       <div class="mt-0.5 flex items-center gap-2" [class.flex-row-reverse]="message.esMio">
         <span class="text-[9px] text-muted">
           {{ message.fechaCreacion | date:'HH:mm':'':'es' }}
           @if (message.estaEditado) { · editado }
         </span>
-        <!-- Actions (visible on hover) -->
         <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button type="button" (click)="replyClick.emit(message)"
             class="flex h-6 w-6 items-center justify-center rounded-full text-muted hover:bg-border cursor-pointer text-xs">

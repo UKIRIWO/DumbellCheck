@@ -17,7 +17,7 @@ export const PROFILE_ROUTES: Routes = [
         return new RedirectCommand(router.parseUrl('/auth/login'));
       },
     ],
-    // Dummy component required by the canActivate redirect pattern
+
     loadComponent: () =>
       import('./pages/profile-page/profile-page.component').then((m) => m.ProfilePageComponent),
   },

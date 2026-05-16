@@ -1,6 +1,8 @@
-<main class="min-h-screen w-full pb-20 pt-6 lg:pb-0 lg:pt-0">
-  <div class="mx-auto w-full max-w-md px-4 lg:max-w-none lg:flex lg:items-start lg:px-0">
-    <aside class="hidden lg:sticky lg:top-0 lg:block lg:h-screen lg:w-[20vw] lg:self-start lg:shrink-0">
+<main class="min-h-screen w-full pb-20 pt-6 md:pb-0 md:pt-0">
+  <div class="mx-auto w-full max-w-md px-4 md:max-w-none md:flex md:items-start md:px-0">
+    <aside
+      class="hidden md:sticky md:top-0 md:block md:h-screen md:w-64 md:shrink-0 md:self-start lg:w-[20vw]"
+    >
       @if (isAdminRoute()) {
         <app-admin-side-nav />
       } @else {
@@ -9,7 +11,7 @@
     </aside>
 
     <section
-      class="lg:ml-[5vw] lg:shrink-0"
+      class="md:min-w-0 md:flex-1 md:px-4 lg:ml-[5vw] lg:shrink-0 lg:px-0"
       [class.lg:w-[45vw]]="!hideSidebar()"
       [class.lg:w-[70vw]]="hideSidebar()"
       [class.lg:mr-[5vw]]="hideSidebar()"
@@ -26,7 +28,7 @@
 </main>
 
 @if (!isAdminRoute()) {
-  <div class="lg:hidden">
+  <div class="md:hidden">
     <app-bottom-nav />
   </div>
 }

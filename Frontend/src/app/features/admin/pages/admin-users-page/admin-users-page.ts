@@ -80,8 +80,6 @@ export class AdminUsersPage implements OnInit {
     return this.sortDir() === 'asc' ? '▴' : '▾';
   }
 
-  // ── Menú de 3 puntos ──────────────────────────────────────────────────
-
   openMenu(event: MouseEvent, item: AdminUser): void {
     event.stopPropagation();
     const btn = event.currentTarget as HTMLElement;
@@ -99,8 +97,6 @@ export class AdminUsersPage implements OnInit {
     );
   }
 
-  // ── Rol auto-save ─────────────────────────────────────────────────────
-
   changeRol(user: AdminUser, rol: RolUsuario): void {
     const req: AdminUserUpdateRequest = { rol };
     this.adminApi.updateUser(user.id, req).subscribe({
@@ -113,14 +109,10 @@ export class AdminUsersPage implements OnInit {
     });
   }
 
-  // ── Ver datos ─────────────────────────────────────────────────────────
-
   openView(user: AdminUser): void {
     this.menuOpenItem.set(null);
     this.viewUser.set(user);
   }
-
-  // ── Baneo ─────────────────────────────────────────────────────────────
 
   openBan(user: AdminUser): void {
     this.menuOpenItem.set(null);
@@ -160,8 +152,6 @@ export class AdminUsersPage implements OnInit {
     }
     this.banForm.update((f) => ({ ...f, [field]: value }));
   }
-
-  // ── Eliminar ──────────────────────────────────────────────────────────
 
   askDelete(user: AdminUser): void { this.menuOpenItem.set(null); this.pendingDelete.set(user); }
   cancelDelete(): void { this.pendingDelete.set(null); }

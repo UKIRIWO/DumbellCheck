@@ -108,8 +108,7 @@ public class CommentService {
                 && comentarioRepository.existsByComentarioPadreIdAndEstaActivoTrue(comentario.getId());
 
         if (hasActiveReplies) {
-            // Soft delete to preserve the thread.
-            // Triggers only fire on INSERT/DELETE, so the publication counter must be adjusted manually here.
+
             comentario.setEstaActivo(false);
             comentarioRepository.save(comentario);
 
@@ -117,7 +116,7 @@ public class CommentService {
             publicacion.setContadorComentarios(Math.max(0, current - 1));
             publicacionRepository.save(publicacion);
         } else {
-            // Hard delete; the after_delete trigger keeps the publication counter in sync.
+
             comentarioRepository.delete(comentario);
         }
     }

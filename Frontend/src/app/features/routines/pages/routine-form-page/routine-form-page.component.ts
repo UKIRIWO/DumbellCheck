@@ -7,7 +7,7 @@ import { Ejercicio } from '../../../../core/models/exercise.model';
 import { CreateRoutineRequest, Routine } from '../../../../core/models/routine.model';
 import { ExerciseSelectorComponent } from '../../../feed/components/exercise-selector/exercise-selector.component';
 
-/** Re-use the same working state types from create-post so exercise components are identical. */
+
 export interface WorkingSerie {
   repeticiones: number | null;
   peso: number | null;
@@ -84,8 +84,7 @@ export class RoutineFormPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Use paramMap observable for reliable param resolution (snapshot can miss params
-    // in some lazy-loaded / nested route configurations).
+
     this.sub = this.route.paramMap.subscribe((params) => {
       const publicId = params.get('publicId');
       if (publicId && publicId !== this.editPublicId) {

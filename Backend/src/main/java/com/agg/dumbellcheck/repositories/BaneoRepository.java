@@ -26,7 +26,7 @@ public interface BaneoRepository extends JpaRepository<BaneoEntity, Integer> {
             """)
     List<BaneoEntity> findActiveBans(@Param("userId") Integer userId, @Param("now") Instant now, Pageable pageable);
 
-    /** Single-query ban check by username — used in the per-request filter. */
+
     @Query(value = """
             SELECT b.* FROM baneos b
             JOIN usuarios u ON u.id = b.usuario_id

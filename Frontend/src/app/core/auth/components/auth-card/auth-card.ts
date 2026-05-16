@@ -1,9 +1,10 @@
+import { NgClass } from '@angular/common';
 import { Component, input } from '@angular/core';
 import { AuthBrandPanel } from '../auth-brand-panel/auth-brand-panel';
 
 @Component({
   selector: 'app-auth-card',
-  imports: [AuthBrandPanel],
+  imports: [AuthBrandPanel, NgClass],
   templateUrl: './auth-card.html',
   styleUrl: './auth-card.scss',
 })

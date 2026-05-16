@@ -74,7 +74,6 @@
   }
 </div>
 
-<!-- 3-dots dropdown -->
 @if (menuOpenItem(); as item) {
   <div class="fixed z-50 min-w-[160px] rounded-xl border border-border bg-surface shadow-xl py-1"
     [style.top.px]="menuPos().top" [style.left.px]="menuPos().left" (click)="$event.stopPropagation()">
@@ -97,7 +96,6 @@
   </div>
 }
 
-<!-- Multimedia modal -->
 @if (mediaModal(); as m) {
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4" (click)="mediaModal.set(null)">
     <div class="relative max-h-[90vh] max-w-3xl overflow-hidden rounded-2xl" (click)="$event.stopPropagation()">

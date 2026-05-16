@@ -75,8 +75,6 @@ export class AdminExercisesPage implements OnInit {
   @HostListener('document:click')
   closeMenu(): void { this.menuOpenItem.set(null); }
 
-  // ── Inline edit ───────────────────────────────────────────────────────
-
   startEdit(ej: AdminEjercicio): void {
     this.menuOpenItem.set(null);
     this.editingRow.set({ id: ej.id, nombre: ej.nombre, descripcion: ej.descripcion ?? '', imagenUrl: ej.imagenUrl ?? '' });
@@ -111,8 +109,6 @@ export class AdminExercisesPage implements OnInit {
     this.editingRow.set({ ...row, [field]: value });
   }
 
-  // ── Create form ───────────────────────────────────────────────────────
-
   openCreate(): void {
     this.menuOpenItem.set(null);
     this.createForm.set({ nombre: '', descripcion: undefined, imagenUrl: undefined });
@@ -140,8 +136,6 @@ export class AdminExercisesPage implements OnInit {
   updateCreateForm(field: keyof AdminEjercicioRequest, value: string): void {
     this.createForm.update((f) => ({ ...f, [field]: value || undefined }));
   }
-
-  // ── Delete ────────────────────────────────────────────────────────────
 
   askDelete(ej: AdminEjercicio): void { this.menuOpenItem.set(null); this.pendingDelete.set(ej); }
   cancelDelete(): void { this.pendingDelete.set(null); }

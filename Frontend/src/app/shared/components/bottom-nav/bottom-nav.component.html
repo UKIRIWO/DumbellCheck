@@ -1,0 +1,66 @@
+<nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-white pb-[env(safe-area-inset-bottom)]">
+  <ul class="mx-auto flex max-w-lg items-center justify-around px-2 py-2 text-brand-text">
+    <li>
+      <a
+        routerLink="/app/feed"
+        routerLinkActive="text-primary-dark"
+        class="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-muted transition-colors hover:text-primary-dark"
+        aria-label="Feed"
+      >
+        <i class="mdi mdi-home-outline text-2xl" aria-hidden="true"></i>
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/app/routines"
+        routerLinkActive="text-primary-dark"
+        class="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-muted transition-colors hover:text-primary-dark"
+        aria-label="Rutinas"
+      >
+        <i class="mdi mdi-dumbbell text-2xl" aria-hidden="true"></i>
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/app/chats"
+        routerLinkActive="text-primary-dark"
+        class="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-muted transition-colors hover:text-primary-dark"
+        aria-label="Mensajes"
+      >
+        <i class="mdi mdi-message-outline text-2xl" aria-hidden="true"></i>
+      </a>
+    </li>
+    <li>
+      <a
+        routerLink="/app/stats"
+        routerLinkActive="text-primary-dark"
+        class="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-muted transition-colors hover:text-primary-dark"
+        aria-label="Estadísticas"
+      >
+        <i class="mdi mdi-chart-bar text-2xl" aria-hidden="true"></i>
+      </a>
+    </li>
+    <li>
+      <a
+        [routerLink]="profileLink()"
+        routerLinkActive="text-primary-dark"
+        class="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-muted transition-colors hover:text-primary-dark"
+        aria-label="Perfil"
+      >
+        <i class="mdi mdi-account-outline text-2xl" aria-hidden="true"></i>
+      </a>
+    </li>
+    @if (isAdmin()) {
+      <li>
+        <a
+          routerLink="/app/admin"
+          routerLinkActive="text-primary-dark"
+          class="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-muted transition-colors hover:text-primary-dark"
+          aria-label="Admin"
+        >
+          <i class="mdi mdi-shield-crown-outline text-2xl" aria-hidden="true"></i>
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

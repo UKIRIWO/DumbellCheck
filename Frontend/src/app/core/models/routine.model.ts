@@ -69,7 +69,7 @@ export interface CreateRoutineRequest {
   ejercicios: CreateRoutineEjercicioRequest[];
 }
 
-/** Converts Routine exercises to the EjercicioEnPost shape used by WorkoutDetailExercises. */
+
 export function routineEjerciciosToPostShape(ejercicios: RoutineEjercicioResponse[]): EjercicioEnPost[] {
   return ejercicios.map((ej, idx) => ({
     id: ej.id,

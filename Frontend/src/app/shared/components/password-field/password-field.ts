@@ -1,7 +1,7 @@
 import { Component, Input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-/** Campo contraseña con toggle mostrar/ocultar (MDI). */
+
 @Component({
   selector: 'app-password-field',
   imports: [ReactiveFormsModule],
@@ -13,12 +13,12 @@ export class PasswordField {
   @Input() placeholder = '';
   @Input() autocomplete: string = 'current-password';
   @Input() inputId = '';
-  /** Alineado con inputs de login (md) o registro (sm). */
+
   @Input() size: 'md' | 'sm' = 'md';
 
   readonly visible = signal(false);
 
-  /** Misma apariencia que los inputs del auth-card colindantes. */
+
   readonly fieldBaseClass =
     'w-full rounded-[10px] border-2 border-[#e8edf2] bg-[#fafbfc] text-charcoal outline-none transition focus:border-sky focus:bg-white disabled:opacity-60';
 

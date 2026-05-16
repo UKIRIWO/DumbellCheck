@@ -164,7 +164,7 @@ export class ChatDetail implements OnChanges, OnDestroy {
           this.markSeen();
           this.chatUpdated.emit();
         }
-        // Update edited/deleted messages
+
         this.messages.update((prev) =>
           prev.map((m) => page.content.find((u) => u.id === m.id) ?? m),
         );
@@ -180,8 +180,6 @@ export class ChatDetail implements OnChanges, OnDestroy {
     const el = this.messagesContainer?.nativeElement;
     if (el) el.scrollTop = el.scrollHeight;
   }
-
-  // ── Send ──────────────────────────────────────────────────────────────
 
   send(): void {
     const file = this.mediaFile();
@@ -264,8 +262,6 @@ export class ChatDetail implements OnChanges, OnDestroy {
     }
   }
 
-  // ── Media ─────────────────────────────────────────────────────────────
-
   toggleAttachMenu(): void {
     this.showAttachMenu.update((v) => !v);
   }
@@ -314,8 +310,6 @@ export class ChatDetail implements OnChanges, OnDestroy {
     this.mediaType.set(null);
   }
 
-  // ── Edit / Delete ─────────────────────────────────────────────────────
-
   onEditSave(event: { message: ChatMessage; content: string }): void {
     this.chatApi.editMessage(this.chat.publicId, event.message.id, { contenido: event.content }).subscribe({
       next: (updated) => {
@@ -336,8 +330,6 @@ export class ChatDetail implements OnChanges, OnDestroy {
     });
   }
 
-  // ── Reply ─────────────────────────────────────────────────────────────
-
   setReply(message: ChatMessage): void {
     const preview = message.contenido
       ? (message.contenido.length > 50 ? message.contenido.slice(0, 50) + '…' : message.contenido)
@@ -346,8 +338,6 @@ export class ChatDetail implements OnChanges, OnDestroy {
   }
 
   cancelReply(): void { this.replyTarget.set(null); }
-
-  // ── Group display ─────────────────────────────────────────────────────
 
   shouldShowAvatar(messages: ChatMessage[], index: number): boolean {
     if (index === 0) return true;

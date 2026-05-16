@@ -3,7 +3,6 @@
   [routerLink]="['/app/workout', post.publicId]"
 >
 
-  <!-- Card header: user info + date -->
   <div class="flex items-center gap-3 px-4 pt-4 pb-3">
     <a
       [routerLink]="['/app/profile', post.usuario.username]"
@@ -29,7 +28,6 @@
     </div>
   </div>
 
-  <!-- Post title + description -->
   <div class="px-4 pb-3">
     <h2 class="font-heading font-semibold text-base text-brand-text">{{ post.titulo }}</h2>
     @if (post.descripcion) {
@@ -37,7 +35,6 @@
     }
   </div>
 
-  <!-- Exercise summary -->
   @if (post.ejercicios.length > 0 || hasMedia) {
     <div class="border-t border-border px-4 py-3 space-y-3">
       <div class="relative overflow-hidden rounded-xl border border-border bg-ice/50 p-3">
@@ -122,7 +119,6 @@
     </div>
   }
 
-  <!-- Footer: likes + comments -->
   <div class="flex items-center gap-4 px-4 py-3 border-t border-border">
     <button
       type="button"

@@ -1,5 +1,4 @@
 <div class="mt-5 rounded-2xl bg-surface p-5 shadow-sm">
-  <!-- Header -->
   <div class="mb-6 flex items-center justify-between">
     <h1 class="font-heading text-2xl font-semibold text-brand-text">Rutinas</h1>
     <a
@@ -52,7 +51,6 @@
           (click)="openDetail(routine)"
         >
           <div class="flex items-start gap-3">
-            <!-- Drag handle -->
             <div
               class="mt-0.5 shrink-0 cursor-grab select-none text-base font-bold leading-none text-border"
               (click)="$event.stopPropagation()"
@@ -65,7 +63,6 @@
               }
             </div>
 
-            <!-- Three-dot menu -->
             <div class="relative shrink-0">
               <button
                 type="button"
@@ -112,7 +109,6 @@
   }
 </div>
 
-<!-- Delete confirmation modal -->
 @if (pendingDelete()) {
   <div
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"

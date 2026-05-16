@@ -1,4 +1,3 @@
-<!-- Banner -->
 <div class="relative w-full">
   <div class="h-44 w-full overflow-hidden rounded-t-3xl bg-gradient-to-br from-primary-dark to-primary-light">
     @if (perfil.bannerUrl) {
@@ -6,7 +5,6 @@
     }
   </div>
 
-  <!-- Avatar overlapping banner -->
   <div class="absolute -bottom-12 left-6">
     <div class="h-24 w-24 overflow-hidden rounded-full border-4 border-surface bg-ice shadow-md">
       @if (perfil.fotoPerfilUrl) {
@@ -20,10 +18,8 @@
   </div>
 </div>
 
-<!-- Info section -->
 <div class="mt-14 px-6 pb-5">
-  <!-- Name/username row + action buttons -->
-  <div class="flex items-start justify-between gap-4">
+  <div class="flex flex-col gap-3">
     <div class="min-w-0">
       <h1 class="font-heading text-xl font-bold text-brand-text leading-tight">
         {{ perfil.nombre }} {{ perfil.apellido1 }}
@@ -32,8 +28,7 @@
       <p class="mt-0.5 text-sm text-muted">@{{ perfil.username }}</p>
     </div>
 
-    <!-- Action buttons -->
-    <div class="flex shrink-0 gap-2 pt-0.5">
+    <div class="flex flex-wrap gap-2">
       @if (perfil.esPropio) {
         <button
           type="button"
@@ -81,12 +76,10 @@
   </div>
 
 
-  <!-- Bio --><!-- Bio -->
   @if (perfil.biografia) {
     <p class="mt-4 text-sm text-brand-text leading-relaxed whitespace-pre-line">{{ perfil.biografia }}</p>
   }
 
-  <!-- Stats -->
   <div class="mt-4 flex items-center justify-between w-70 gap-2">
   
     <div class="flex-1 text-center px-2 py-1">
@@ -113,7 +106,6 @@
 
   
 
-  <!-- Social links -->
   @if (perfil.enlaces.length > 0) {
     <div class="mt-4 flex flex-wrap gap-3">
       @for (enlace of perfil.enlaces; track enlace.id) {

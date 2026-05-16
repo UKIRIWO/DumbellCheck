@@ -1,5 +1,4 @@
 <div class="flex h-full flex-col">
-  <!-- Chat header -->
   <div class="flex shrink-0 items-center border-b border-border bg-surface">
     <button
       type="button"
@@ -44,7 +43,6 @@
     <p class="shrink-0 bg-red-50 px-4 py-2 text-xs text-danger">{{ errorMessage() }}</p>
   }
 
-  <!-- Messages area -->
   <div
     #messagesContainer
     class="flex-1 overflow-y-auto px-4 py-3 space-y-1"
@@ -83,9 +81,7 @@
     }
   </div>
 
-  <!-- Input area -->
   <div class="shrink-0 border-t border-border bg-surface px-4 py-3">
-    <!-- Media preview -->
     @if (mediaPreviewUrl()) {
       <div class="mb-2 flex items-center gap-2">
         @if (mediaType() === 'image') {
@@ -104,7 +100,6 @@
       <p class="mb-2 text-[11px] text-muted">Con multimedia adjunta no puedes escribir texto en el mismo mensaje.</p>
     }
 
-    <!-- Reply preview -->
     @if (replyTarget(); as reply) {
       <div class="mb-2 flex items-center justify-between rounded-xl bg-ice px-3 py-2 text-xs">
         <div class="min-w-0">

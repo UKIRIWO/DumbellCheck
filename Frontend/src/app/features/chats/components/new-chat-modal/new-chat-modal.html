@@ -7,7 +7,6 @@
     style="max-height: 85vh"
     (click)="$event.stopPropagation()"
   >
-    <!-- Header -->
     <header class="flex items-center justify-between border-b border-border px-5 py-4">
       <h2 class="font-heading text-lg font-semibold text-brand-text">Nuevo grupo</h2>
       <button type="button" (click)="closed.emit()"
@@ -16,7 +15,6 @@
       </button>
     </header>
 
-    <!-- Group name -->
     <div class="border-b border-border px-5 py-3">
       <input
         type="text"
@@ -27,7 +25,6 @@
       />
     </div>
 
-    <!-- Selected chips -->
     @if (selected().length > 0) {
       <div class="flex flex-wrap gap-2 border-b border-border px-5 py-2">
         @for (u of selected(); track u.id) {
@@ -39,7 +36,6 @@
       </div>
     }
 
-    <!-- Search -->
     <div class="border-b border-border px-5 py-3">
       <input
         type="text"
@@ -50,7 +46,6 @@
       />
     </div>
 
-    <!-- Users list -->
     <div class="flex-1 overflow-y-auto px-3 py-2">
       @if (loading()) {
         <div class="space-y-2 p-3 animate-pulse">
@@ -100,7 +95,6 @@
       <p class="px-5 pb-2 text-sm text-danger">{{ errorMessage() }}</p>
     }
 
-    <!-- Footer -->
     <footer class="border-t border-border px-5 py-4">
       <button
         type="button"

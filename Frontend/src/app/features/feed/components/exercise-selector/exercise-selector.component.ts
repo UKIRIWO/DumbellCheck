@@ -10,10 +10,10 @@ import { Ejercicio, GrupoMuscular } from '../../../../core/models/exercise.model
   templateUrl: './exercise-selector.component.html',
 })
 export class ExerciseSelectorComponent implements OnInit {
-  /** Filtro de grupo recordado mientras se crea la misma publicación (lo establece el padre). */
+
   @Input() savedGrupoMuscularId: number | undefined = undefined;
 
-  /** Ejercicios ya añadidos al entreno; no se listan de nuevo (misma referencia que en el padre). */
+
   @Input() workoutExercises: ReadonlyArray<{ ejercicioId: number }> = [];
 
   @Output() ejercicioSelected = new EventEmitter<Ejercicio>();

@@ -22,7 +22,7 @@ export class RoutinesPageComponent implements OnInit {
   readonly activeMenuId = signal<string | null>(null);
   readonly pendingDelete = signal<RoutineListItem | null>(null);
 
-  // Drag state
+
   readonly draggedIndex = signal<number | null>(null);
   readonly dragOverIndex = signal<number | null>(null);
 
@@ -95,7 +95,7 @@ export class RoutinesPageComponent implements OnInit {
     });
   }
 
-  // ── Drag & drop ──────────────────────────────────────────────────────────────
+
 
   onDragStart(event: DragEvent, index: number): void {
     this.draggedIndex.set(index);

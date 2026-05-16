@@ -178,8 +178,7 @@ public class PerfilService {
             seguidorRepository.save(seguidor);
         }
 
-        // Trigger updates counters in DB; force sync and clear persistence context
-        // so the response reads fresh values instead of stale managed entities.
+
         entityManager.flush();
         entityManager.clear();
         return getPerfil(viewerUsername, targetUsername);
@@ -198,8 +197,7 @@ public class PerfilService {
 
         seguidorRepository.findByUsuarioIdAndSeguidoId(viewer.getId(), target.getId())
                 .ifPresent(seguidorRepository::delete);
-        // Trigger updates counters in DB; force sync and clear persistence context
-        // so the response reads fresh values instead of stale managed entities.
+
         entityManager.flush();
         entityManager.clear();
         return getPerfil(viewerUsername, targetUsername);

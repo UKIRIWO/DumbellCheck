@@ -43,7 +43,7 @@ public class ChatService {
         this.mediaStorageService = mediaStorageService;
     }
 
-    // ── Chat list ─────────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public List<ChatListItemResponse> getMisChats(String username) {
@@ -53,7 +53,7 @@ public class ChatService {
         return chats.stream().map(chat -> buildListItem(chat, me)).toList();
     }
 
-    // ── Create direct chat (find-or-create) ───────────────────────────────
+
 
     @Transactional
     public ChatDetailResponse findOrCreateDirectChat(String username, String targetUsername) {
@@ -78,7 +78,7 @@ public class ChatService {
         return buildDetailResponse(saved, me);
     }
 
-    // ── Create group chat ─────────────────────────────────────────────────
+
 
     @Transactional
     public ChatDetailResponse createGroupChat(String username, CreateGroupChatRequest request) {
@@ -146,7 +146,7 @@ public class ChatService {
         return buildDetailResponse(chat, me);
     }
 
-    // ── Chat detail ───────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public ChatDetailResponse getChatDetail(String publicId, String username) {
@@ -156,7 +156,7 @@ public class ChatService {
         return buildDetailResponse(chat, me);
     }
 
-    // ── Messages ──────────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public CursorPageResponse<ChatMessageResponse> getMensajes(
@@ -173,7 +173,7 @@ public class ChatService {
         List<MensajeChatEntity> page = hasMore ? rows.subList(0, pageSize) : rows;
         Integer nextCursor = hasMore ? page.get(page.size() - 1).getId() : null;
 
-        // Return in ascending order (oldest first for rendering)
+
         List<ChatMessageResponse> content = page.stream()
                 .sorted((a, b) -> a.getId() - b.getId())
                 .map(m -> toMessageResponse(m, me))
@@ -354,7 +354,7 @@ public class ChatService {
         return buildDetailResponse(chat, me);
     }
 
-    // ── User search ───────────────────────────────────────────────────────
+
 
     @Transactional(readOnly = true)
     public List<ChatSearchUserResponse> searchUsers(String username, String q, int page, int size) {
@@ -378,12 +378,9 @@ public class ChatService {
         )).toList();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
 
-    /**
-     * Si el usuario que sale es el único admin, asciende al primer miembro restante
-     * (orden de la lista: id ascendente, el de más arriba en el modal).
-     */
+
+
     private void promoteNextAdminIfSoleAdminLeaving(Integer chatId, Integer leavingUserId) {
         List<UsuarioChatEntity> participantes = usuarioChatRepository.findByChatIdOrderByIdAsc(chatId);
 

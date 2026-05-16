@@ -55,10 +55,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * Prevents Spring Boot from auto-registering BanCheckFilter as a plain servlet filter.
-     * It must only run inside the Spring Security filter chain (after JwtAuthenticationFilter).
-     */
+
     @Bean
     public FilterRegistrationBean<BanCheckFilter> banCheckFilterRegistration(BanCheckFilter filter) {
         FilterRegistrationBean<BanCheckFilter> registration = new FilterRegistrationBean<>(filter);
