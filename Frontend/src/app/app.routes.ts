@@ -45,12 +45,6 @@ export const routes: Routes = [
         loadChildren: () => import('./features/chats/chats.routes').then((m) => m.CHATS_ROUTES),
       },
       {
-        path: 'notifications',
-        canActivate: [memberGuard],
-        loadChildren: () =>
-          import('./features/notifications/notifications.routes').then((m) => m.NOTIFICATIONS_ROUTES),
-      },
-      {
         path: 'routines',
         canActivate: [memberGuard],
         loadChildren: () => import('./features/routines/routines.routes').then((m) => m.ROUTINES_ROUTES),
@@ -59,11 +53,6 @@ export const routes: Routes = [
         path: 'stats',
         canActivate: [memberGuard],
         loadChildren: () => import('./features/stats/stats.routes').then((m) => m.STATS_ROUTES),
-      },
-      {
-        path: 'support',
-        canActivate: [memberGuard],
-        loadChildren: () => import('./features/support/support.routes').then((m) => m.SUPPORT_ROUTES),
       },
       {
         path: 'workout/:publicId',
