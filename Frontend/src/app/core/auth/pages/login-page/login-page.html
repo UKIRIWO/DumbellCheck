@@ -61,3 +61,51 @@
     <a routerLink="/auth/register" class="font-bold text-blue transition hover:text-navy">Create una gratis</a>
   </div>
 </app-auth-card>
+
+@if (banData(); as ban) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+    <div class="w-full max-w-md overflow-hidden rounded-2xl border-2 border-red-400 bg-white shadow-2xl">
+      <div class="bg-red-600 px-6 py-4 text-white">
+        <div class="flex items-center gap-3">
+          <i class="mdi mdi-account-lock-outline text-3xl"></i>
+          <div>
+            <h3 class="font-heading text-lg font-bold">Cuenta suspendida</h3>
+            <p class="text-sm opacity-90">No puedes iniciar sesión en este momento</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-5 space-y-3">
+        @if (ban.motivoBaneo) {
+          <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3">
+            <p class="text-xs font-semibold uppercase tracking-wide text-red-500 mb-1">Motivo</p>
+            <p class="text-sm text-red-800">{{ ban.motivoBaneo }}</p>
+          </div>
+        }
+        <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3">
+          <p class="text-xs font-semibold uppercase tracking-wide text-red-500 mb-1">Duración</p>
+          @if (ban.baneadoPermanentemente) {
+            <p class="text-sm font-semibold text-red-800">Baneo permanente</p>
+          } @else if (ban.baneadoHasta) {
+            <p class="text-sm text-red-800">
+              Hasta el <span class="font-semibold">{{ ban.baneadoHasta | date:'d \'de\' MMMM yyyy, HH:mm':'':'es' }}</span>
+            </p>
+          } @else {
+            <p class="text-sm text-red-800">Indefinido</p>
+          }
+        </div>
+        <p class="text-xs text-center text-red-400">
+          Si crees que es un error, contacta con el soporte.
+        </p>
+      </div>
+      <div class="border-t border-red-200 px-6 py-4">
+        <button
+          type="button"
+          (click)="banData.set(null)"
+          class="w-full rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white hover:bg-red-700 transition-colors cursor-pointer"
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+}

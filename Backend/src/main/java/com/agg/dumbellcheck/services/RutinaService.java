@@ -98,8 +98,7 @@ public class RutinaService {
         rutina.setDescripcion(request.descripcion() != null ? request.descripcion().trim() : null);
         rutinaRepository.save(rutina);
 
-        // Delete all series and exercises in bulk, then flush so the DB reflects the
-        // deletes before we insert new rows (avoids unique-key violations).
+
         detalleSerieRutinaRepository.deleteSeriesByRutinaId(rutina.getId());
         ejercicioRutinaRepository.deleteByRutinaId(rutina.getId());
         entityManager.flush();
@@ -119,7 +118,7 @@ public class RutinaService {
         rutinaRepository.delete(rutina);
     }
 
-    // ─── helpers ────────────────────────────────────────────────────────────────
+
 
     public RutinaEntity findByPublicId(String publicId) {
         return rutinaRepository.findByPublicId(publicId)

@@ -25,10 +25,10 @@ public class UsuarioChatEntity {
     private UsuarioEntity usuario;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('admin','miembro')")
+    @Column(nullable = false, columnDefinition = "ENUM('miembro','admin','soporte')")
     private RolChatUsuario rol;
 
-    @Column(name = "fecha_union", nullable = false, updatable = false)
+    @Column(name = "fecha_union", updatable = false)
     private Instant fechaUnion;
 
     @Column(name = "fecha_ultima_vista")

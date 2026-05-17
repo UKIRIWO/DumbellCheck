@@ -1,0 +1,119 @@
+<div class="rounded-2xl border border-border bg-surface shadow-sm overflow-hidden">
+  <div class="px-5 py-4 border-b border-border">
+    <h2 class="font-heading text-base font-semibold text-brand-text">Publicaciones</h2>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="mx-5 my-3 rounded-lg bg-red-50 px-4 py-2 text-sm text-danger">{{ errorMessage() }}</p>
+  }
+
+  <div class="overflow-x-auto">
+    @if (loading()) {
+      <div class="space-y-2 p-5 animate-pulse">
+        @for (n of [1,2,3,4,5]; track n) { <div class="h-10 rounded-xl bg-ice"></div> }
+      </div>
+    } @else if (page()?.content?.length === 0) {
+      <p class="py-10 text-center text-sm text-muted">No hay publicaciones.</p>
+    } @else {
+      <table class="w-full text-sm">
+        <thead class="bg-ice text-xs font-semibold uppercase tracking-wide text-muted">
+          <tr>
+            <th class="w-8 px-2 py-3"></th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('id')">ID {{ sortIcon('id') }}</th>
+            <th class="px-4 py-3 text-left">Autor</th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('titulo')">Título {{ sortIcon('titulo') }}</th>
+            <th class="px-4 py-3 text-center cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('contadorLikes')">Likes {{ sortIcon('contadorLikes') }}</th>
+            <th class="px-4 py-3 text-center cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('contadorComentarios')">Coment. {{ sortIcon('contadorComentarios') }}</th>
+            <th class="px-4 py-3 text-center">Media</th>
+            <th class="px-4 py-3 text-center cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('estaActiva')">Estado {{ sortIcon('estaActiva') }}</th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('fechaCreacion')">Fecha {{ sortIcon('fechaCreacion') }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          @for (post of page()?.content ?? []; track post.id) {
+            <tr class="group hover:bg-ice/50 transition-colors" [class.opacity-50]="!post.estaActiva">
+              <td class="px-2 py-3 text-center">
+                <button type="button" (click)="openMenu($event, post)"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg px-2 py-1 text-lg font-bold text-muted hover:bg-ice cursor-pointer leading-none">
+                  ⋮
+                </button>
+              </td>
+              <td class="px-4 py-3 text-muted">{{ post.id }}</td>
+              <td class="px-4 py-3 font-semibold text-brand-text">{{ post.usuarioUsername }}</td>
+              <td class="px-4 py-3 max-w-xs truncate text-brand-text">{{ post.titulo }}</td>
+              <td class="px-4 py-3 text-center text-muted">{{ post.contadorLikes }}</td>
+              <td class="px-4 py-3 text-center text-muted">{{ post.contadorComentarios }}</td>
+              <td class="px-4 py-3 text-center">
+                @if (post.multimediaUrl) {
+                  <button type="button" (click)="openMedia(post)"
+                    class="rounded-lg border border-border px-2 py-0.5 text-xs text-brand-blue hover:bg-ice cursor-pointer">
+                    <i class="mdi mdi-image-outline text-sm"></i> Ver
+                  </button>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                  [class.bg-success/10]="post.estaActiva" [class.text-success]="post.estaActiva"
+                  [class.bg-danger/10]="!post.estaActiva" [class.text-danger]="!post.estaActiva">
+                  {{ post.estaActiva ? 'Activa' : 'Inactiva' }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-muted">{{ post.fechaCreacion | date:'d MMM yyyy':'':'es' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  @if (page(); as p) {
+    <app-admin-pagination [currentPage]="currentPage()" [totalPages]="p.totalPages"
+      [totalElements]="p.totalElements" [pageSize]="20" (pageChange)="load($event)" />
+  }
+</div>
+
+@if (menuOpenItem(); as item) {
+  <div class="fixed z-50 min-w-[160px] rounded-xl border border-border bg-surface shadow-xl py-1"
+    [style.top.px]="menuPos().top" [style.left.px]="menuPos().left" (click)="$event.stopPropagation()">
+    @if (item.multimediaUrl) {
+      <button type="button" (click)="openMedia(item)"
+        class="flex w-full items-center gap-2 px-4 py-2 text-sm text-brand-text hover:bg-ice cursor-pointer">
+        <i class="mdi mdi-image-outline text-base"></i> Ver multimedia
+      </button>
+    }
+    <button type="button" (click)="toggleActiva(item)"
+      class="flex w-full items-center gap-2 px-4 py-2 text-sm text-brand-text hover:bg-ice cursor-pointer">
+      <i class="mdi mdi-toggle-switch-outline text-base"></i>
+      {{ item.estaActiva ? 'Desactivar' : 'Activar' }}
+    </button>
+    <hr class="my-1 border-border" />
+    <button type="button" (click)="askDelete(item)"
+      class="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger hover:bg-red-50 cursor-pointer">
+      <i class="mdi mdi-delete-outline text-base"></i> Eliminar
+    </button>
+  </div>
+}
+
+@if (mediaModal(); as m) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4" (click)="mediaModal.set(null)">
+    <div class="relative max-h-[90vh] max-w-3xl overflow-hidden rounded-2xl" (click)="$event.stopPropagation()">
+      <button type="button" (click)="mediaModal.set(null)"
+        class="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 cursor-pointer">
+        <i class="mdi mdi-close text-lg"></i>
+      </button>
+      @if (m.type === 'image') {
+        <img [src]="m.url" alt="Multimedia" class="max-h-[85vh] max-w-full rounded-2xl object-contain" />
+      } @else {
+        <video [src]="m.url" controls autoplay class="max-h-[85vh] max-w-full rounded-2xl"></video>
+      }
+    </div>
+  </div>
+}
+
+@if (pendingDelete()) {
+  <app-admin-confirm-modal title="Eliminar publicación"
+    [message]="'¿Eliminar «' + pendingDelete()!.titulo + '»? Esta acción es permanente.'"
+    confirmLabel="Eliminar" [loading]="deleting()" (confirmed)="confirmDelete()" (cancelled)="cancelDelete()" />
+}

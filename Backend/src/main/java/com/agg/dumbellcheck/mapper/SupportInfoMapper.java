@@ -1,8 +1,6 @@
 package com.agg.dumbellcheck.mapper;
 
-/*
-incidencias (Tickets de soporte o reportes).
-*/
+
 
 import com.agg.dumbellcheck.dto.SupportInfoDTO.IncidenciaDto;
 import com.agg.dumbellcheck.entities.IncidenciaEntity;

@@ -1,5 +1,6 @@
-import { HttpClient, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { finalize, map, Observable, of, shareReplay, switchMap, catchError } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 import { AuthSession } from '../models/auth-session.model';
@@ -20,6 +21,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
   const authStateService = inject(AuthStateService);
   const http = inject(HttpClient);
   const apiBaseUrl = inject(API_BASE_URL);
+  const router = inject(Router);
   const isAuthEndpoint = request.url.includes('/auth/login')
     || request.url.includes('/auth/register')
     || request.url.includes('/auth/refresh');
@@ -68,8 +70,15 @@ export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
           authStateService.clearSession();
           return null;
         }),
-        catchError(() => {
-          authStateService.clearSession();
+        catchError((err: HttpErrorResponse) => {
+          if (err?.error?.errorCode === 'USER_BANNED') {
+            authStateService.clearSession();
+            router.navigate(['/auth/login'], {
+              state: { banData: err?.error?.data ?? null },
+            });
+          } else {
+            authStateService.clearSession();
+          }
           return of(null);
         }),
         finalize(() => {

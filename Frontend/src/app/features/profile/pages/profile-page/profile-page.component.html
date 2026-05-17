@@ -1,6 +1,5 @@
 <div class="lg:pt-6">
   @if (loadingPerfil()) {
-    <!-- Skeleton loader -->
     <div class="animate-pulse">
       <div class="h-44 w-full rounded-t-3xl bg-border"></div>
       <div class="mt-14 px-6 space-y-3">
@@ -27,13 +26,12 @@
         (followClick)="onFollowClick()"
         (seguidoresClick)="openSeguidoresModal()"
         (seguidosClick)="openSeguidosModal()"
+        (messageClick)="onMessageClick()"
       />
     </div>
 
-    <!-- Divider -->
     <div class="mt-5 mb-4 border-t border-border"></div>
 
-    <!-- Posts grid -->
     <app-profile-posts-grid
       [posts]="posts()"
       [loading]="loadingPosts()"
@@ -43,7 +41,6 @@
   }
 </div>
 
-<!-- Edit modal -->
 @if (editOpen() && perfil()) {
   <app-edit-profile-modal
     [perfil]="perfil()!"

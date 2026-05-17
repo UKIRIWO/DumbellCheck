@@ -4,6 +4,5 @@ public enum TipoMensajeChat {
     texto,
     imagen,
     video,
-    rutina,
-    emoji
+    rutina
 }

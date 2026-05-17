@@ -7,7 +7,6 @@
     style="max-height: 85vh"
     (click)="$event.stopPropagation()"
   >
-    <!-- Header: post author info + close button -->
     <header class="flex items-start gap-3 border-b border-border px-5 py-4">
       <a
         [routerLink]="['/app/profile', post.usuario.username]"
@@ -46,7 +45,6 @@
       </button>
     </header>
 
-    <!-- Comments list -->
     <div class="flex-1 overflow-y-auto px-5 py-4">
       @if (loading()) {
         <div class="space-y-3">
@@ -238,7 +236,6 @@
       }
     </div>
 
-    <!-- Footer: write a comment -->
     <footer class="border-t border-border px-5 py-3">
       @if (replyTarget(); as target) {
         <div class="mb-2 flex items-center justify-between rounded-2xl bg-ice px-3 py-2 text-xs text-muted">
@@ -281,7 +278,6 @@
   </section>
 </div>
 
-<!-- Delete comment confirmation modal -->
 @if (pendingDelete()) {
   <div
     class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4"

@@ -1,0 +1,290 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+  (click)="closed.emit()"
+>
+  <section
+    class="flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+    style="max-height: 85vh"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="flex items-center justify-between border-b border-border px-5 py-4">
+      <h2 class="font-heading text-lg font-semibold text-brand-text">Info del chat</h2>
+      <button
+        type="button"
+        (click)="closed.emit()"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:bg-ice cursor-pointer"
+      >
+        <i class="mdi mdi-close text-xl"></i>
+      </button>
+    </header>
+
+    @if (chat.esGrupo && canManage) {
+      <div class="border-b border-border px-5 py-4 space-y-4">
+        <div class="flex flex-col items-center gap-2">
+          <label class="text-xs font-semibold uppercase tracking-wide text-muted">Foto del grupo</label>
+          <div class="relative">
+            @if (photoPreview()) {
+              <img
+                [src]="photoPreview()!"
+                alt="Foto del grupo"
+                class="h-20 w-20 rounded-full object-cover border border-border"
+              />
+            } @else {
+              <div class="flex h-20 w-20 items-center justify-center rounded-full bg-ice border border-border">
+                <i class="mdi mdi-account-group text-3xl text-muted"></i>
+              </div>
+            }
+            <label
+              class="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-brand-blue text-white shadow hover:bg-blueDark"
+              [class.opacity-50]="uploadingPhoto()"
+            >
+              <i class="mdi mdi-camera text-sm"></i>
+              <input
+                type="file"
+                accept="image/*"
+                class="hidden"
+                [disabled]="uploadingPhoto()"
+                (change)="onGroupPhotoSelected($event)"
+              />
+            </label>
+          </div>
+          @if (uploadingPhoto()) {
+            <p class="text-xs text-muted">Subiendo foto…</p>
+          }
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs font-semibold uppercase tracking-wide text-muted">Nombre del grupo</label>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              [ngModel]="groupName()"
+              (ngModelChange)="groupName.set($event)"
+              maxlength="100"
+              placeholder="Nombre del grupo"
+              class="flex-1 rounded-xl border border-border bg-ice px-3 py-2 text-sm text-brand-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+            />
+            <button
+              type="button"
+              (click)="saveGroupName()"
+              [disabled]="savingName()"
+              class="shrink-0 rounded-xl bg-brand-blue px-4 py-2 text-sm font-semibold text-white hover:bg-blueDark disabled:opacity-50 cursor-pointer"
+            >
+              @if (savingName()) { … } @else { Guardar }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="flex-1 overflow-y-auto px-3 py-3">
+      <div class="mb-2 flex items-center justify-between gap-2 px-2">
+        <p class="text-xs font-semibold uppercase tracking-wide text-muted">
+          Miembros ({{ chat.participantes.length }})
+        </p>
+        @if (canAddMembers) {
+          <button
+            type="button"
+            (click)="openAddMembers()"
+            class="flex items-center gap-1 rounded-full bg-brand-blue/10 px-3 py-1.5 text-xs font-semibold text-brand-blue transition-colors hover:bg-brand-blue/20 cursor-pointer"
+          >
+            <i class="mdi mdi-account-plus-outline text-base"></i>
+            Añadir
+          </button>
+        }
+      </div>
+      <ul class="space-y-1">
+        @for (p of chat.participantes; track p.usuarioId) {
+          <li class="flex items-center gap-3 rounded-2xl px-3 py-2.5">
+            <app-user-avatar size="sm" [username]="p.username" [fotoPerfilUrl]="p.fotoPerfilUrl ?? null" />
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-semibold text-brand-text">
+                {{ p.username }}
+                @if (p.username === myUsername) {
+                  <span class="text-muted font-normal">(tú)</span>
+                }
+              </p>
+              <p class="truncate text-xs text-muted">{{ p.nombre }}</p>
+            </div>
+            @if (canChangeRole(p)) {
+              <select
+                [ngModel]="p.rol"
+                (ngModelChange)="onRoleChange(p, $event)"
+                [disabled]="isRoleLoading(p.usuarioId)"
+                class="rounded-xl border border-border bg-ice px-2 py-1.5 text-xs font-semibold text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-blue/30 disabled:opacity-50 cursor-pointer"
+              >
+                <option value="miembro">Miembro</option>
+                <option value="admin">Admin</option>
+              </select>
+            } @else {
+              <span class="shrink-0 rounded-full bg-ice px-2.5 py-1 text-[10px] font-semibold uppercase text-muted">
+                {{ p.rol === 'admin' ? 'Admin' : 'Miembro' }}
+              </span>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+
+    @if (errorMessage()) {
+      <p class="px-5 pb-2 text-sm text-danger">{{ errorMessage() }}</p>
+    }
+
+    <footer class="border-t border-border px-5 py-4">
+      <button
+        type="button"
+        (click)="openLeaveConfirm()"
+        [disabled]="leaving()"
+        class="flex w-full items-center justify-center gap-2 rounded-2xl border border-danger/30 bg-danger/5 py-3 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 disabled:opacity-50 cursor-pointer"
+      >
+        <i class="mdi mdi-exit-to-app text-lg"></i>
+        {{ leaveLabel }}
+      </button>
+    </footer>
+  </section>
+</div>
+
+@if (showAddMembers()) {
+  <div
+    class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4 py-6"
+    (click)="closeAddMembers()"
+  >
+    <section
+      class="flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+      style="max-height: 85vh"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="flex items-center justify-between border-b border-border px-5 py-4">
+        <h3 class="font-heading text-lg font-semibold text-brand-text">Añadir miembros</h3>
+        <button
+          type="button"
+          (click)="closeAddMembers()"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:bg-ice cursor-pointer"
+        >
+          <i class="mdi mdi-close text-xl"></i>
+        </button>
+      </header>
+
+      @if (addSelected().length > 0) {
+        <div class="flex flex-wrap gap-2 border-b border-border px-5 py-2">
+          @for (u of addSelected(); track u.id) {
+            <span class="flex items-center gap-1.5 rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
+              {{ u.username }}
+              <button type="button" (click)="toggleAddUser(u)" class="cursor-pointer hover:text-danger">✕</button>
+            </span>
+          }
+        </div>
+      }
+
+      <div class="border-b border-border px-5 py-3">
+        <input
+          type="text"
+          [ngModel]="addSearchQuery()"
+          (ngModelChange)="onAddQueryChange($event)"
+          placeholder="Buscar usuario…"
+          class="w-full rounded-xl border border-border bg-ice px-3 py-2 text-sm text-brand-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+        />
+        <p class="mt-1.5 text-xs text-muted">
+          Puedes añadir hasta {{ maxSelectableToAdd }} {{ maxSelectableToAdd === 1 ? 'persona' : 'personas' }} más
+        </p>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-3 py-2">
+        @if (addLoading()) {
+          <div class="space-y-2 p-3 animate-pulse">
+            @for (n of [1, 2, 3]; track n) {
+              <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-full bg-ice"></div>
+                <div class="h-3 w-32 rounded bg-ice"></div>
+              </div>
+            }
+          </div>
+        } @else if (addUsers().length === 0) {
+          <p class="py-6 text-center text-sm text-muted">No hay usuarios disponibles para añadir.</p>
+        } @else {
+          <ul class="space-y-1">
+            @for (user of addUsers(); track user.id) {
+              <li>
+                <button
+                  type="button"
+                  (click)="toggleAddUser(user)"
+                  [disabled]="!isAddSelected(user) && addSelected().length >= maxSelectableToAdd"
+                  class="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors hover:bg-ice cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  [class.bg-brand-blue/5]="isAddSelected(user)"
+                >
+                  <app-user-avatar size="sm" [username]="user.username" [fotoPerfilUrl]="user.fotoPerfilUrl ?? null" />
+                  <div class="min-w-0 flex-1 text-left">
+                    <p class="truncate text-sm font-semibold text-brand-text">{{ user.username }}</p>
+                    <p class="truncate text-xs text-muted">{{ user.nombre }}</p>
+                  </div>
+                  @if (user.sigo) {
+                    <span class="text-[10px] font-semibold text-brand-blue">Siguiendo</span>
+                  }
+                  <div
+                    class="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
+                    [class.border-brand-blue]="isAddSelected(user)"
+                    [class.bg-brand-blue]="isAddSelected(user)"
+                    [class.border-border]="!isAddSelected(user)"
+                  >
+                    @if (isAddSelected(user)) {
+                      <i class="mdi mdi-check text-xs text-white"></i>
+                    }
+                  </div>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <footer class="border-t border-border px-5 py-4">
+        <button
+          type="button"
+          (click)="confirmAddMembers()"
+          [disabled]="addSelected().length === 0 || addingMembers()"
+          class="w-full rounded-2xl bg-brand-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-blueDark disabled:opacity-50 cursor-pointer"
+        >
+          @if (addingMembers()) { Añadiendo… }
+          @else {
+            Añadir {{ addSelected().length }}
+            {{ addSelected().length === 1 ? 'miembro' : 'miembros' }}
+          }
+        </button>
+      </footer>
+    </section>
+  </div>
+}
+
+@if (showLeaveConfirm()) {
+  <div
+    class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4"
+    (click)="cancelLeaveConfirm()"
+  >
+    <div
+      class="w-full max-w-sm overflow-hidden rounded-2xl bg-surface shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="px-6 py-5">
+        <h3 class="font-heading text-lg font-semibold text-brand-text">{{ leaveLabel }}</h3>
+        <p class="mt-2 text-sm text-muted">{{ leaveConfirmMessage }}</p>
+      </div>
+      <div class="flex gap-3 border-t border-border px-6 py-4">
+        <button
+          type="button"
+          (click)="cancelLeaveConfirm()"
+          [disabled]="leaving()"
+          class="flex-1 rounded-xl border border-border py-2 text-sm font-semibold text-brand-text transition-colors hover:bg-ice disabled:opacity-60 cursor-pointer"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          (click)="confirmLeave()"
+          [disabled]="leaving()"
+          class="flex-1 rounded-xl bg-danger py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60 cursor-pointer"
+        >
+          {{ leaving() ? 'Saliendo…' : leaveLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

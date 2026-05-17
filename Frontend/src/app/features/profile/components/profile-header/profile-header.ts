@@ -2,10 +2,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SlicePipe } from '@angular/common';
 import { Perfil } from '../../../../core/models/profile.model';
 import { ProfileLinkIcon } from '../profile-link-icon/profile-link-icon';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profile-header',
-  imports: [ProfileLinkIcon, SlicePipe],
+  imports: [ProfileLinkIcon, SlicePipe, RouterLink],
   templateUrl: './profile-header.html',
 })
 export class ProfileHeader {

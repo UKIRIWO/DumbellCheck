@@ -1,0 +1,24 @@
+<div class="flex items-center justify-between border-t border-border px-4 py-3 text-sm text-muted">
+  <span>{{ from }}–{{ to }} de {{ totalElements }}</span>
+  <div class="flex gap-2">
+    <button
+      type="button"
+      (click)="prev()"
+      [disabled]="currentPage === 0"
+      class="rounded-lg border border-border px-3 py-1 font-semibold transition-colors hover:bg-ice disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+    >
+      ‹ Anterior
+    </button>
+    <span class="flex items-center px-2 font-semibold text-brand-text">
+      {{ currentPage + 1 }} / {{ totalPages || 1 }}
+    </span>
+    <button
+      type="button"
+      (click)="next()"
+      [disabled]="currentPage >= totalPages - 1"
+      class="rounded-lg border border-border px-3 py-1 font-semibold transition-colors hover:bg-ice disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+    >
+      Siguiente ›
+    </button>
+  </div>
+</div>

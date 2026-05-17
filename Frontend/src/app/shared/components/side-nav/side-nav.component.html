@@ -19,6 +19,12 @@
         <p class="text-lg ml-2">Rutinas</p>
       </a>
 
+      <a routerLink="/app/chats" routerLinkActive="bg-ice text-primary-dark"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice">
+        <i class="mdi mdi-message-outline text-2xl"></i>
+        <p class="text-lg ml-2">Mensajes</p>
+      </a>
+
       <a routerLink="/app/stats" routerLinkActive="bg-ice text-primary-dark"
         class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice">
         <i class="mdi mdi-chart-bar text-2xl"></i>
@@ -30,6 +36,14 @@
         <i class="mdi mdi-account-outline text-2xl"></i>
         <p class="text-lg ml-2">Perfil</p>
       </a>
+
+      @if (isAdmin()) {
+        <a routerLink="/app/admin" routerLinkActive="bg-ice text-primary-dark"
+          class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-brand-text transition-colors hover:bg-ice">
+          <i class="mdi mdi-shield-crown-outline text-2xl"></i>
+          <p class="text-lg ml-2">Admin</p>
+        </a>
+      }
     </nav>
   </div>
 

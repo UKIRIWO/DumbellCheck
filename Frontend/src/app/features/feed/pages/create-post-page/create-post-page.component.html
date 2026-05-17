@@ -1,5 +1,4 @@
 <div class="bg-surface mt-5 rounded-xl">
-  <!-- Top bar -->
   <div class="sticky top-0 z-10 flex items-center justify-between border-b border-border px-4 py-3 bg-surface">
     <button class="flex items-center gap-1 text-sm font-medium text-muted cursor-pointer" type="button" (click)="goBack()">
       <i class="mdi mdi-arrow-left text-lg"></i>
@@ -15,9 +14,7 @@
     </button>
   </div>
 
-  <!-- Post metadata -->
   <div class="px-4 pt-4 space-y-3 ">
-    <!-- Load from routine template -->
     <button
       type="button"
       (click)="openTemplatePicker()"
@@ -66,17 +63,14 @@
     </div>
   </div>
 
-  <!-- Error -->
   @if (errorMessage()) {
   <p class="mx-4 mt-3 rounded-lg bg-red-50 px-4 py-2 text-sm text-danger">{{ errorMessage() }}</p>
   }
 
-  <!-- Exercise list -->
   <div class="mt-4 space-y-4 px-4">
     @for (ej of exercises; track ej.ejercicioId; let exIdx = $index) {
     <div class="rounded-2xl bg-surface shadow-sm border border-border overflow-hidden">
 
-      <!-- Exercise header -->
       <div class="flex items-center gap-3 px-4 py-3">
         @if (ej.imagenUrl) {
         <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="h-10 w-10 rounded-full object-cover bg-ice shrink-0" />
@@ -92,7 +86,6 @@
         </button>
       </div>
 
-      <!-- Series table -->
       <div class="border-t border-border">
         <table class="w-full text-sm">
           <thead>
@@ -151,7 +144,6 @@
         </table>
       </div>
 
-      <!-- Add serie button -->
       <button class="w-full py-3 text-sm font-medium text-muted hover:bg-ice transition-colors" type="button"
         (click)="addSerie(ej)">
         <i class="mdi mdi-plus text-base"></i> Agregar Serie
@@ -160,7 +152,6 @@
     }
   </div>
 
-  <!-- Empty state -->
   @if (exercises.length === 0) {
   <div
     class="mx-4 mt-4 flex flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-border py-10 text-center">
@@ -169,7 +160,6 @@
   </div>
   }
 
-  <!-- Add exercise button -->
   <div class="px-4 py-4">
     <button
       class="w-full rounded-2xl bg-brand-blue py-4 text-sm font-semibold text-white hover:bg-blueDark transition-colors cursor-pointer"
@@ -178,7 +168,6 @@
     </button>
   </div>
 
-  <!-- Exercise selector overlay -->
   @if (showExerciseSelector()) {
   <app-exercise-selector
     [savedGrupoMuscularId]="persistedSelectorGrupoId"
@@ -190,7 +179,6 @@
   }
 </div>
 
-<!-- Template picker modal -->
 @if (showTemplatePicker()) {
   <div
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"

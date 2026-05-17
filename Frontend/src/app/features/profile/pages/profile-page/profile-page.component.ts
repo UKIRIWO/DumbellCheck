@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileApiService } from '../../../../core/services/profile-api.service';
 import { PostApiService } from '../../../../core/services/post-api.service';
 import { CurrentUserService } from '../../../../core/services/current-user.service';
+import { ChatApiService } from '../../../../core/services/chat-api.service';
 import { Perfil } from '../../../../core/models/profile.model';
 import { PostFeedItem } from '../../../../core/models/post.model';
 import { ProfileHeader } from '../../components/profile-header/profile-header';
@@ -21,6 +22,7 @@ export class ProfilePageComponent implements OnInit {
   private readonly profileApi = inject(ProfileApiService);
   private readonly postApi = inject(PostApiService);
   private readonly currentUser = inject(CurrentUserService);
+  private readonly chatApi = inject(ChatApiService);
 
   readonly perfil = signal<Perfil | null>(null);
   readonly posts = signal<PostFeedItem[]>([]);
@@ -118,5 +120,14 @@ export class ProfilePageComponent implements OnInit {
 
   openSeguidosModal(): void {
     this.followModalMode.set('seguidos');
+  }
+
+  onMessageClick(): void {
+    const p = this.perfil();
+    if (!p) return;
+    this.chatApi.findOrCreateDirectChat(p.username).subscribe({
+      next: (chat) => this.router.navigate(['/app/chats'], { queryParams: { id: chat.publicId } }),
+      error: () => {},
+    });
   }
 }

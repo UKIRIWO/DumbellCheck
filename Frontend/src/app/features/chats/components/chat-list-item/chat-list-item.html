@@ -1,0 +1,33 @@
+<div
+  class="flex cursor-pointer items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-ice"
+  [class.bg-brand-blue/5]="active"
+  [class.border-l-2]="active"
+  [class.border-brand-blue]="active"
+>
+  <div class="shrink-0">
+    <app-user-avatar
+      size="md"
+      [username]="avatarUsername"
+      [fotoPerfilUrl]="fotoUrl"
+    />
+  </div>
+
+  <div class="min-w-0 flex-1">
+    <div class="flex items-center justify-between gap-2">
+      <p class="truncate font-heading text-sm font-semibold text-brand-text">{{ displayName }}</p>
+      @if (chat.ultimoMensaje) {
+        <span class="shrink-0 text-[10px] text-muted">
+          {{ chat.ultimoMensaje.fechaCreacion | date:'HH:mm':'':'es' }}
+        </span>
+      }
+    </div>
+    <div class="flex items-center justify-between gap-2 mt-0.5">
+      <p class="truncate text-xs text-muted">{{ lastMessagePreview }}</p>
+      @if (chat.mensajesNoLeidos > 0) {
+        <span class="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-blue px-1 text-[10px] font-bold text-white shrink-0">
+          {{ chat.mensajesNoLeidos > 99 ? '99+' : chat.mensajesNoLeidos }}
+        </span>
+      }
+    </div>
+  </div>
+</div>

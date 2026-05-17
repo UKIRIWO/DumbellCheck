@@ -28,6 +28,46 @@
   --color-ice: #e6f2fa;
   --color-charcoal: #243746;
   --bg-light: #d8d8d8;
+  --bottom-nav-height: 4.75rem;
+  --fixed-fab-offset-mobile: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 0.75rem);
+  --fixed-fab-offset-desktop: 1rem;
+  --side-nav-width-md: 16rem;
+}
+
+.fixed-fab-left,
+.fixed-fab-right {
+  position: fixed;
+}
+
+.fixed-fab-left {
+  left: 0.75rem;
+  bottom: var(--fixed-fab-offset-mobile);
+}
+
+.fixed-fab-right {
+  right: 0.75rem;
+  bottom: var(--fixed-fab-offset-mobile);
+}
+
+@media (min-width: 768px) {
+  .fixed-fab-right {
+    bottom: var(--fixed-fab-offset-desktop);
+  }
+
+  .fixed-fab-left {
+    left: calc(var(--side-nav-width-md) + 1rem);
+    bottom: var(--fixed-fab-offset-desktop);
+  }
+
+  .fixed-fab-right {
+    right: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .fixed-fab-left {
+    left: calc(20vw + 1rem);
+  }
 }
 
 *,

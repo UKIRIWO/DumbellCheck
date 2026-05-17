@@ -1,0 +1,110 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+  (click)="closed.emit()"
+>
+  <section
+    class="flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-xl"
+    style="max-height: 85vh"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="flex items-center justify-between border-b border-border px-5 py-4">
+      <h2 class="font-heading text-lg font-semibold text-brand-text">Nuevo grupo</h2>
+      <button type="button" (click)="closed.emit()"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:bg-ice cursor-pointer">
+        <i class="mdi mdi-close text-xl"></i>
+      </button>
+    </header>
+
+    <div class="border-b border-border px-5 py-3">
+      <input
+        type="text"
+        [ngModel]="groupName()"
+        (ngModelChange)="groupName.set($event)"
+        placeholder="Nombre del grupo (opcional)"
+        class="w-full rounded-xl border border-border bg-ice px-3 py-2 text-sm text-brand-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+      />
+    </div>
+
+    @if (selected().length > 0) {
+      <div class="flex flex-wrap gap-2 border-b border-border px-5 py-2">
+        @for (u of selected(); track u.id) {
+          <span class="flex items-center gap-1.5 rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
+            {{ u.username }}
+            <button type="button" (click)="toggleUser(u)" class="cursor-pointer hover:text-danger">✕</button>
+          </span>
+        }
+      </div>
+    }
+
+    <div class="border-b border-border px-5 py-3">
+      <input
+        type="text"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onQueryChange($event)"
+        placeholder="Buscar usuario…"
+        class="w-full rounded-xl border border-border bg-ice px-3 py-2 text-sm text-brand-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+      />
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-3 py-2">
+      @if (loading()) {
+        <div class="space-y-2 p-3 animate-pulse">
+          @for (n of [1,2,3,4]; track n) {
+            <div class="flex items-center gap-3">
+              <div class="h-9 w-9 rounded-full bg-ice"></div>
+              <div class="h-3 w-32 rounded bg-ice"></div>
+            </div>
+          }
+        </div>
+      } @else if (users().length === 0) {
+        <p class="py-6 text-center text-sm text-muted">No se encontraron usuarios.</p>
+      } @else {
+        <ul class="space-y-1">
+          @for (user of users(); track user.id) {
+            <li>
+              <button
+                type="button"
+                (click)="toggleUser(user)"
+                class="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors hover:bg-ice cursor-pointer"
+                [class.bg-brand-blue/5]="isSelected(user)"
+              >
+                <app-user-avatar size="sm" [username]="user.username" [fotoPerfilUrl]="user.fotoPerfilUrl ?? null" />
+                <div class="min-w-0 flex-1 text-left">
+                  <p class="truncate text-sm font-semibold text-brand-text">{{ user.username }}</p>
+                  <p class="truncate text-xs text-muted">{{ user.nombre }}</p>
+                </div>
+                @if (user.sigo) {
+                  <span class="text-[10px] text-brand-blue font-semibold">Siguiendo</span>
+                }
+                <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors"
+                  [class.border-brand-blue]="isSelected(user)"
+                  [class.bg-brand-blue]="isSelected(user)"
+                  [class.border-border]="!isSelected(user)">
+                  @if (isSelected(user)) {
+                    <i class="mdi mdi-check text-xs text-white"></i>
+                  }
+                </div>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    @if (errorMessage()) {
+      <p class="px-5 pb-2 text-sm text-danger">{{ errorMessage() }}</p>
+    }
+
+    <footer class="border-t border-border px-5 py-4">
+      <button
+        type="button"
+        (click)="create()"
+        [disabled]="selected().length === 0 || creating()"
+        class="w-full rounded-2xl bg-brand-blue py-3 text-sm font-semibold text-white transition-colors hover:bg-blueDark disabled:opacity-50 cursor-pointer"
+      >
+        @if (creating()) { Creando… }
+        @else { Crear chat con {{ selected().length }} {{ selected().length === 1 ? 'persona' : 'personas' }} }
+      </button>
+    </footer>
+  </section>
+</div>

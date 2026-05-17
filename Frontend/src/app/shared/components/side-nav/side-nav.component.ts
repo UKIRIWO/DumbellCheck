@@ -15,6 +15,8 @@ export class SideNavComponent implements OnInit {
   private readonly authStateService = inject(AuthStateService);
   private readonly currentUser = inject(CurrentUserService);
 
+  readonly isAdmin = this.authStateService.isAdmin;
+
   readonly profile = this.currentUser.profile;
 
   readonly username = computed(

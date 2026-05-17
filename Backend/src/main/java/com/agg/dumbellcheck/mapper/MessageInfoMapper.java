@@ -1,12 +1,6 @@
 package com.agg.dumbellcheck.mapper;
 
-/*
-chats (Cabeceras de chat/grupo).
 
-usuarios_chat (Participantes y roles).
-
-mensajes_chat (El contenido de los mensajes).
-*/
 
 import com.agg.dumbellcheck.dto.MessageInfoDTO.*;
 import com.agg.dumbellcheck.entities.ChatEntity;

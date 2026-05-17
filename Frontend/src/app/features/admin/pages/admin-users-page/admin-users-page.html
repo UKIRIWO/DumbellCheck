@@ -1,0 +1,250 @@
+<div class="rounded-2xl border border-border bg-surface shadow-sm overflow-hidden">
+    <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border">
+    <h2 class="font-heading text-base font-semibold text-brand-text">Usuarios</h2>
+    <form (ngSubmit)="search()" class="flex gap-2">
+      <input
+        type="text"
+        placeholder="Buscar por username o email…"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        name="q"
+        class="rounded-xl border border-border bg-ice px-3 py-1.5 text-sm text-brand-text placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand-blue/30 w-60"
+      />
+      <button type="submit" class="rounded-xl bg-brand-blue px-4 py-1.5 text-sm font-semibold text-white hover:bg-blueDark transition-colors cursor-pointer">
+        Buscar
+      </button>
+    </form>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="mx-5 my-3 rounded-lg bg-red-50 px-4 py-2 text-sm text-danger">{{ errorMessage() }}</p>
+  }
+
+  <div class="overflow-x-auto">
+    @if (loading()) {
+      <div class="space-y-2 p-5 animate-pulse">
+        @for (n of [1,2,3,4,5]; track n) { <div class="h-10 rounded-xl bg-ice"></div> }
+      </div>
+    } @else if (page()?.content?.length === 0) {
+      <p class="py-10 text-center text-sm text-muted">No se encontraron usuarios.</p>
+    } @else {
+      <table class="w-full text-sm">
+        <thead class="bg-ice text-xs font-semibold uppercase tracking-wide text-muted">
+          <tr>
+            <th class="w-8 px-2 py-3"></th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('id')">
+              ID {{ sortIcon('id') }}
+            </th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('username')">
+              Username {{ sortIcon('username') }}
+            </th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('email')">
+              Email {{ sortIcon('email') }}
+            </th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('rol')">
+              Rol {{ sortIcon('rol') }}
+            </th>
+            <th class="px-4 py-3 text-center">Baneos</th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('fechaCreacion')">
+              Registro {{ sortIcon('fechaCreacion') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          @for (user of page()?.content ?? []; track user.id) {
+            <tr class="group hover:bg-ice/50 transition-colors">
+              <td class="px-2 py-3 text-center">
+                <button type="button" (click)="openMenu($event, user)"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg px-2 py-1 text-lg font-bold text-muted hover:bg-ice cursor-pointer leading-none">
+                  ⋮
+                </button>
+              </td>
+              <td class="px-4 py-3 text-muted">{{ user.id }}</td>
+              <td class="px-4 py-3 font-semibold text-brand-text">{{ user.username }}</td>
+              <td class="px-4 py-3 text-muted">{{ user.email }}</td>
+              <td class="px-4 py-3">
+                <select
+                  [ngModel]="user.rol"
+                  (ngModelChange)="changeRol(user, $event)"
+                  class="rounded-lg border border-border bg-surface px-2 py-1 text-xs font-semibold focus:outline-none cursor-pointer hover:border-brand-blue transition-colors"
+                >
+                  @for (r of rolOptions; track r) {
+                    <option [value]="r">{{ r }}</option>
+                  }
+                </select>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span
+                  class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                  [class.bg-danger/10]="user.baneos.length > 0"
+                  [class.text-danger]="user.baneos.length > 0"
+                  [class.text-muted]="user.baneos.length === 0"
+                >{{ user.baneos.length }}</span>
+              </td>
+              <td class="px-4 py-3 text-muted">{{ user.fechaCreacion | date:'d MMM yyyy':'':'es' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  @if (page(); as p) {
+    <app-admin-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="p.totalPages"
+      [totalElements]="p.totalElements"
+      [pageSize]="20"
+      (pageChange)="load($event)"
+    />
+  }
+</div>
+
+@if (menuOpenItem(); as item) {
+  <div class="fixed z-50 min-w-[160px] rounded-xl border border-border bg-surface shadow-xl py-1"
+    [style.top.px]="menuPos().top" [style.left.px]="menuPos().left"
+    (click)="$event.stopPropagation()">
+    <button type="button" (click)="openView(item)"
+      class="flex w-full items-center gap-2 px-4 py-2 text-sm text-brand-text hover:bg-ice cursor-pointer">
+      <i class="mdi mdi-account-details-outline text-base"></i> Ver datos
+    </button>
+    @if (!hasActiveBan(item)) {
+      <button type="button" (click)="openBan(item)"
+        class="flex w-full items-center gap-2 px-4 py-2 text-sm text-muted hover:bg-ice cursor-pointer">
+        <i class="mdi mdi-account-cancel-outline text-base"></i> Banear
+      </button>
+    }
+    <hr class="my-1 border-border" />
+    <button type="button" (click)="askDelete(item)"
+      class="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger hover:bg-red-50 cursor-pointer">
+      <i class="mdi mdi-delete-outline text-base"></i> Eliminar
+    </button>
+  </div>
+}
+
+@if (viewUser(); as u) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+    (click)="viewUser.set(null)">
+    <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-surface shadow-xl"
+      style="max-height: 85vh; display: flex; flex-direction: column;"
+      (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between border-b border-border px-6 py-4">
+        <h3 class="font-heading text-lg font-semibold text-brand-text">Datos de {{ u.username }}</h3>
+        <button type="button" (click)="viewUser.set(null)"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:bg-ice cursor-pointer">
+          <i class="mdi mdi-close text-xl"></i>
+        </button>
+      </div>
+      <div class="overflow-y-auto px-6 py-4">
+        <dl class="space-y-3 text-sm">
+          @if (u.fotoPerfilUrl) {
+            <div class="flex justify-center mb-4">
+              <img [src]="u.fotoPerfilUrl" [alt]="u.username" class="h-20 w-20 rounded-full object-cover border-2 border-border" />
+            </div>
+          }
+          <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+            <dt class="font-semibold text-muted">ID</dt>
+            <dd class="text-brand-text">{{ u.id }}</dd>
+            <dt class="font-semibold text-muted">Username</dt>
+            <dd class="text-brand-text">{{ u.username }}</dd>
+            <dt class="font-semibold text-muted">Email</dt>
+            <dd class="break-all text-brand-text">{{ u.email }}</dd>
+            <dt class="font-semibold text-muted">Nombre</dt>
+            <dd class="text-brand-text">{{ u.nombre }} {{ u.apellido1 }} {{ u.apellido2 ?? '' }}</dd>
+            <dt class="font-semibold text-muted">Rol</dt>
+            <dd class="text-brand-text">{{ u.rol }}</dd>
+            <dt class="font-semibold text-muted">Estado</dt>
+            <dd>
+              <span class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                [class.bg-success/10]="u.estaActivo" [class.text-success]="u.estaActivo"
+                [class.bg-danger/10]="!u.estaActivo" [class.text-danger]="!u.estaActivo">
+                {{ u.estaActivo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </dd>
+            <dt class="font-semibold text-muted">Seguidores</dt>
+            <dd class="text-brand-text">{{ u.contadorSeguidores }}</dd>
+            <dt class="font-semibold text-muted">Seguidos</dt>
+            <dd class="text-brand-text">{{ u.contadorSeguidos }}</dd>
+            <dt class="font-semibold text-muted">Publicaciones</dt>
+            <dd class="text-brand-text">{{ u.contadorSeguidores }}</dd>
+            @if (u.biografia) {
+              <dt class="font-semibold text-muted">Biografía</dt>
+              <dd class="text-brand-text">{{ u.biografia }}</dd>
+            }
+            <dt class="font-semibold text-muted">Registro</dt>
+            <dd class="text-brand-text">{{ u.fechaCreacion | date:'d MMM yyyy HH:mm':'':'es' }}</dd>
+            <dt class="font-semibold text-muted">Última conexión</dt>
+            <dd class="text-brand-text">{{ u.ultimaConexion ? (u.ultimaConexion | date:'d MMM yyyy HH:mm':'':'es') : '—' }}</dd>
+          </div>
+          @if (u.baneos.length > 0) {
+            <div class="mt-3 border-t border-border pt-3">
+              <p class="mb-2 font-semibold text-danger">Baneos ({{ u.baneos.length }})</p>
+              <ul class="space-y-2">
+                @for (ban of u.baneos; track ban.id) {
+                  <li class="rounded-xl border border-border bg-ice px-3 py-2 text-xs">
+                    <span class="font-semibold">Motivo:</span> {{ ban.motivoBaneo || '—' }} ·
+                    <span class="font-semibold">Permanente:</span> {{ ban.baneadoPermanentemente ? 'Sí' : 'No' }}
+                    @if (ban.baneadoHasta) {
+                      · <span class="font-semibold">Hasta:</span> {{ ban.baneadoHasta | date:'d MMM yyyy HH:mm':'':'es' }}
+                    }
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </dl>
+      </div>
+    </div>
+  </div>
+}
+
+@if (banTarget(); as user) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" (click)="closeBan()">
+    <div class="w-full max-w-sm overflow-hidden rounded-2xl bg-surface shadow-xl" (click)="$event.stopPropagation()">
+      <div class="px-6 py-5">
+        <h3 class="font-heading text-lg font-semibold text-brand-text">Banear a {{ user.username }}</h3>
+        <div class="mt-4 space-y-3">
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-muted">Motivo</label>
+            <input type="text" [ngModel]="banForm().motivoBaneo" (ngModelChange)="updateBanForm('motivoBaneo', $event)"
+              class="w-full rounded-xl border border-border bg-ice px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+              placeholder="Motivo del baneo" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-muted">Baneado hasta</label>
+            <input type="datetime-local"
+              (change)="updateBanForm('baneadoHasta', $any($event.target).value || undefined)"
+              [attr.disabled]="banForm().baneadoPermanentemente ? true : null"
+              class="w-full rounded-xl border border-border bg-ice px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30 disabled:opacity-40 disabled:cursor-not-allowed" />
+          </div>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" [ngModel]="banForm().baneadoPermanentemente"
+              (ngModelChange)="updateBanForm('baneadoPermanentemente', $event)" class="rounded" />
+            <span class="text-sm font-semibold text-brand-text">Baneo permanente</span>
+          </label>
+        </div>
+      </div>
+      <div class="flex gap-3 border-t border-border px-6 py-4">
+        <button type="button" (click)="closeBan()" [disabled]="creatingBan()"
+          class="flex-1 rounded-xl border border-border py-2 text-sm font-semibold text-brand-text hover:bg-ice disabled:opacity-60 cursor-pointer">
+          Cancelar
+        </button>
+        <button type="button" (click)="submitBan()" [disabled]="creatingBan()"
+          class="flex-1 rounded-xl bg-danger py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60 cursor-pointer">
+          {{ creatingBan() ? 'Baneando…' : 'Banear' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (pendingDelete()) {
+  <app-admin-confirm-modal
+    title="Eliminar usuario"
+    [message]="'¿Eliminar a ' + pendingDelete()!.username + '? Esta acción es permanente.'"
+    confirmLabel="Eliminar"
+    [loading]="deleting()"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+}

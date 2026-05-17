@@ -1,5 +1,6 @@
 package com.agg.dumbellcheck.repositories;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,12 +39,14 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
                 ORDER BY common_count DESC
                 LIMIT :limit
             ) as suggestions ON u.id = suggestions.seguido_id
+            WHERE u.rol != 'ADMIN'
             """, nativeQuery = true)
     List<UsuarioEntity> findSuggestedUsers(@Param("userId") Integer userId, @Param("limit") int limit);
 
     @Query("""
             SELECT u FROM UsuarioEntity u
             WHERE u.estaActivo = true
+              AND u.rol <> com.agg.dumbellcheck.entities.RolUsuario.ADMIN
               AND (
                 LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%'))
                 OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :q, '%'))
@@ -58,4 +61,47 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
               AND LOWER(u.username) IN :usernamesLowercase
             """)
     List<String> findExistingUsernames(@Param("usernamesLowercase") Collection<String> usernamesLowercase);
+
+
+    @Query(value = """
+            SELECT u.*,
+                   CASE WHEN s.seguido_id IS NOT NULL THEN 0 ELSE 1 END AS sigo_rank
+            FROM usuarios u
+            LEFT JOIN seguidores s ON s.usuario_id = :myId AND s.seguido_id = u.id
+            WHERE u.id != :myId
+              AND u.rol != 'ADMIN'
+              AND u.esta_activo = 1
+              AND (:q IS NULL
+                   OR LOWER(u.username) LIKE LOWER(CONCAT('%', :q, '%'))
+                   OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :q, '%')))
+            ORDER BY sigo_rank ASC, u.username ASC
+            LIMIT :lim OFFSET :off
+            """, nativeQuery = true)
+    List<UsuarioEntity> searchUsersForChat(
+            @Param("myId") Integer myId,
+            @Param("q") String q,
+            @Param("lim") int lim,
+            @Param("off") long off);
+
+
+    @Query(value = """
+            SELECT * FROM usuarios
+            WHERE LOWER(username) LIKE LOWER(CONCAT('%', :q, '%'))
+               OR LOWER(email) LIKE LOWER(CONCAT('%', :q, '%'))
+            ORDER BY
+              CASE WHEN LOWER(username) LIKE LOWER(CONCAT('%', :q, '%')) THEN 0 ELSE 1 END,
+              fecha_creacion DESC
+            LIMIT :lim OFFSET :off
+            """, nativeQuery = true)
+    List<UsuarioEntity> findBySearchPaged(
+            @Param("q") String q,
+            @Param("lim") int lim,
+            @Param("off") long off);
+
+    @Query(value = """
+            SELECT COUNT(*) FROM usuarios
+            WHERE LOWER(username) LIKE LOWER(CONCAT('%', :q, '%'))
+               OR LOWER(email) LIKE LOWER(CONCAT('%', :q, '%'))
+            """, nativeQuery = true)
+    long countBySearch(@Param("q") String q);
 }

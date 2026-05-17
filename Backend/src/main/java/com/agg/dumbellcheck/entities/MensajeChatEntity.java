@@ -25,7 +25,7 @@ public class MensajeChatEntity {
     private UsuarioEntity usuario;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_mensaje", nullable = false, columnDefinition = "ENUM('texto','imagen','video','rutina','emoji')")
+    @Column(name = "tipo_mensaje", nullable = false, columnDefinition = "ENUM('texto','imagen','video','rutina')")
     private TipoMensajeChat tipoMensaje;
 
     @Column

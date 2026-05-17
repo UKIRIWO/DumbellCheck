@@ -108,7 +108,7 @@ export class FeedRightSidebar implements OnInit {
   }
 
   onModalFollowChanged(event: { userId: number; username: string; seguidoPorMi: boolean }): void {
-    // Keep "Puede que conozcas..." button state in sync with modal actions.
+
     this.suggestionFollowState.update((prev) => ({ ...prev, [event.userId]: event.seguidoPorMi }));
 
     this.currentUser.refresh(8).subscribe({ error: () => {} });
@@ -145,7 +145,7 @@ export class FeedRightSidebar implements OnInit {
         this.suggestionFollowState.update((prev) => ({ ...prev, [userId]: !currentlyFollowed }));
         this.suggestionActionLoading.update((prev) => ({ ...prev, [userId]: false }));
 
-        // Keep suggestion visible, but sync my "siguiendo" counter in the sidebar card.
+
         this.profile.update((me) => {
           if (!me) return me;
           const delta = currentlyFollowed ? -1 : 1;

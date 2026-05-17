@@ -108,7 +108,7 @@ export class RoutineDetailPageComponent implements OnInit, OnDestroy {
       document.execCommand('copy');
       onSuccess();
     } catch {
-      // silently ignore
+
     } finally {
       document.body.removeChild(ta);
     }

@@ -19,7 +19,6 @@
   } @else if (routine(); as r) {
     <article class="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
 
-      <!-- Header -->
       <div class="flex items-start gap-3 border-b border-border px-5 py-4">
         <a
           [routerLink]="['/app/profile', r.usuario.username]"
@@ -49,14 +48,11 @@
         </div>
       </div>
 
-      <!-- Exercises -->
       @if (ejerciciosForDisplay().length > 0) {
         <app-workout-detail-exercises [ejercicios]="ejerciciosForDisplay()" />
       }
 
-      <!-- Action footer -->
       <div class="flex flex-col gap-2 border-t border-border px-5 py-4">
-        <!-- Copy link button -->
         <button
           type="button"
           (click)="copyLink()"
@@ -95,7 +91,6 @@
   }
 </section>
 
-<!-- Delete confirmation modal -->
 @if (showDeleteModal()) {
   <div
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"

@@ -18,10 +18,10 @@ public interface PublicacionRepository extends JpaRepository<PublicacionEntity, 
 
     Optional<PublicacionEntity> findByPublicIdAndEstaActivaTrue(String publicId);
 
-    // Cursor-based pagination for user profile (first page — no cursor)
+
     List<PublicacionEntity> findByUsuarioIdAndEstaActivaTrueOrderByIdDesc(Integer usuarioId, Pageable pageable);
 
-    // Cursor-based pagination for user profile (subsequent pages — cursor = last seen id)
+
     List<PublicacionEntity> findByUsuarioIdAndEstaActivaTrueAndIdLessThanOrderByIdDesc(
             Integer usuarioId, Integer cursorId, Pageable pageable);
 

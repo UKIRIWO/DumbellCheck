@@ -1,0 +1,147 @@
+<div class="rounded-2xl border border-border bg-surface shadow-sm overflow-hidden">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-border">
+    <h2 class="font-heading text-base font-semibold text-brand-text">Ejercicios</h2>
+    <button type="button" (click)="openCreate()"
+      class="rounded-xl bg-brand-blue px-4 py-1.5 text-sm font-semibold text-white hover:bg-blueDark transition-colors cursor-pointer">
+      <i class="mdi mdi-plus text-base"></i> Nuevo ejercicio
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="mx-5 my-3 rounded-lg bg-red-50 px-4 py-2 text-sm text-danger">{{ errorMessage() }}</p>
+  }
+
+  @if (showCreateForm()) {
+    <div class="border-b border-border bg-ice px-5 py-4">
+      <h3 class="mb-3 font-heading text-sm font-semibold text-brand-text">Nuevo ejercicio</h3>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <label class="mb-1 block text-xs font-semibold text-muted">Nombre *</label>
+          <input type="text" [ngModel]="createForm().nombre" (ngModelChange)="updateCreateForm('nombre', $event)"
+            class="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30" placeholder="Nombre del ejercicio" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-muted">URL imagen</label>
+          <input type="text" [ngModel]="createForm().imagenUrl ?? ''" (ngModelChange)="updateCreateForm('imagenUrl', $event)"
+            class="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30" placeholder="https://…" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-muted">Descripción</label>
+          <input type="text" [ngModel]="createForm().descripcion ?? ''" (ngModelChange)="updateCreateForm('descripcion', $event)"
+            class="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30" placeholder="Descripción opcional" />
+        </div>
+      </div>
+      <div class="mt-4 flex gap-3">
+        <button type="button" (click)="closeCreate()"
+          class="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-brand-text hover:bg-surface transition-colors cursor-pointer">Cancelar</button>
+        <button type="button" (click)="submitCreate()" [disabled]="!createForm().nombre.trim() || creating()"
+          class="rounded-xl bg-brand-blue px-4 py-2 text-sm font-semibold text-white hover:bg-blueDark disabled:opacity-60 cursor-pointer">
+          {{ creating() ? 'Creando…' : 'Crear ejercicio' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <div class="overflow-x-auto">
+    @if (loading()) {
+      <div class="space-y-2 p-5 animate-pulse">
+        @for (n of [1,2,3,4,5]; track n) { <div class="h-10 rounded-xl bg-ice"></div> }
+      </div>
+    } @else if (page()?.content?.length === 0) {
+      <p class="py-10 text-center text-sm text-muted">No hay ejercicios.</p>
+    } @else {
+      <table class="w-full text-sm">
+        <thead class="bg-ice text-xs font-semibold uppercase tracking-wide text-muted">
+          <tr>
+            <th class="w-8 px-2 py-3"></th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('id')">ID {{ sortIcon('id') }}</th>
+            <th class="px-4 py-3 text-left w-10">Img</th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('nombre')">Nombre {{ sortIcon('nombre') }}</th>
+            <th class="px-4 py-3 text-left">Descripción</th>
+            <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-brand-text" (click)="toggleSort('fechaCreacion')">Fecha {{ sortIcon('fechaCreacion') }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          @for (ej of page()?.content ?? []; track ej.id) {
+            <tr class="group hover:bg-ice/50 transition-colors"
+              [class.bg-sky/5]="editingRow()?.id === ej.id"
+              (dblclick)="startEdit(ej)">
+              <td class="px-2 py-3 text-center">
+                <button type="button" (click)="openMenu($event, ej)"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity rounded-lg px-2 py-1 text-lg font-bold text-muted hover:bg-ice cursor-pointer leading-none">⋮</button>
+              </td>
+              <td class="px-4 py-3 text-muted">{{ ej.id }}</td>
+              <td class="px-4 py-3">
+                @if (editingRow()?.id === ej.id) {
+                  <input type="text" [ngModel]="editingRow()!.imagenUrl" (ngModelChange)="updateEditField('imagenUrl', $event)"
+                    class="w-32 rounded-lg border border-brand-blue bg-surface px-2 py-1 text-xs focus:outline-none" placeholder="URL imagen" />
+                } @else if (ej.imagenUrl) {
+                  <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="h-8 w-8 rounded-full object-cover bg-ice" />
+                } @else {
+                  <div class="flex h-8 w-8 items-center justify-center rounded-full bg-ice">
+                    <i class="mdi mdi-dumbbell text-sm text-muted"></i>
+                  </div>
+                }
+              </td>
+              <td class="px-4 py-3 font-semibold text-brand-text">
+                @if (editingRow()?.id === ej.id) {
+                  <input type="text" [ngModel]="editingRow()!.nombre" (ngModelChange)="updateEditField('nombre', $event)"
+                    class="w-40 rounded-lg border border-brand-blue bg-surface px-2 py-1 text-sm focus:outline-none" />
+                } @else {
+                  {{ ej.nombre }}
+                }
+              </td>
+              <td class="px-4 py-3 max-w-xs truncate text-muted">
+                @if (editingRow()?.id === ej.id) {
+                  <input type="text" [ngModel]="editingRow()!.descripcion" (ngModelChange)="updateEditField('descripcion', $event)"
+                    class="w-48 rounded-lg border border-brand-blue bg-surface px-2 py-1 text-sm focus:outline-none" placeholder="Descripción" />
+                } @else {
+                  {{ ej.descripcion || '—' }}
+                }
+              </td>
+              <td class="px-4 py-3 text-muted">
+                {{ ej.fechaCreacion | date:'d MMM yyyy':'':'es' }}
+                @if (editingRow()?.id === ej.id) {
+                  <div class="mt-1 flex gap-2">
+                    <button type="button" (click)="saveEdit()" [disabled]="saving()"
+                      class="rounded-lg bg-brand-blue px-3 py-1 text-xs font-semibold text-white disabled:opacity-60 cursor-pointer">
+                      {{ saving() ? '…' : 'Guardar' }}
+                    </button>
+                    <button type="button" (click)="cancelEdit()"
+                      class="rounded-lg border border-border px-3 py-1 text-xs font-semibold text-muted hover:bg-ice cursor-pointer">Cancelar</button>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  @if (page(); as p) {
+    <app-admin-pagination [currentPage]="currentPage()" [totalPages]="p.totalPages"
+      [totalElements]="p.totalElements" [pageSize]="20" (pageChange)="load($event)" />
+  }
+</div>
+
+@if (menuOpenItem(); as item) {
+  <div class="fixed z-50 min-w-[150px] rounded-xl border border-border bg-surface shadow-xl py-1"
+    [style.top.px]="menuPos().top" [style.left.px]="menuPos().left" (click)="$event.stopPropagation()">
+    <button type="button" (click)="startEdit(item); menuOpenItem.set(null)"
+      class="flex w-full items-center gap-2 px-4 py-2 text-sm text-brand-text hover:bg-ice cursor-pointer">
+      <i class="mdi mdi-pencil-outline text-base"></i> Editar
+    </button>
+    <hr class="my-1 border-border" />
+    <button type="button" (click)="askDelete(item)"
+      class="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger hover:bg-red-50 cursor-pointer">
+      <i class="mdi mdi-delete-outline text-base"></i> Eliminar
+    </button>
+  </div>
+}
+
+@if (pendingDelete()) {
+  <app-admin-confirm-modal title="Eliminar ejercicio"
+    [message]="'¿Eliminar «' + pendingDelete()!.nombre + '»?'"
+    confirmLabel="Eliminar" [loading]="deleting()" (confirmed)="confirmDelete()" (cancelled)="cancelDelete()" />
+}
