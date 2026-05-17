@@ -40,6 +40,11 @@
 }
 
 .fixed-fab-left {
+  left: max(0.5rem, env(safe-area-inset-left, 0px));
+  bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.fixed-fab-left--in-app {
   left: 0.75rem;
   bottom: var(--fixed-fab-offset-mobile);
 }
@@ -52,20 +57,17 @@
 @media (min-width: 768px) {
   .fixed-fab-right {
     bottom: var(--fixed-fab-offset-desktop);
+    right: 1rem;
   }
 
-  .fixed-fab-left {
+  .fixed-fab-left--in-app {
     left: calc(var(--side-nav-width-md) + 1rem);
     bottom: var(--fixed-fab-offset-desktop);
-  }
-
-  .fixed-fab-right {
-    right: 1rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .fixed-fab-left {
+  .fixed-fab-left--in-app {
     left: calc(20vw + 1rem);
   }
 }

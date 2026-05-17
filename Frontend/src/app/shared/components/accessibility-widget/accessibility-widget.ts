@@ -1,4 +1,7 @@
 import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, map, startWith } from 'rxjs/operators';
 import {
   AccessibilityOptionKey,
   AccessibilityService,
@@ -19,6 +22,16 @@ interface AccessibilityOption {
 export class AccessibilityWidget {
   protected readonly a11y = inject(AccessibilityService);
   private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly router = inject(Router);
+
+  readonly inAppLayout = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map(() => this.router.url.startsWith('/app')),
+      startWith(this.router.url.startsWith('/app')),
+    ),
+    { initialValue: this.router.url.startsWith('/app') },
+  );
 
   readonly panelOpen = signal(false);
   readonly state = this.a11y.state;

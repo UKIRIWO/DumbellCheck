@@ -1,4 +1,7 @@
-<div class="accessibility-widget-root fixed-fab-left z-[60]">
+<div
+  class="accessibility-widget-root fixed-fab-left z-[60]"
+  [class.fixed-fab-left--in-app]="inAppLayout()"
+>
   <button
     type="button"
     class="accessibility-fab flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-brand-blue text-white shadow-lg transition-colors hover:bg-blueDark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning"
